@@ -5,6 +5,22 @@
   "repository": "https://github.com/dejosli/NodeJS-RESTful-API-Boilerplate.git",
   "author": "Josli Shubho Biswas <bjoslishubho@gmail.com>",
   "license": "MIT",
+  "engines": {
+    "node": ">=16.13.1",
+    "yarn": ">=1.22.17",
+    "npm": ">=8.1.2"
+  },
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node src/index.js",
+    "dev": "cross-env NODE_ENV=development nodemon src/index.js",
+    "test": "jest -i --colors --verbose --detectOpenHandles",
+    "test:watch": "jest -i --watchAll",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prettier": "prettier --check **/*.js",
+    "prettier:fix": "prettier --write **/*.js",
+    "prepare": "husky install"
+  },
   "dependencies": {
     "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
@@ -44,6 +60,7 @@
     "eslint-plugin-security": "^1.4.0",
     "husky": "^7.0.4",
     "jest": "^27.4.7",
+    "lint-staged": "^12.1.7",
     "nodemon": "^2.0.15",
     "prettier": "^2.5.1",
     "supertest": "^6.2.1"
