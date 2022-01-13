@@ -1,0 +1,8 @@
+{
+  "name": "NodeJS-RESTful-API-Boilerplate",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/dejosli/NodeJS-RESTful-API-Boilerplate.git",
+  "author": "Josli Shubho Biswas <bjoslishubho@gmail.com>",
+  "license": "MIT"
+}
