@@ -53,6 +53,8 @@
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {
+    "commitizen": "^4.2.4",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.6.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.3.0",
@@ -66,5 +68,10 @@
     "nodemon": "^2.0.15",
     "prettier": "^2.5.1",
     "supertest": "^6.2.1"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   }
 }
