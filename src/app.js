@@ -3,10 +3,10 @@ const express = require('express');
 const helmet = require('helmet');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cors = require('cors');
 const methodOverride = require('method-override');
 const cookieParser = require('cookie-parser');
 const mongoSanitize = require('express-mongo-sanitize');
-const cors = require('cors');
 
 // Internal module imports
 const compression = require('./config/compression');
