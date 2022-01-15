@@ -24,7 +24,6 @@ module.exports = {
       },
     ],
     'arrow-body-style': 'off',
-    'prefer-arrow-callback': 'off',
     'no-unused-vars': 'warn',
     'no-underscore-dangle': 'off',
     'consistent-return': 'off',
