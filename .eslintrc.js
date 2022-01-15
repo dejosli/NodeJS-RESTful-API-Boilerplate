@@ -25,6 +25,7 @@ module.exports = {
     ],
     'arrow-body-style': 'off',
     'no-unused-vars': 'warn',
+    'func-names': 'off',
     'no-underscore-dangle': 'off',
     'consistent-return': 'off',
     'jest/expect-expect': 'off',

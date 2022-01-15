@@ -1,0 +1,19 @@
+[
+  {
+    "success": true,
+    "code": 200,
+    "message": "Success Response Message",
+    "data": {}
+  },
+  {
+    "success": false,
+    "code": 400,
+    "message": "Error Response Message",
+    "errors": [
+      {
+        "field": "phoneNumber",
+        "message": "Phone number already exists for another user."
+      }
+    ]
+  }
+]

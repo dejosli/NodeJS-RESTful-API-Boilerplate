@@ -6,22 +6,23 @@ const hpp = require('hpp');
 const methodOverride = require('method-override');
 const cookieParser = require('cookie-parser');
 const mongoSanitize = require('express-mongo-sanitize');
-
 const cors = require('cors');
 
 // Internal module imports
 const compression = require('./config/compression');
 const config = require('./config/config');
 const logger = require('./config/logger');
-const { successHandler, errorHandler } = require('./config/morgan');
+const morgan = require('./config/morgan');
 const routes = require('./routes/v1');
+const errorHandler = require('./middlewares/common/errorHandler');
+const notFoundHandler = require('./middlewares/common/notFoundHandler');
 
 // create express app
 const app = express();
 
 // set logger
-app.use(successHandler);
-app.use(errorHandler);
+app.use(morgan.successHandler);
+app.use(morgan.errorHandler);
 
 // set security HTTP headers
 app.use(helmet());
@@ -50,8 +51,14 @@ app.use(compression);
 app.use(cors());
 app.options('*', cors());
 
-// v1 api routes
+// mount api v1 routes
 app.use('/api/v1', routes);
+
+// catch 404 and forward to error handler
+app.use(notFoundHandler);
+
+// error handler, send stacktrace only during development
+app.use(errorHandler);
 
 // Module exports
 module.exports = app;
