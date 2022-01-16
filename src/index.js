@@ -5,6 +5,10 @@ const http = require('http');
 const app = require('./app');
 const config = require('./config/config');
 const logger = require('./config/logger');
+const connectDB = require('./config/database');
+
+// connect to database
+connectDB();
 
 // init server
 const server = http.createServer(app);
