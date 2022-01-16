@@ -11,6 +11,7 @@ module.exports = {
     'plugin:jest/recommended',
     'plugin:security/recommended',
     'plugin:prettier/recommended',
+    'plugin:you-dont-need-lodash-underscore/compatible',
   ],
   parserOptions: {
     ecmaVersion: 12,
