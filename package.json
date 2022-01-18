@@ -13,8 +13,9 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node src/index.js",
     "dev": "cross-env NODE_ENV=development nodemon src/index.js",
-    "test": "jest -i --colors --verbose --detectOpenHandles",
-    "test:watch": "jest -i --watchAll",
+    "test": "jest --colors --verbose --detectOpenHandles",
+    "test:watch": "jest --watchAll",
+    "coverage": "jest --collect-coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --check **/*.js",
