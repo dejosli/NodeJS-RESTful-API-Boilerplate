@@ -11,8 +11,6 @@ const mongoSanitize = require('express-mongo-sanitize');
 // Internal module imports
 const compression = require('./config/compression');
 const corsOptionsDelegate = require('./config/cors');
-const config = require('./config/config');
-const logger = require('./config/logger');
 const morgan = require('./config/morgan');
 const routes = require('./routes/v1');
 const errorHandler = require('./middlewares/common/errorHandler');

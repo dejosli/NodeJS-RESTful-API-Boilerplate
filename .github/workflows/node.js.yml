@@ -10,6 +10,9 @@ jobs:
   build:
     env:
       CI: true
+      NODE_ENV: production
+      PORT: 5000
+      MONGODB_URL: mongodb://localhost/boilerplate
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -26,8 +29,7 @@ jobs:
         uses: supercharge/mongodb-github-action@1.7.0
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
-      - run: yarn install --frozen-lockfile
-      - run: cp .env.example .env
+      - run: yarn install --frozen-lockfile --production=false
       - run: yarn lint
       - run: yarn test
       - run: yarn coverage
