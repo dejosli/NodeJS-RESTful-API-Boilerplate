@@ -29,7 +29,7 @@ jobs:
         uses: supercharge/mongodb-github-action@1.7.0
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --force
       - run: yarn lint
       - run: yarn test
       - run: yarn coverage
