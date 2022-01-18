@@ -1,9 +1,75 @@
 # Dependencies
+lib-cov
+lcov.info
+pids
+logs
+results
 node_modules
-
-# yarn error logs
-yarn-error.log
+.node_history
 
 # Environment varibales
 .env*
 !.env*.example
+license.txt
+exports
+*.cache
+build
+
+# Logs
+.tmp
+*.log
+
+# Misc.
+*#
+ssl
+.idea
+nbproject
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Linux
+*~
+
+# OS X
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+.Spotlight-V100
+.Trashes
+._*
+
+# Packages
+*.7z
+*.csv
+*.dat
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.seed
+*.so
+*.swo
+*.swp
+*.swn
+*.swm
+*.out
+*.pid
