@@ -10,6 +10,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 
 // Internal module imports
 const compression = require('./config/compression');
+const corsOptionsDelegate = require('./config/cors');
 const config = require('./config/config');
 const logger = require('./config/logger');
 const morgan = require('./config/morgan');
@@ -47,9 +48,8 @@ app.use(mongoSanitize());
 // gzip compression
 app.use(compression);
 
-// enable cors
-app.use(cors());
-app.options('*', cors());
+// enable cors and pre-flight requests for all routes
+app.use(cors(corsOptionsDelegate));
 
 // mount api v1 routes
 app.use('/api/v1', routes);

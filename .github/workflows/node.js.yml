@@ -8,13 +8,16 @@ on:
 
 jobs:
   build:
+    env:
+      CI: true
+      NODE_ENV: production
+      PORT: 5000
+      MONGODB_URL: mongodb://localhost/boilerplate
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+        mongodb-version: ['5.0']
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
@@ -24,7 +27,9 @@ jobs:
           cache: 'yarn'
       - name: MongoDB in GitHub Actions
         uses: supercharge/mongodb-github-action@1.7.0
-      - run: yarn install --force
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
+      - run: yarn install --frozen-lockfile
       - run: yarn lint
       - run: yarn test
       - run: yarn coverage
