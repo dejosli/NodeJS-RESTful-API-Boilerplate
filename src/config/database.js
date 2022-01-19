@@ -24,7 +24,7 @@ const connectDB = function () {
         return logger.error(err);
       }
       logger.error(`MongoDB Connection Failed: ${err.message}`);
-      process.exit(-1);
+      process.exit(1);
     });
 };
 
