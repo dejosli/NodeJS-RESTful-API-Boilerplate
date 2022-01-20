@@ -1,10 +1,11 @@
 class SuccessResponse {
-  constructor(statusCode = 200, message = 'Okay', data = null) {
+  constructor(statusCode, message, data, metadata = null) {
     this.success = true;
-    this.code = statusCode;
-    this.message = message;
-    if (data) {
-      this.data = data;
+    this.code = statusCode || 200;
+    this.message = message || 'Request has been processed successfully';
+    this.data = data || null;
+    if (metadata) {
+      this.metadata = metadata;
     }
   }
 }
