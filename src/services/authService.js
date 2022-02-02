@@ -1,4 +1,7 @@
+// External module imports
 const httpStatus = require('http-status');
+
+// Internal module imports
 const { User } = require('../models/index');
 const ErrorResponse = require('../utils/ErrorResponse');
 
@@ -28,6 +31,7 @@ const loginUserWithEmailAndPassword = async (email, password) => {
   return user;
 };
 
+// Module exports
 module.exports = {
   createUser,
   loginUserWithEmailAndPassword,

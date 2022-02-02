@@ -1,5 +1,9 @@
+// External module imports
 const httpStatus = require('http-status');
+
+// Internal module imports
 const SuccessResponse = require('../utils/SuccessResponse');
+const sendTokenResponse = require('../utils/sendTokenResponse');
 const asyncHandler = require('../middlewares/common/asyncHandler');
 const { authService } = require('../services/index');
 
@@ -12,14 +16,8 @@ const login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
   // get user from DB
   const user = await authService.loginUserWithEmailAndPassword(email, password);
-  // create jwt token
-  const token = user.getSignedJwtToken();
-  // send jwt token to user
-  res.status(httpStatus.OK).json(
-    new SuccessResponse(httpStatus.OK, 'You logged in successfully', {
-      token,
-    })
-  );
+  // send response
+  sendTokenResponse(res, user, httpStatus.OK, 'You logged in successfully');
 });
 
 /**
@@ -30,16 +28,11 @@ const login = asyncHandler(async (req, res, next) => {
 const register = asyncHandler(async (req, res, next) => {
   // create a new user
   const user = await authService.createUser(req.body);
-  // create jwt token
-  const token = user.getSignedJwtToken();
-  // send jwt token to user
-  res.status(httpStatus.CREATED).json(
-    new SuccessResponse(httpStatus.CREATED, 'User created successfully', {
-      token,
-    })
-  );
+  // send response
+  sendTokenResponse(res, user, httpStatus.CREATED, 'User created successfully');
 });
 
+// Module exports
 module.exports = {
   register,
   login,

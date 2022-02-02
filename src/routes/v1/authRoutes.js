@@ -9,13 +9,13 @@ const validate = require('../../middlewares/validate');
 const router = express.Router();
 
 // mount routes
-router.post('/login', authValidator.login, validate, authController.login);
 router.post(
   '/register',
   authValidator.register,
   validate,
   authController.register
 );
+router.post('/login', authValidator.login, validate, authController.login);
 
 // Module exports
 module.exports = router;
