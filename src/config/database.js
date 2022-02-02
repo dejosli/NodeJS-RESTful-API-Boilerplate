@@ -17,7 +17,9 @@ const connectDB = function () {
   mongoose
     .connect(mongodb.url, mongoose.config)
     .then(() => {
-      logger.info(`MongoDB Connected: ${mongoose.connection.host}`);
+      logger.info(
+        `MongoDB Connected at ${mongoose.connection.host}:${mongoose.connection.port}`
+      );
     })
     .catch((err) => {
       if (config.env === 'development') {

@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cors = require('cors');
+const passport = require('passport');
 const methodOverride = require('method-override');
 const cookieParser = require('cookie-parser');
 const mongoSanitize = require('express-mongo-sanitize');
@@ -12,7 +13,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const compression = require('./config/compression');
 const corsOptionsDelegate = require('./config/cors');
 const morgan = require('./config/morgan');
-const routes = require('./routes/v1');
+const routes = require('./routes/v1/index');
 const errorHandler = require('./middlewares/common/errorHandler');
 const notFoundHandler = require('./middlewares/common/notFoundHandler');
 
@@ -48,6 +49,11 @@ app.use(compression);
 
 // enable cors and pre-flight requests for all routes
 app.use(cors(corsOptionsDelegate));
+
+// passport config
+require('./config/passport')(passport);
+
+app.use(passport.initialize());
 
 // mount api v1 routes
 app.use('/api/v1', routes);

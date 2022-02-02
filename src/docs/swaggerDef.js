@@ -3,9 +3,9 @@ const config = require('../config/config');
 
 const swaggerDef = {
   definition: {
-    openapi: '3.0.3',
+    openapi: '3.0.0',
     info: {
-      title: 'NodeJS-RESTful-API-Boilerplate Documentation',
+      title: 'NodeJS RESTful API Boilerplate Documentation',
       version,
       description:
         'This is a simple and clean Node.js RESTful API Boilerplate documentation made with Express and documented with Swagger',
@@ -21,7 +21,7 @@ const swaggerDef = {
     },
     servers: [
       {
-        url: `http://localhost:${config.port}/api/v1`,
+        url: `http://localhost:${config.port}`,
       },
     ],
   },

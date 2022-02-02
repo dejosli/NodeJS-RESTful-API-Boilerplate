@@ -35,6 +35,7 @@ const errorHandler = function (err, req, res, next) {
     success: false,
     code: error.statusCode || httpStatus.INTERNAL_SERVER_ERROR,
     message: error.message || httpStatus[httpStatus.INTERNAL_SERVER_ERROR],
+    errors: error.errors,
   });
 };
 
