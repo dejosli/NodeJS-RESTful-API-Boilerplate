@@ -1,8 +1,11 @@
+// External module imports
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+// Internal module imports
 const config = require('../config/config');
+const { toJSON } = require('./plugins');
 
 const saltRounds = 10; // required for hashing the password
 
@@ -27,6 +30,7 @@ const userSchema = new mongoose.Schema(
       minLength: 8,
       trim: true,
       select: false,
+      private: true, // used by the toJSON plugin
     },
     role: {
       type: String,
@@ -40,6 +44,9 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// add plugins
+userSchema.plugin(toJSON);
 
 // encrypt password using bcrypt
 userSchema.pre('save', async function (next) {
@@ -78,16 +85,6 @@ userSchema.methods.getSignedJwtToken = function () {
     expiresIn: config.jwt.accessExpirationMinutes * 60, // 1min = 60s
   };
   return jwt.sign(payload, config.jwt.secret, opts);
-};
-
-/**
- * @desc Convert to regular object
- * @returns {Object}
- */
-userSchema.methods.parseJSON = function () {
-  const user = this.toObject();
-  delete user.password;
-  return user;
 };
 
 /**
