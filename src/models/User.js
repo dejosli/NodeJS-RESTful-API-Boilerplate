@@ -81,6 +81,16 @@ userSchema.methods.getSignedJwtToken = function () {
 };
 
 /**
+ * @desc Convert to regular object
+ * @returns {Object}
+ */
+userSchema.methods.parseJSON = function () {
+  const user = this.toObject();
+  delete user.password;
+  return user;
+};
+
+/**
  * @typedef User
  */
 module.exports = mongoose.model('People', userSchema);

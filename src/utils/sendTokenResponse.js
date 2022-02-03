@@ -32,7 +32,9 @@ const sendTokenResponse = (res, user, statusCode, msg) => {
   res
     .status(statusCode)
     .cookie('token', token, options)
-    .json(new SuccessResponse(statusCode, msg, { user, token }));
+    .json(
+      new SuccessResponse(statusCode, msg, { user: user.parseJSON(), token })
+    );
 };
 
 // Module exports

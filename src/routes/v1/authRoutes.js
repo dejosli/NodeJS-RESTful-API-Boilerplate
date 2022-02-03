@@ -5,10 +5,12 @@ const express = require('express');
 const { authController } = require('../../controllers/index');
 const { authValidator } = require('../../validations/index');
 const validate = require('../../middlewares/validate');
+const { protect } = require('../../middlewares/auth');
 
 const router = express.Router();
 
 // mount routes
+router.get('/me', protect, authController.getMe);
 router.post(
   '/register',
   authValidator.register,
@@ -16,6 +18,7 @@ router.post(
   authController.register
 );
 router.post('/login', authValidator.login, validate, authController.login);
+router.delete('/logout', protect, authController.logout);
 
 // Module exports
 module.exports = router;

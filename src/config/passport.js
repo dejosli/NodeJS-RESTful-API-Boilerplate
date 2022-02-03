@@ -10,12 +10,13 @@ const { User } = require('../models/index');
 const localOptions = {
   usernameField: 'email',
   passwordField: 'password',
+  passReqToCallback: true,
 };
 
 // implementation of passport local-strategy
 const localStrategy = new LocalStrategy(
   localOptions,
-  async (email, password, done) => {
+  async (req, email, password, done) => {
     try {
       // find user in database
       const user = await User.findOne({ email }).select('+password');
@@ -35,15 +36,26 @@ const localStrategy = new LocalStrategy(
     }
   }
 );
+const cookieExtractor = function (req) {
+  let token = null;
+  if (req && req.cookies && req.cookies.token) {
+    token = req.cookies.token;
+  }
+  return token;
+};
 
 // passport jwt-strategy options
 const jwtOptions = {
   secretOrKey: config.jwt.secret,
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  jwtFromRequest: ExtractJwt.fromExtractors([
+    ExtractJwt.fromAuthHeaderAsBearerToken(),
+    cookieExtractor,
+  ]),
+  passReqToCallback: true,
 };
 
 // implementation of passport jwt-strategy
-const jwtStrategy = new Strategy(jwtOptions, async (jwtPayload, done) => {
+const jwtStrategy = new Strategy(jwtOptions, async (req, jwtPayload, done) => {
   try {
     // find user in database
     const user = await User.findById(jwtPayload.sub);
