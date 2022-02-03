@@ -2,6 +2,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const moment = require('moment');
 
 // Internal module imports
 const config = require('../config/config');
@@ -90,18 +91,18 @@ userSchema.methods.isPasswordMatch = async function (password) {
 
 /**
  * @desc Generate signed jwt token
+ * @param {Moment} expires
  * @param {string} type
  * @returns {string}
  */
-userSchema.methods.getSignedJwtToken = function () {
-  const accessExpirationMinutes = config.jwt.accessExpirationMinutes * 60; // 1min = 60s
-  const opts = {
-    expiresIn: accessExpirationMinutes,
-  };
+userSchema.methods.getSignedJwtToken = function (expires, type) {
   const payload = {
     sub: this._id,
+    iat: moment().unix(),
+    exp: expires.unix(),
+    type,
   };
-  return jwt.sign(payload, config.jwt.secret, opts);
+  return jwt.sign(payload, config.jwt.secret);
 };
 
 /**

@@ -4,7 +4,8 @@ const { Strategy, ExtractJwt } = require('passport-jwt');
 
 // Internal module imports
 const config = require('./config');
-const { User } = require('../models/index');
+const { User, Token } = require('../models/index');
+const { tokenTypes } = require('./tokens');
 
 // passport local-strategy fields
 const localOptions = {
@@ -38,8 +39,9 @@ const localStrategy = new LocalStrategy(
 );
 const cookieExtractor = function (req) {
   let token = null;
-  if (req && req.cookies && req.cookies.token) {
-    token = req.cookies.token;
+  if (req && req.cookies && req.cookies.tokens) {
+    // eslint-disable-next-line dot-notation
+    token = req.cookies.tokens['access_token'];
   }
   return token;
 };
@@ -57,13 +59,15 @@ const jwtOptions = {
 // implementation of passport jwt-strategy
 const jwtStrategy = new Strategy(jwtOptions, async (req, jwtPayload, done) => {
   try {
-    // find user in database
-    const user = await User.findById(jwtPayload.sub);
-    // if user not found
-    if (!user) {
-      return done(null, false);
+    // find refresh_token in DB
+    const refreshToken = await Token.findToken(jwtPayload.sub);
+    // get user from refresh_token
+    const { user } = refreshToken;
+    // if refresh_token and user exists
+    if (refreshToken && user) {
+      return done(null, user);
     }
-    return done(null, user);
+    return done(null, false);
   } catch (err) {
     return done(err, false);
   }

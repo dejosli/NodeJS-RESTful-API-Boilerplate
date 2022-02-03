@@ -4,7 +4,7 @@ const httpStatus = require('http-status');
 // Internal module imports
 const asyncHandler = require('../middlewares/common/asyncHandler');
 const { SuccessResponse, sendTokenResponse } = require('../utils');
-const { authService } = require('../services');
+const { authService, tokenService } = require('../services');
 
 /**
  * @desc Get current logged in user
@@ -27,8 +27,16 @@ const getMe = (req, res, next) => {
 const register = asyncHandler(async (req, res, next) => {
   // create a new user
   const user = await authService.createUser(req.body);
+  // generate access and refresh token
+  const tokens = await tokenService.generateAuthTokens(user);
   // send response
-  sendTokenResponse(res, user, httpStatus.CREATED, 'User created successfully');
+  sendTokenResponse(
+    res,
+    user,
+    tokens,
+    httpStatus.CREATED,
+    'User created successfully'
+  );
 });
 
 /**
@@ -40,8 +48,16 @@ const login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
   // get user from DB
   const user = await authService.loginUserWithEmailAndPassword(email, password);
+  // generate and save tokens
+  const tokens = await tokenService.generateAuthTokens(user);
   // send response
-  sendTokenResponse(res, user, httpStatus.OK, 'You logged in successfully');
+  sendTokenResponse(
+    res,
+    user,
+    tokens,
+    httpStatus.OK,
+    'You logged in successfully'
+  );
 });
 
 /**
@@ -50,20 +66,16 @@ const login = asyncHandler(async (req, res, next) => {
  * @access Private
  */
 const logout = asyncHandler(async (req, res, next) => {
-  if (req.user && req.cookies && req.cookies.token) {
-    return res
-      .status(httpStatus.OK)
-      .clearCookie('token')
-      .json(new SuccessResponse(httpStatus.OK, 'You logged out successfully'));
+  if (req.user) {
+    await authService.logoutUserWithToken(req.user._id);
   }
+  if (req.user && req.cookies && req.cookies.tokens) {
+    await authService.logoutUserWithCookie(res, 'tokens');
+  }
+  // send response to client
   res
-    .status(httpStatus.UNAUTHORIZED)
-    .json(
-      new SuccessResponse(
-        httpStatus.UNAUTHORIZED,
-        httpStatus[httpStatus.UNAUTHORIZED]
-      )
-    );
+    .status(httpStatus.NO_CONTENT)
+    .json(new SuccessResponse(httpStatus.NO_CONTENT));
 });
 
 // Module exports
