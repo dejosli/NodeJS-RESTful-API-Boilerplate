@@ -3,7 +3,7 @@ const httpStatus = require('http-status');
 
 // Internal module imports
 const { User } = require('../models/index');
-const ErrorResponse = require('../utils/ErrorResponse');
+const { ErrorResponse } = require('../utils');
 
 /**
  * Create a user

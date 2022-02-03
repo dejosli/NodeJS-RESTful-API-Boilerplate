@@ -2,10 +2,9 @@
 const httpStatus = require('http-status');
 
 // Internal module imports
-const SuccessResponse = require('../utils/SuccessResponse');
-const sendTokenResponse = require('../utils/sendTokenResponse');
 const asyncHandler = require('../middlewares/common/asyncHandler');
-const { authService } = require('../services/index');
+const { SuccessResponse, sendTokenResponse } = require('../utils');
+const { authService } = require('../services');
 
 /**
  * @desc Get current logged in user

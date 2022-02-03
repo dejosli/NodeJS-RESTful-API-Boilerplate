@@ -1,5 +1,2 @@
-const authValidator = require('./authValidator');
-
-module.exports = {
-  authValidator,
-};
+// Module exports
+module.exports.authValidator = require('./authValidator');

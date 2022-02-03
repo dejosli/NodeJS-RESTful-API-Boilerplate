@@ -3,7 +3,7 @@ const httpStatus = require('http-status');
 const passport = require('passport');
 
 // Internal module imports
-const ErrorResponse = require('../utils/ErrorResponse');
+const { ErrorResponse } = require('../utils');
 
 const verifyCallback = (req, resolve, reject) => {
   return (err, user, info) => {

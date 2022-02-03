@@ -11,4 +11,5 @@ class ErrorResponse extends Error {
   }
 }
 
+// Module exports
 module.exports = ErrorResponse;

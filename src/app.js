@@ -13,7 +13,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const compression = require('./config/compression');
 const corsOptionsDelegate = require('./config/cors');
 const morgan = require('./config/morgan');
-const routes = require('./routes/v1/index');
+const routes = require('./routes/v1');
 const errorHandler = require('./middlewares/common/errorHandler');
 const notFoundHandler = require('./middlewares/common/notFoundHandler');
 

@@ -1,3 +1,10 @@
+/**
+ * @class SuccessResponse
+ * @param {number} statusCode
+ * @param {string} message
+ * @param {Object} data
+ * @param {Object} metadata
+ */
 class SuccessResponse {
   constructor(
     statusCode = 200,
@@ -15,4 +22,5 @@ class SuccessResponse {
   }
 }
 
+// Module exports
 module.exports = SuccessResponse;

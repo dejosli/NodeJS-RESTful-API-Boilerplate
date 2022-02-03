@@ -2,8 +2,8 @@
 const express = require('express');
 
 // Internal module imports
-const { authController } = require('../../controllers/index');
-const { authValidator } = require('../../validations/index');
+const { authController } = require('../../controllers');
+const { authValidator } = require('../../validations');
 const validate = require('../../middlewares/validate');
 const { protect } = require('../../middlewares/auth');
 

@@ -9,7 +9,10 @@ const { toJSON } = require('./plugins');
 
 const saltRounds = 10; // required for hashing the password
 
-// define user schema
+/**
+ * User Schema
+ * @private
+ */
 const userSchema = new mongoose.Schema(
   {
     username: {
@@ -45,14 +48,23 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// add plugins
+/**
+ * Plugins
+ */
 userSchema.plugin(toJSON);
 
-// encrypt password using bcrypt
+/**
+ * Hooks
+ */
 userSchema.pre('save', async function (next) {
+  // encrypt password using bcrypt
   const salt = await bcrypt.genSalt(saltRounds);
   this.password = await bcrypt.hash(this.password, salt);
 });
+
+/**
+ * Statics
+ */
 
 /**
  * @desc Check if email already exists in the database
@@ -62,6 +74,10 @@ userSchema.pre('save', async function (next) {
 userSchema.statics.findByEmail = async function (email) {
   return this.findOne({ email });
 };
+
+/**
+ * Methods
+ */
 
 /**
  * @desc Check if password matches the user's password
@@ -78,11 +94,12 @@ userSchema.methods.isPasswordMatch = async function (password) {
  * @returns {string}
  */
 userSchema.methods.getSignedJwtToken = function () {
+  const accessExpirationMinutes = config.jwt.accessExpirationMinutes * 60; // 1min = 60s
+  const opts = {
+    expiresIn: accessExpirationMinutes,
+  };
   const payload = {
     sub: this._id,
-  };
-  const opts = {
-    expiresIn: config.jwt.accessExpirationMinutes * 60, // 1min = 60s
   };
   return jwt.sign(payload, config.jwt.secret, opts);
 };

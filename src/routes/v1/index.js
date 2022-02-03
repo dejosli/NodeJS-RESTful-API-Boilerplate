@@ -3,7 +3,7 @@ const express = require('express');
 const httpStatus = require('http-status');
 
 // Internal module imports
-const SuccessResponse = require('../../utils/SuccessResponse');
+const { SuccessResponse } = require('../../utils/SuccessResponse');
 const docsRoutes = require('./docsRoutes');
 const authRoutes = require('./authRoutes');
 

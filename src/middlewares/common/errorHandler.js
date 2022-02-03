@@ -1,6 +1,9 @@
+// External module imports
 const httpStatus = require('http-status');
 const mongoose = require('mongoose');
-const ErrorResponse = require('../../utils/ErrorResponse');
+
+// Internal module imports
+const { ErrorResponse } = require('../../utils');
 const logger = require('../../config/logger');
 const config = require('../../config/config');
 
@@ -39,4 +42,5 @@ const errorHandler = function (err, req, res, next) {
   });
 };
 
+// Module exports
 module.exports = errorHandler;

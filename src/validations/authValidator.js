@@ -1,5 +1,8 @@
+// External module imports
 const { check } = require('express-validator');
-const { User } = require('../models/index');
+
+// Internal module imports
+const { User } = require('../models');
 
 // if email exists
 const checkEmailExists = (value) => {
@@ -50,6 +53,7 @@ const login = [
     ),
 ];
 
+// Module exports
 module.exports = {
   register,
   login,

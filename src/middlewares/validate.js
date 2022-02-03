@@ -1,6 +1,9 @@
+// External module imports
 const { validationResult } = require('express-validator');
 const httpStatus = require('http-status');
-const ErrorResponse = require('../utils/ErrorResponse');
+
+// Internal module imports
+const { ErrorResponse } = require('../utils');
 
 const validate = (req, res, next) => {
   const errors = validationResult(req);
@@ -19,4 +22,5 @@ const validate = (req, res, next) => {
   }
 };
 
+// Module exports
 module.exports = validate;
