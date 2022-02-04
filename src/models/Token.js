@@ -32,7 +32,7 @@ const tokenSchema = mongoose.Schema(
       ],
       required: true,
     },
-    expires: {
+    expireAt: {
       type: Date,
       required: true,
     },
@@ -47,7 +47,7 @@ const tokenSchema = mongoose.Schema(
 );
 
 // set total-live-time for tokens document
-tokenSchema.index({ expires: 1 }, { expireAfterSeconds: 0 });
+tokenSchema.index({ expireAt: 1 }, { expireAfterSeconds: 0 });
 
 // set total-live-time for tokens document
 // const expireAfterSeconds = moment

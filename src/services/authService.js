@@ -63,13 +63,10 @@ const logoutUserWithCookie = async (res, cookieName) => {
   return res.clearCookie(cookieName);
 };
 
-const refreshAuthTokens = () => {};
-
 // Module exports
 module.exports = {
   createUser,
   loginUserWithEmailAndPassword,
   logoutUserWithToken,
   logoutUserWithCookie,
-  refreshAuthTokens,
 };

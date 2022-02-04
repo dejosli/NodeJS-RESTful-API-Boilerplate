@@ -63,11 +63,11 @@ jwtStrategy.ACCESS = new Strategy(
       // check token type
       if (jwtPayload.type === tokenTypes.ACCESS) {
         // find refresh_token in DB
-        const refreshToken = await Token.findToken(jwtPayload.sub);
+        const refreshTokenDoc = await Token.findToken(jwtPayload.sub);
         // get user from refresh_token
-        const { user } = refreshToken;
+        const { user } = refreshTokenDoc;
         // if refresh_token and user exists
-        if (refreshToken && user) {
+        if (refreshTokenDoc && user) {
           return done(null, user);
         }
         return done(null, false);
@@ -86,10 +86,10 @@ jwtStrategy.REFRESH = new Strategy(
       // check token type
       if (jwtPayload.type === tokenTypes.REFRESH) {
         // find refresh_token in DB
-        const refreshToken = await Token.findToken(jwtPayload.sub);
+        const refreshTokenDoc = await Token.findToken(jwtPayload.sub);
         // if refresh_token exists
-        if (refreshToken) {
-          return done(null, refreshToken);
+        if (refreshTokenDoc) {
+          return done(null, refreshTokenDoc);
         }
         return done(null, false);
       }

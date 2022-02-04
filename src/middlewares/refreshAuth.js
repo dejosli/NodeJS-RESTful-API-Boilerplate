@@ -6,14 +6,14 @@ const passport = require('passport');
 const { ErrorResponse } = require('../utils');
 
 const verifyCallback = (req, resolve, reject) => {
-  return (err, refreshToken, info) => {
-    if (err || info || !refreshToken) {
+  return (err, refreshTokenDoc, info) => {
+    if (err || info || !refreshTokenDoc) {
       return reject(
-        new ErrorResponse(httpStatus.UNAUTHORIZED, 'Please authenticate')
+        new ErrorResponse(httpStatus.UNAUTHORIZED, 'Invalid Refresh Token')
       );
     }
     // set refreshToken to request object
-    req.refreshToken = refreshToken;
+    req.refreshTokenDoc = refreshTokenDoc;
     resolve();
   };
 };

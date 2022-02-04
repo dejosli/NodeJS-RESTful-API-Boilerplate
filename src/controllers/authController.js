@@ -84,8 +84,8 @@ const logout = asyncHandler(async (req, res, next) => {
  */
 
 const refreshTokens = asyncHandler(async (req, res, next) => {
-  // re-generate tokens
-  const tokens = await authService.refreshAuthTokens(req.refreshToken);
+  // re-generate(access_token) auth tokens
+  const tokens = await tokenService.refreshAuthTokens(req.refreshTokenDoc);
   // send response
   sendTokenResponse(res, null, tokens, httpStatus.OK);
 });

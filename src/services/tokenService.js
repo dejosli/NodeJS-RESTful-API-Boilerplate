@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 // Internal module imports
 const config = require('../config/config');
 const { tokenTypes } = require('../config/tokens');
-const { Token } = require('../models');
+const { Token, User } = require('../models');
 
 /**
  * Save a token
@@ -21,7 +21,7 @@ const saveToken = async (userId, token, type, expires, blacklisted = false) => {
     user: userId,
     token,
     type,
-    expires: expires.toDate(),
+    expireAt: expires.toDate(),
     blacklisted,
   });
   return tokenDoc;
@@ -30,26 +30,29 @@ const saveToken = async (userId, token, type, expires, blacklisted = false) => {
 /**
  * Generate auth tokens
  * @param {User} user
- * @returns {Promise<Object>}
+ * @returns {Promise}
  */
 const generateAuthTokens = async (user) => {
+  // access_token expires time
   const accessTokenExpires = moment().add(
     config.jwt.accessExpirationMinutes,
     'minutes'
   );
+  // refresh_token expires time
   const refreshTokenExpires = moment().add(
     config.jwt.refreshExpirationDays,
     'days'
   );
+  // generate access_token
   const accessToken = user.getSignedJwtToken(
     accessTokenExpires,
     tokenTypes.ACCESS
   );
+  // generate refresh_token
   const refreshToken = user.getSignedJwtToken(
     refreshTokenExpires,
     tokenTypes.REFRESH
   );
-
   // save refresh token to DB
   await saveToken(
     user._id,
@@ -57,10 +60,34 @@ const generateAuthTokens = async (user) => {
     tokenTypes.REFRESH,
     refreshTokenExpires
   );
-
+  // return tokens
   return {
     access_token: accessToken,
     refresh_token: refreshToken,
+  };
+};
+
+/**
+ * Generate auth tokens
+ * @param {Object} refreshTokenDoc
+ * @returns {Promise}
+ */
+const refreshAuthTokens = async (refreshTokenDoc) => {
+  let { user } = refreshTokenDoc;
+  user = await User.findById(user._id);
+  // access_token expires time
+  const accessTokenExpires = moment().add(
+    config.jwt.accessExpirationMinutes,
+    'minutes'
+  );
+  // generate access_token
+  const accessToken = user.getSignedJwtToken(
+    accessTokenExpires,
+    tokenTypes.ACCESS
+  );
+  return {
+    access_token: accessToken,
+    refresh_token: refreshTokenDoc.token,
   };
 };
 
@@ -68,4 +95,5 @@ const generateAuthTokens = async (user) => {
 module.exports = {
   saveToken,
   generateAuthTokens,
+  refreshAuthTokens,
 };
