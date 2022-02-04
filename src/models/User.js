@@ -41,6 +41,10 @@ const userSchema = new mongoose.Schema(
       enum: ['user', 'editor', 'admin'],
       default: 'user',
     },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
   },

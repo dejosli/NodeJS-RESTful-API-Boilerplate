@@ -1,3 +1,4 @@
+// define token types
 const tokenTypes = {
   ACCESS: 'access',
   REFRESH: 'refresh',

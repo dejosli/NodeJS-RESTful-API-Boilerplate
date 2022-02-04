@@ -53,7 +53,7 @@ const login = asyncHandler(async (req, res, next) => {
   // send response
   sendTokenResponse(
     res,
-    user,
+    null,
     tokens,
     httpStatus.OK,
     'You logged in successfully'
@@ -77,6 +77,18 @@ const logout = asyncHandler(async (req, res, next) => {
     .status(httpStatus.NO_CONTENT)
     .json(new SuccessResponse(httpStatus.NO_CONTENT));
 });
+/**
+ * @desc Logout current user
+ * @route GET /api/v1/auth/refresh-tokens
+ * @access Private
+ */
+
+const refreshTokens = asyncHandler(async (req, res, next) => {
+  // re-generate tokens
+  const tokens = await authService.refreshAuthTokens(req.refreshToken);
+  // send response
+  sendTokenResponse(res, null, tokens, httpStatus.OK);
+});
 
 // Module exports
 module.exports = {
@@ -84,4 +96,5 @@ module.exports = {
   register,
   login,
   logout,
+  refreshTokens,
 };

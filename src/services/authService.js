@@ -42,7 +42,7 @@ const loginUserWithEmailAndPassword = async (email, password) => {
 /**
  * Logout user via refresh token
  * @param {ObjectId} userId
- * @returns {Promise}
+ * @returns {Promise<Token>}
  */
 const logoutUserWithToken = async (userId) => {
   // find and delete refresh_token from DB
@@ -57,11 +57,13 @@ const logoutUserWithToken = async (userId) => {
  * Logout user via cookie
  * @param {Object} res
  * @param {string} cookieName
- * @returns {Promise}
+ * @returns {Promise<Response>}
  */
 const logoutUserWithCookie = async (res, cookieName) => {
   return res.clearCookie(cookieName);
 };
+
+const refreshAuthTokens = () => {};
 
 // Module exports
 module.exports = {
@@ -69,4 +71,5 @@ module.exports = {
   loginUserWithEmailAndPassword,
   logoutUserWithToken,
   logoutUserWithCookie,
+  refreshAuthTokens,
 };

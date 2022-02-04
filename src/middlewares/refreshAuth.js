@@ -6,22 +6,22 @@ const passport = require('passport');
 const { ErrorResponse } = require('../utils');
 
 const verifyCallback = (req, resolve, reject) => {
-  return (err, user, info) => {
-    if (err || info || !user) {
+  return (err, refreshToken, info) => {
+    if (err || info || !refreshToken) {
       return reject(
         new ErrorResponse(httpStatus.UNAUTHORIZED, 'Please authenticate')
       );
     }
-    // set user to request object
-    req.user = user;
+    // set refreshToken to request object
+    req.refreshToken = refreshToken;
     resolve();
   };
 };
 
-const protect = (req, res, next) => {
+const refreshAuth = (req, res, next) => {
   return new Promise((resolve, reject) => {
     passport.authenticate(
-      'jwt_access',
+      'jwt_refresh',
       { session: false },
       verifyCallback(req, resolve, reject)
     )(req, res, next);
@@ -31,4 +31,4 @@ const protect = (req, res, next) => {
 };
 
 // Module exports
-module.exports = protect;
+module.exports = refreshAuth;

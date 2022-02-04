@@ -12,6 +12,7 @@ const SuccessResponse = require('./SuccessResponse');
  * @param {Object} tokens
  * @param {number} statusCode
  * @param {string} msg
+ * @return {Object<Response>}
  */
 const sendTokenResponse = (res, user, tokens, statusCode, msg) => {
   // set cookie expires time
@@ -29,9 +30,15 @@ const sendTokenResponse = (res, user, tokens, statusCode, msg) => {
   }
 
   // send cookie to client
-  res
+  res.cookie('tokens', tokens, options);
+  // send json response
+  if (!user) {
+    return res
+      .status(statusCode)
+      .json(new SuccessResponse(statusCode, msg, { tokens }));
+  }
+  return res
     .status(statusCode)
-    .cookie('tokens', tokens, options)
     .json(new SuccessResponse(statusCode, msg, { user, tokens }));
 };
 

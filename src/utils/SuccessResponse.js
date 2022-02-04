@@ -8,7 +8,7 @@
 class SuccessResponse {
   constructor(
     statusCode = 200,
-    message = 'Request processed successfully',
+    message = 'Successful Response',
     data = null,
     metadata = null
   ) {

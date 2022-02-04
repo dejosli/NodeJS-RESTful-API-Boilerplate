@@ -1,43 +1,20 @@
 // External module imports
-const LocalStrategy = require('passport-local').Strategy;
 const { Strategy, ExtractJwt } = require('passport-jwt');
+const passport = require('passport');
 
 // Internal module imports
 const config = require('./config');
-const { User, Token } = require('../models/index');
+const { Token } = require('../models');
 const { tokenTypes } = require('./tokens');
 
-// passport local-strategy fields
-const localOptions = {
-  usernameField: 'email',
-  passwordField: 'password',
-  passReqToCallback: true,
-};
+const cookieExtractor = {};
+const jwtOptions = {};
+const jwtStrategy = {};
 
-// implementation of passport local-strategy
-const localStrategy = new LocalStrategy(
-  localOptions,
-  async (req, email, password, done) => {
-    try {
-      // find user in database
-      const user = await User.findOne({ email }).select('+password');
-      // if user not found
-      if (!user) {
-        return done(null, false, { message: 'Wrong email or password' });
-      }
-      const isMatch = await user.isPasswordMatch(password);
-      // if password doesn't match
-      if (!isMatch) {
-        // if user doesn't exists or password doesn't match
-        return done(null, false, { message: 'Wrong email or password' });
-      }
-      return done(null, user, { message: 'You logged in successfully!' });
-    } catch (err) {
-      return done(err);
-    }
-  }
-);
-const cookieExtractor = function (req) {
+/**
+ * Custom Extractors
+ */
+cookieExtractor.ACCESS = function (req) {
   let token = null;
   if (req && req.cookies && req.cookies.tokens) {
     // eslint-disable-next-line dot-notation
@@ -46,35 +23,86 @@ const cookieExtractor = function (req) {
   return token;
 };
 
-// passport jwt-strategy options
-const jwtOptions = {
+cookieExtractor.REFRESH = function (req) {
+  let token = null;
+  if (req && req.cookies && req.cookies.tokens) {
+    // eslint-disable-next-line dot-notation
+    token = req.cookies.tokens['refresh_token'];
+  }
+  return token;
+};
+
+/**
+ * JWT Strategy Options
+ */
+jwtOptions.ACCESS = {
   secretOrKey: config.jwt.secret,
   jwtFromRequest: ExtractJwt.fromExtractors([
     ExtractJwt.fromAuthHeaderAsBearerToken(),
-    cookieExtractor,
+    cookieExtractor.ACCESS,
   ]),
-  passReqToCallback: true,
+  // passReqToCallback: true, // if req (object) need in callback
 };
 
-// implementation of passport jwt-strategy
-const jwtStrategy = new Strategy(jwtOptions, async (req, jwtPayload, done) => {
-  try {
-    // find refresh_token in DB
-    const refreshToken = await Token.findToken(jwtPayload.sub);
-    // get user from refresh_token
-    const { user } = refreshToken;
-    // if refresh_token and user exists
-    if (refreshToken && user) {
-      return done(null, user);
+jwtOptions.REFRESH = {
+  secretOrKey: config.jwt.secret,
+  jwtFromRequest: ExtractJwt.fromExtractors([
+    ExtractJwt.fromAuthHeaderAsBearerToken(),
+    cookieExtractor.REFRESH,
+  ]),
+  // passReqToCallback: true, // if req (object) need in callback
+};
+
+/**
+ * JWT Strategy
+ */
+jwtStrategy.ACCESS = new Strategy(
+  jwtOptions.ACCESS,
+  async (jwtPayload, done) => {
+    try {
+      // check token type
+      if (jwtPayload.type === tokenTypes.ACCESS) {
+        // find refresh_token in DB
+        const refreshToken = await Token.findToken(jwtPayload.sub);
+        // get user from refresh_token
+        const { user } = refreshToken;
+        // if refresh_token and user exists
+        if (refreshToken && user) {
+          return done(null, user);
+        }
+        return done(null, false);
+      }
+      return done(null, false);
+    } catch (err) {
+      return done(err, false);
     }
-    return done(null, false);
-  } catch (err) {
-    return done(err, false);
   }
-});
+);
+
+jwtStrategy.REFRESH = new Strategy(
+  jwtOptions.REFRESH,
+  async (jwtPayload, done) => {
+    try {
+      // check token type
+      if (jwtPayload.type === tokenTypes.REFRESH) {
+        // find refresh_token in DB
+        const refreshToken = await Token.findToken(jwtPayload.sub);
+        // if refresh_token exists
+        if (refreshToken) {
+          return done(null, refreshToken);
+        }
+        return done(null, false);
+      }
+      return done(null, false);
+    } catch (err) {
+      return done(err, false);
+    }
+  }
+);
+
+// Register Passport Strategy
+passport.use('jwt_access', jwtStrategy.ACCESS);
+passport.use('jwt_refresh', jwtStrategy.REFRESH);
 
 // Module exports
-module.exports = (passport) => {
-  // passport.use(localStrategy);
-  passport.use(jwtStrategy);
-};
+module.exports = passport;

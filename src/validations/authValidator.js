@@ -4,9 +4,9 @@ const { check } = require('express-validator');
 // Internal module imports
 const { User } = require('../models');
 
-// if email exists
-const checkEmailExists = (value) => {
-  return User.findByEmail(value).then((user) => {
+// if email already exists
+const isEmailExists = (email) => {
+  return User.findByEmail(email).then((user) => {
     if (user) {
       return Promise.reject(new Error('Email already exists'));
     }
@@ -24,7 +24,7 @@ const register = [
   check('email')
     .isEmail()
     .withMessage('Invalid email address')
-    .custom(checkEmailExists)
+    .custom(isEmailExists)
     .normalizeEmail()
     .trim()
     .escape(),
