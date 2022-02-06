@@ -3,9 +3,12 @@ const httpStatus = require('http-status');
 const passport = require('passport');
 
 // Internal module imports
+const config = require('../config/config');
 const { ErrorResponse } = require('../utils');
 
-const verifyCallback = (req, resolve, reject) => {
+const verifyCallback = {};
+
+verifyCallback.ACCESS = (req, resolve, reject) => {
   return (err, user, info) => {
     if (err || info || !user) {
       return reject(
@@ -18,12 +21,37 @@ const verifyCallback = (req, resolve, reject) => {
   };
 };
 
-const protect = (req, res, next) => {
+verifyCallback.REFRESH = (req, resolve, reject) => {
+  return (err, refreshTokenDoc, info) => {
+    if (err || info || !refreshTokenDoc) {
+      return reject(
+        new ErrorResponse(httpStatus.UNAUTHORIZED, 'Invalid Refresh Token')
+      );
+    }
+    // set refreshToken to request object
+    req.refreshTokenDoc = refreshTokenDoc;
+    resolve();
+  };
+};
+
+const authorizeAccessToken = (req, res, next) => {
   return new Promise((resolve, reject) => {
     passport.authenticate(
       'jwt_access',
-      { session: false },
-      verifyCallback(req, resolve, reject)
+      { session: config.jwt.session },
+      verifyCallback.ACCESS(req, resolve, reject)
+    )(req, res, next);
+  })
+    .then(() => next())
+    .catch((err) => next(err));
+};
+
+const authorizeRefreshToken = (req, res, next) => {
+  return new Promise((resolve, reject) => {
+    passport.authenticate(
+      'jwt_refresh',
+      { session: config.jwt.session },
+      verifyCallback.REFRESH(req, resolve, reject)
     )(req, res, next);
   })
     .then(() => next())
@@ -31,4 +59,7 @@ const protect = (req, res, next) => {
 };
 
 // Module exports
-module.exports = protect;
+module.exports = {
+  authorizeAccessToken,
+  authorizeRefreshToken,
+};

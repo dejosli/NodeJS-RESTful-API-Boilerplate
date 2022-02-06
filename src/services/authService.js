@@ -22,6 +22,22 @@ const createUser = async (userBody) => {
 };
 
 /**
+ * Get a user
+ * @param {string} userId
+ * @returns {Promise<User>}
+ */
+const getUser = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new ErrorResponse(
+      httpStatus.NOT_FOUND,
+      httpStatus[httpStatus.NOT_FOUND]
+    );
+  }
+  return user;
+};
+
+/**
  * Login with username and password
  * @param {string} email
  * @param {string} password
@@ -66,6 +82,7 @@ const logoutUserWithCookie = async (res, cookieName) => {
 // Module exports
 module.exports = {
   createUser,
+  getUser,
   loginUserWithEmailAndPassword,
   logoutUserWithToken,
   logoutUserWithCookie,

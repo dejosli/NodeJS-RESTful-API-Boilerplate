@@ -2,16 +2,26 @@
 const express = require('express');
 
 // Internal module imports
+const validate = require('../../middlewares/validate');
 const { authController } = require('../../controllers');
 const { authValidator } = require('../../validations');
-const validate = require('../../middlewares/validate');
-const protect = require('../../middlewares/auth');
-const refreshAuth = require('../../middlewares/refreshAuth');
+const {
+  authorizeAccessToken,
+  authorizeRefreshToken,
+} = require('../../middlewares/auth');
+const { authorizeUsersReadRules } = require('../../policies/users.policy');
 
 const router = express.Router();
 
 // mount routes
-router.get('/me', protect, authController.getMe);
+router.get(
+  '/user/:userId',
+  authValidator.profile,
+  validate,
+  authorizeAccessToken,
+  authorizeUsersReadRules,
+  authController.profile
+);
 router.post(
   '/register',
   authValidator.register,
@@ -19,30 +29,34 @@ router.post(
   authController.register
 );
 router.post('/login', authValidator.login, validate, authController.login);
-router.delete('/logout', protect, authController.logout);
-router.get('/refresh-tokens', refreshAuth, authController.refreshTokens);
+router.delete('/logout', authorizeAccessToken, authController.logout);
+router.get(
+  '/refresh-tokens',
+  authorizeRefreshToken,
+  authController.refreshTokens
+);
 // router.post(
 //   '/forgot-password',
-//   protect,
+//   authorizeAccessToken,
 //   authValidator.forgotPassword,
 //   validate,
 //   authController.forgotPassword
 // );
 // router.post(
 //   '/reset-password',
-//   protect,
+//   authorizeAccessToken,
 //   authValidator.resetPassword,
 //   validate,
 //   authController.resetPassword
 // );
 // router.post(
 //   '/send-verification-email',
-//   protect,
+//   authorizeAccessToken,
 //   authController.sendVerificationEmail
 // );
 // router.post(
 //   '/verify-email',
-//   protect,
+//   authorizeAccessToken,
 //   authValidator.verifyEmail,
 //   validate,
 //   authController.verifyEmail

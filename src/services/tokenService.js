@@ -1,6 +1,5 @@
 // External module imports
 const moment = require('moment');
-const jwt = require('jsonwebtoken');
 
 // Internal module imports
 const config = require('../config/config');

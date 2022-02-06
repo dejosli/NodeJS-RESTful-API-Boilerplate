@@ -3,6 +3,7 @@ const path = require('path');
 const dotenv = require('dotenv');
 const Joi = require('joi');
 
+// init dotenv path
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const envVarsSchema = Joi.object()
@@ -12,6 +13,9 @@ const envVarsSchema = Joi.object()
       .required(),
     PORT: Joi.number().default(3000),
     MONGODB_URL: Joi.string().required().description('Mongo DB url'),
+    ADMIN_EMAIL: Joi.string()
+      .default('admin@example.com')
+      .description('Admin registration email'),
     JWT_SECRET: Joi.string().required().description('JWT secret key'),
     JWT_SESSION: Joi.string()
       .valid('true', 'false')
@@ -47,7 +51,7 @@ const { value: envVars, error } = envVarsSchema
   .validate(process.env);
 
 if (error) {
-  throw new Error(`Config validation error: ${error.message}`);
+  throw new Error(`Config Validation Error: ${error.message}`);
 }
 
 // Module exports
@@ -55,6 +59,7 @@ module.exports = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   mongodbUrl: envVars.MONGODB_URL,
+  adminEmail: envVars.ADMIN_EMAIL,
   jwt: {
     secret: envVars.JWT_SECRET,
     session: envVars.JWT_SESSION,

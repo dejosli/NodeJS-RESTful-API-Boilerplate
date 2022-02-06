@@ -7,8 +7,9 @@ const moment = require('moment');
 // Internal module imports
 const config = require('../config/config');
 const { toJSON } = require('./plugins');
+const { allRoles, roles } = require('../config/roles');
 
-const saltRounds = 10; // required for hashing the password
+const saltRounds = 15; // required for hashing the password
 
 /**
  * User Schema
@@ -16,6 +17,11 @@ const saltRounds = 10; // required for hashing the password
  */
 const userSchema = new mongoose.Schema(
   {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     username: {
       type: String,
       required: true,
@@ -38,15 +44,21 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['user', 'editor', 'admin'],
-      default: 'user',
+      enum: roles,
+      default: allRoles.USER.value,
     },
-    isEmailVerified: {
+    verified: {
       type: Boolean,
       default: false,
     },
-    resetPasswordToken: String,
-    resetPasswordExpire: Date,
+    resetPasswordToken: {
+      type: String,
+      required: false,
+    },
+    resetPasswordExpireIn: {
+      type: Date,
+      required: false,
+    },
   },
   {
     timestamps: true,
@@ -63,13 +75,31 @@ userSchema.plugin(toJSON);
  */
 userSchema.pre('save', async function (next) {
   // encrypt password using bcrypt
-  const salt = await bcrypt.genSalt(saltRounds);
-  this.password = await bcrypt.hash(this.password, salt);
+  try {
+    // if password is not changed
+    if (!this.isModified('password')) {
+      return next();
+    }
+    const salt = await bcrypt.genSalt(saltRounds);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (err) {
+    next(err);
+  }
 });
 
 /**
  * Statics
  */
+
+/**
+ * @desc Check if username already exists in the database
+ * @param {string} username
+ * @returns {Promise<boolean>}
+ */
+userSchema.statics.findByUsername = async function (username) {
+  return this.findOne({ username });
+};
 
 /**
  * @desc Check if email already exists in the database

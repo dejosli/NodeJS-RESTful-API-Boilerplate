@@ -11,13 +11,13 @@ const { authService, tokenService } = require('../services');
  * @route GET /api/v1/auth/me
  * @access Private
  */
-const getMe = (req, res, next) => {
-  res.status(httpStatus.OK).json(
+const profile = asyncHandler(async (req, res, next) => {
+  return res.status(httpStatus.OK).json(
     new SuccessResponse(httpStatus.OK, httpStatus[httpStatus.OK], {
       user: req.user,
     })
   );
-};
+});
 
 /**
  * @desc Register user
@@ -87,12 +87,12 @@ const refreshTokens = asyncHandler(async (req, res, next) => {
   // re-generate(access_token) auth tokens
   const tokens = await tokenService.refreshAuthTokens(req.refreshTokenDoc);
   // send response
-  sendTokenResponse(res, null, tokens, httpStatus.OK);
+  sendTokenResponse(res, null, tokens, httpStatus.OK, 'Access token response');
 });
 
 // Module exports
 module.exports = {
-  getMe,
+  profile,
   register,
   login,
   logout,
