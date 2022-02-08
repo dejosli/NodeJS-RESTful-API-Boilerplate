@@ -1,8 +1,6 @@
 // External module imports
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const moment = require('moment');
 
 // Internal module imports
 const config = require('../config/config');
@@ -51,14 +49,14 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    resetPasswordToken: {
-      type: String,
-      required: false,
-    },
-    resetPasswordExpireIn: {
-      type: Date,
-      required: false,
-    },
+    // resetPasswordToken: {
+    //   type: String,
+    //   required: false,
+    // },
+    // resetPasswordExpireIn: {
+    //   type: Date,
+    //   required: false,
+    // },
   },
   {
     timestamps: true,
@@ -76,6 +74,10 @@ userSchema.plugin(toJSON);
 userSchema.pre('save', async function (next) {
   // encrypt password using bcrypt
   try {
+    // set user role to admin
+    if (this.email === config.adminEmail) {
+      this.role = allRoles.ADMIN.value;
+    }
     // if password is not changed
     if (!this.isModified('password')) {
       return next();
@@ -121,22 +123,6 @@ userSchema.statics.findByEmail = async function (email) {
  */
 userSchema.methods.isPasswordMatch = async function (password) {
   return bcrypt.compare(password, this.password);
-};
-
-/**
- * @desc Generate signed jwt token
- * @param {Moment} expires
- * @param {string} type
- * @returns {string}
- */
-userSchema.methods.generateSignedJWT = function (expires, type) {
-  const payload = {
-    sub: this._id,
-    iat: moment().unix(),
-    exp: expires.unix(),
-    type,
-  };
-  return jwt.sign(payload, config.jwt.secret);
 };
 
 /**

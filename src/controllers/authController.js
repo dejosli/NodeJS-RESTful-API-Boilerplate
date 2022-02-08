@@ -28,7 +28,7 @@ const register = asyncHandler(async (req, res, next) => {
   // create a new user
   const user = await authService.createUser(req.body);
   // generate access and refresh token
-  const tokens = await tokenService.generateAuthTokens(user);
+  const tokens = await tokenService.generateAuthTokens(user._id);
   // send response
   sendTokenResponse(
     res,
@@ -49,7 +49,7 @@ const login = asyncHandler(async (req, res, next) => {
   // get user from DB
   const user = await authService.loginUserWithEmailAndPassword(email, password);
   // generate and save tokens
-  const tokens = await tokenService.generateAuthTokens(user);
+  const tokens = await tokenService.generateAuthTokens(user._id);
   // send response
   sendTokenResponse(
     res,

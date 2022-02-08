@@ -1,11 +1,9 @@
 // External module imports
 const mongoose = require('mongoose');
-// const moment = require('moment');
 
 // Internal module imports
 const { toJSON } = require('./plugins');
 const { tokenTypes } = require('../config/tokens');
-// const config = require('../config/config');
 
 /**
  * Token Schema
@@ -20,7 +18,7 @@ const tokenSchema = mongoose.Schema(
     },
     token: {
       type: String,
-      //   index: true,
+      index: true,
       required: true,
     },
     type: {

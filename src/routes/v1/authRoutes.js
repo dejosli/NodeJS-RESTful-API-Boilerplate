@@ -51,6 +51,7 @@ router.get(
 //   validate,
 //   authController.resetPassword
 // );
+
 // router.post(
 //   '/send-verification-email',
 //   authorizeAccessToken,

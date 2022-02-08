@@ -25,7 +25,7 @@ verifyCallback.REFRESH = (req, resolve, reject) => {
   return (err, refreshTokenDoc, info) => {
     if (err || info || !refreshTokenDoc) {
       return reject(
-        new ErrorResponse(httpStatus.UNAUTHORIZED, 'Invalid Refresh Token')
+        new ErrorResponse(httpStatus.UNAUTHORIZED, 'Invalid refresh token')
       );
     }
     // set refreshToken to request object
