@@ -2,11 +2,11 @@
 const AccessControl = require('accesscontrol');
 
 // Internal module imports
-const { allRoles } = require('../config/roles');
-const { permissionObject } = require('../utils');
-const grantAccess = require('../middlewares/grantAccess');
-const asyncHandler = require('../middlewares/common/asyncHandler');
-const { authService } = require('../services');
+const { allRoles } = require('../../config/roles');
+const { permissionObject } = require('../../utils');
+const grantAccess = require('../grantAccess');
+const asyncHandler = require('../common/asyncHandler');
+const { authService } = require('../../services');
 
 // init access-control
 const roleRights = new AccessControl();
@@ -75,19 +75,22 @@ const grantRules = function (...actions) {
 };
 
 // chain middleware
-const authorizeUsersReadRules = [grantRules('readAny', 'readOwn'), grantAccess];
-const authorizeUsersUpdateRules = [
+const authorizeUsersReadPermission = [
+  grantRules('readAny', 'readOwn'),
+  grantAccess,
+];
+const authorizeUsersUpdatePermission = [
   grantRules('updateAny', 'updateOwn'),
   grantAccess,
 ];
-const authorizeUsersDeleteRules = [
+const authorizeUsersDeletePermission = [
   grantRules('deleteAny', 'deleteOwn'),
   grantAccess,
 ];
 
 // Module exports
 module.exports = {
-  authorizeUsersReadRules,
-  authorizeUsersUpdateRules,
-  authorizeUsersDeleteRules,
+  authorizeUsersReadPermission,
+  authorizeUsersUpdatePermission,
+  authorizeUsersDeletePermission,
 };

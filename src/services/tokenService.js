@@ -43,12 +43,12 @@ const generateAuthTokens = async (user) => {
     'days'
   );
   // generate access_token
-  const accessToken = user.getSignedJwtToken(
+  const accessToken = user.generateSignedJWT(
     accessTokenExpires,
     tokenTypes.ACCESS
   );
   // generate refresh_token
-  const refreshToken = user.getSignedJwtToken(
+  const refreshToken = user.generateSignedJWT(
     refreshTokenExpires,
     tokenTypes.REFRESH
   );
@@ -80,7 +80,7 @@ const refreshAuthTokens = async (refreshTokenDoc) => {
     'minutes'
   );
   // generate access_token
-  const accessToken = user.getSignedJwtToken(
+  const accessToken = user.generateSignedJWT(
     accessTokenExpires,
     tokenTypes.ACCESS
   );

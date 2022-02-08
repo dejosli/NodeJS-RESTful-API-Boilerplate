@@ -129,7 +129,7 @@ userSchema.methods.isPasswordMatch = async function (password) {
  * @param {string} type
  * @returns {string}
  */
-userSchema.methods.getSignedJwtToken = function (expires, type) {
+userSchema.methods.generateSignedJWT = function (expires, type) {
   const payload = {
     sub: this._id,
     iat: moment().unix(),

@@ -9,7 +9,9 @@ const {
   authorizeAccessToken,
   authorizeRefreshToken,
 } = require('../../middlewares/auth');
-const { authorizeUsersReadRules } = require('../../policies/users.policy');
+const {
+  authorizeUsersReadPermission,
+} = require('../../middlewares/permissions/users.permission');
 
 const router = express.Router();
 
@@ -19,7 +21,7 @@ router.get(
   authValidator.profile,
   validate,
   authorizeAccessToken,
-  authorizeUsersReadRules,
+  authorizeUsersReadPermission,
   authController.profile
 );
 router.post(
