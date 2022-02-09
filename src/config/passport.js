@@ -53,6 +53,12 @@ jwtOptions.REFRESH = {
   // passReqToCallback: true, // if req (object) need in callback
 };
 
+jwtOptions.RESET_PASSWORD = {
+  secretOrKey: config.jwt.secret,
+  jwtFromRequest: ExtractJwt.fromUrlQueryParameter('token'),
+  // passReqToCallback: true, // if req (object) need in callback
+};
+
 /**
  * JWT Strategy
  */
@@ -63,7 +69,9 @@ jwtStrategy.ACCESS = new Strategy(
       // check token type
       if (jwtPayload.type === tokenTypes.ACCESS) {
         // find refresh_token in DB
-        const refreshTokenDoc = await Token.findToken(jwtPayload.sub);
+        const refreshTokenDoc = await Token.findToken({
+          userId: jwtPayload.sub,
+        });
         // get user from refresh_token
         const { user } = refreshTokenDoc;
         // if refresh_token and user exists
@@ -86,7 +94,9 @@ jwtStrategy.REFRESH = new Strategy(
       // check token type
       if (jwtPayload.type === tokenTypes.REFRESH) {
         // find refresh_token in DB
-        const refreshTokenDoc = await Token.findToken(jwtPayload.sub);
+        const refreshTokenDoc = await Token.findToken({
+          userId: jwtPayload.sub,
+        });
         // if refresh_token exists
         if (refreshTokenDoc) {
           return done(null, refreshTokenDoc);
@@ -100,9 +110,34 @@ jwtStrategy.REFRESH = new Strategy(
   }
 );
 
+jwtStrategy.RESET_PASSWORD = new Strategy(
+  jwtOptions.RESET_PASSWORD,
+  async (jwtPayload, done) => {
+    try {
+      // check token type
+      if (jwtPayload.type === tokenTypes.RESET_PASSWORD) {
+        // find resetPasswordToken in DB
+        const resetPasswordTokenDoc = await Token.findToken({
+          userId: jwtPayload.sub,
+          type: tokenTypes.RESET_PASSWORD,
+        });
+        // if resetPasswordToken exists
+        if (resetPasswordTokenDoc) {
+          return done(null, resetPasswordTokenDoc);
+        }
+        return done(null, false);
+      }
+      return done(null, false);
+    } catch (err) {
+      return done(err, false);
+    }
+  }
+);
+
 // Register Passport Strategy
 passport.use('jwt_access', jwtStrategy.ACCESS);
 passport.use('jwt_refresh', jwtStrategy.REFRESH);
+passport.use('jwt_resetPassword', jwtStrategy.RESET_PASSWORD);
 
 // Module exports
 module.exports = passport;

@@ -8,6 +8,7 @@ const { authValidator } = require('../../validations');
 const {
   authorizeAccessToken,
   authorizeRefreshToken,
+  authorizeResetPasswordToken,
 } = require('../../middlewares/auth');
 const {
   authorizeUsersReadPermission,
@@ -37,20 +38,19 @@ router.get(
   authorizeRefreshToken,
   authController.refreshTokens
 );
-// router.post(
-//   '/forgot-password',
-//   authorizeAccessToken,
-//   authValidator.forgotPassword,
-//   validate,
-//   authController.forgotPassword
-// );
-// router.post(
-//   '/reset-password',
-//   authorizeAccessToken,
-//   authValidator.resetPassword,
-//   validate,
-//   authController.resetPassword
-// );
+router.post(
+  '/forgot-password',
+  authValidator.forgotPassword,
+  validate,
+  authController.forgotPassword
+);
+router.post(
+  '/reset-password',
+  authValidator.resetPassword,
+  validate,
+  authorizeResetPasswordToken,
+  authController.resetPassword
+);
 
 // router.post(
 //   '/send-verification-email',

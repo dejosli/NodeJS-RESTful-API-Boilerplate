@@ -1,38 +1,41 @@
 // External module imports
-const { check, param } = require('express-validator');
-const mongoose = require('mongoose');
+const { body, param, query } = require('express-validator');
 
 // Internal module imports
-const { User } = require('../models');
 const { roles } = require('../config/roles');
+const {
+  isUsernameTaken,
+  isEmailTaken,
+  isObjectId,
+} = require('./customValidator');
 
-// if email already exists
-const isUsernameTaken = (username) => {
-  return User.findByUsername(username).then((user) => {
-    if (user) {
-      return Promise.reject(new Error('Username already exists'));
-    }
-  });
-};
-
-// if email already exists
-const isEmailTaken = (email) => {
-  return User.findByEmail(email).then((user) => {
-    if (user) {
-      return Promise.reject(new Error('Email already exists'));
-    }
-  });
-};
+const login = [
+  body('email')
+    .notEmpty()
+    .withMessage('Email is required')
+    .isEmail()
+    .withMessage('Invalid email address')
+    .normalizeEmail()
+    .trim()
+    .escape(),
+  body('password')
+    .isLength({ min: 8 })
+    .withMessage('Password is required and must be at least 8 characters long')
+    .isStrongPassword()
+    .withMessage(
+      'Password should contain at least 1 lowercase, 1 uppercase, 1 number & 1 symbol'
+    ),
+];
 
 const register = [
-  check('name')
+  body('name')
     .isLength({ min: 1 })
     .withMessage('Name is required')
     .isAlpha('en-US', { ignore: ' -' })
     .withMessage('Name must not contain anything other than alphabet')
     .trim()
     .escape(),
-  check('username')
+  body('username')
     .isLength({ min: 1 })
     .withMessage('Username is required')
     .custom((username) => !username.includes(' '))
@@ -42,7 +45,7 @@ const register = [
     .trim()
     .escape()
     .custom(isUsernameTaken),
-  check('email')
+  body('email')
     .notEmpty()
     .withMessage('Email is required')
     .isEmail()
@@ -51,14 +54,14 @@ const register = [
     .trim()
     .escape()
     .custom(isEmailTaken),
-  check('password')
+  body('password')
     .isLength({ min: 8 })
     .withMessage('Password is required and must be at least 8 characters long')
     .isStrongPassword()
     .withMessage(
       'Password should contain at least 1 lowercase, 1 uppercase, 1 number & 1 symbol'
     ),
-  check('role')
+  body('role')
     .not()
     .notEmpty()
     .withMessage('Role is required')
@@ -68,16 +71,22 @@ const register = [
     .escape(),
 ];
 
-const login = [
-  check('email')
+const forgotPassword = body('email')
+  .notEmpty()
+  .withMessage('Email is required')
+  .isEmail()
+  .withMessage('Invalid email address')
+  .normalizeEmail()
+  .trim()
+  .escape();
+
+const resetPassword = [
+  query('token')
     .notEmpty()
-    .withMessage('Email is required')
-    .isEmail()
-    .withMessage('Invalid email address')
-    .normalizeEmail()
-    .trim()
-    .escape(),
-  check('password')
+    .withMessage('Token is required')
+    .isJWT()
+    .withMessage('Invalid token'),
+  body('password')
     .isLength({ min: 8 })
     .withMessage('Password is required and must be at least 8 characters long')
     .isStrongPassword()
@@ -87,14 +96,14 @@ const login = [
 ];
 
 const profile = [
-  param('userId')
-    .custom((value) => mongoose.Types.ObjectId.isValid(value))
-    .withMessage('Invalid params value'),
+  param('userId').custom(isObjectId).withMessage('Invalid params value'),
 ];
 
 // Module exports
 module.exports = {
-  register,
   login,
+  register,
+  forgotPassword,
+  resetPassword,
   profile,
 };

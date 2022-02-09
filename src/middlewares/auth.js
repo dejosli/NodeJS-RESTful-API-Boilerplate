@@ -34,6 +34,22 @@ verifyCallback.REFRESH = (req, resolve, reject) => {
   };
 };
 
+verifyCallback.RESET_PASSWORD = (req, resolve, reject) => {
+  return (err, resetPasswordTokenDoc, info) => {
+    if (err || info || !resetPasswordTokenDoc) {
+      return reject(
+        new ErrorResponse(
+          httpStatus.UNAUTHORIZED,
+          'Invalid reset password token'
+        )
+      );
+    }
+    // set resetPasswordToken to request object
+    req.resetPasswordTokenDoc = resetPasswordTokenDoc;
+    resolve();
+  };
+};
+
 const authorizeAccessToken = (req, res, next) => {
   return new Promise((resolve, reject) => {
     passport.authenticate(
@@ -58,8 +74,21 @@ const authorizeRefreshToken = (req, res, next) => {
     .catch((err) => next(err));
 };
 
+const authorizeResetPasswordToken = (req, res, next) => {
+  return new Promise((resolve, reject) => {
+    passport.authenticate(
+      'jwt_resetPassword',
+      { session: config.jwt.session },
+      verifyCallback.RESET_PASSWORD(req, resolve, reject)
+    )(req, res, next);
+  })
+    .then(() => next())
+    .catch((err) => next(err));
+};
+
 // Module exports
 module.exports = {
   authorizeAccessToken,
   authorizeRefreshToken,
+  authorizeResetPasswordToken,
 };

@@ -4,7 +4,7 @@ const httpStatus = require('http-status');
 // Internal module imports
 const asyncHandler = require('../middlewares/common/asyncHandler');
 const { SuccessResponse, sendTokenResponse } = require('../utils');
-const { authService, tokenService } = require('../services');
+const { authService, tokenService, emailService } = require('../services');
 
 /**
  * @desc Get current logged in user
@@ -77,17 +77,57 @@ const logout = asyncHandler(async (req, res, next) => {
     .status(httpStatus.NO_CONTENT)
     .json(new SuccessResponse(httpStatus.NO_CONTENT));
 });
+
 /**
  * @desc Logout current user
  * @route GET /api/v1/auth/refresh-tokens
  * @access Private
  */
-
 const refreshTokens = asyncHandler(async (req, res, next) => {
   // re-generate(access_token) auth tokens
   const tokens = await tokenService.refreshAuthTokens(req.refreshTokenDoc);
   // send response
   sendTokenResponse(res, null, tokens, httpStatus.OK, 'Access token response');
+});
+
+/**
+ * @desc Forgot password
+ * @route POST /api/v1/auth/forgot-password
+ * @access Public
+ */
+const forgotPassword = asyncHandler(async (req, res, next) => {
+  const user = await authService.requestPasswordReset(req.body.email);
+  const resetPasswordToken = await tokenService.generateResetPasswordToken(
+    user._id
+  );
+  // email resetToken to client
+  await emailService.sendResetPasswordEmail(
+    user.email,
+    user.name,
+    resetPasswordToken
+  );
+  // send response to client
+  res.status(httpStatus.OK).json(
+    new SuccessResponse(httpStatus.OK, `You've received an email`, {
+      resetPasswordToken,
+    })
+  );
+});
+
+const resetPassword = asyncHandler(async (req, res, next) => {
+  const { user } = req.resetPasswordTokenDoc;
+  const { password } = req.body;
+  await authService.resetPassword(user._id, password);
+  // confirmation email to client
+  await emailService.sendEmail(
+    user.email,
+    'Reset Password Confirmation',
+    'Password Changed Successfully'
+  );
+  // send response to client
+  res
+    .status(httpStatus.OK)
+    .json(new SuccessResponse(httpStatus.OK, `You've received an email`));
 });
 
 // Module exports
@@ -97,4 +137,6 @@ module.exports = {
   login,
   logout,
   refreshTokens,
+  forgotPassword,
+  resetPassword,
 };

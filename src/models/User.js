@@ -49,14 +49,6 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    // resetPasswordToken: {
-    //   type: String,
-    //   required: false,
-    // },
-    // resetPasswordExpireIn: {
-    //   type: Date,
-    //   required: false,
-    // },
   },
   {
     timestamps: true,
@@ -113,9 +105,19 @@ userSchema.statics.findByEmail = async function (email) {
 };
 
 /**
+ * Check if email is taken
+ * @param {string} email - The user's email
+ * @param {ObjectId} [excludeUserId] - The id of the user to be excluded
+ * @returns {Promise<boolean>}
+ */
+userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
+  const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
+  return !!user;
+};
+
+/**
  * Methods
  */
-
 /**
  * @desc Check if password matches the user's password
  * @param {string} password

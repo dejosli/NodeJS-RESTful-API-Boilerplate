@@ -69,11 +69,11 @@ tokenSchema.plugin(toJSON);
  * @param {Boolean} blacklisted
  * @returns {Promise<Token>}
  */
-tokenSchema.statics.findToken = async function (
+tokenSchema.statics.findToken = async function ({
   userId,
   type = tokenTypes.REFRESH,
-  blacklisted = false
-) {
+  blacklisted = false,
+}) {
   return this.findOne({
     $and: [{ user: userId }, { type }, { blacklisted }],
   }).populate('user');
@@ -86,11 +86,11 @@ tokenSchema.statics.findToken = async function (
  * @param {Boolean} blacklisted
  * @returns {Promise<Token>}
  */
-tokenSchema.statics.deleteToken = async function (
+tokenSchema.statics.deleteToken = async function ({
   userId,
   type = tokenTypes.REFRESH,
-  blacklisted = false
-) {
+  blacklisted = false,
+}) {
   return this.findOneAndDelete({
     $and: [{ user: userId }, { type }, { blacklisted }],
   });

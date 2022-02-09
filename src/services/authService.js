@@ -4,6 +4,37 @@ const httpStatus = require('http-status');
 // Internal module imports
 const { User, Token } = require('../models/index');
 const { ErrorResponse } = require('../utils');
+const { tokenTypes } = require('../config/tokens');
+
+/**
+ * Get user by id
+ * @param {string} userId
+ * @returns {Promise<User>}
+ */
+const getUserById = async (userId) => {
+  const user = await User.findById(userId);
+
+  return user;
+};
+
+/**
+ * Update user by id
+ * @param {ObjectId} userId
+ * @param {Object} updateBody
+ * @returns {Promise<User>}
+ */
+const updateUserById = async (userId, updateBody) => {
+  const user = await getUserById(userId);
+  if (!user) {
+    throw new ErrorResponse(httpStatus.NOT_FOUND, 'User not found');
+  }
+  if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
+    throw new ErrorResponse(httpStatus.BAD_REQUEST, 'Email already taken');
+  }
+  Object.assign(user, updateBody);
+  await user.save();
+  return user;
+};
 
 /**
  * Create a user
@@ -22,22 +53,6 @@ const createUser = async (userBody) => {
 };
 
 /**
- * Get a user
- * @param {string} userId
- * @returns {Promise<User>}
- */
-const getUser = async (userId) => {
-  const user = await User.findById(userId);
-  if (!user) {
-    throw new ErrorResponse(
-      httpStatus.NOT_FOUND,
-      httpStatus[httpStatus.NOT_FOUND]
-    );
-  }
-  return user;
-};
-
-/**
  * Login with username and password
  * @param {string} email
  * @param {string} password
@@ -50,8 +65,8 @@ const loginUserWithEmailAndPassword = async (email, password) => {
   if (!user || !(await user.isPasswordMatch(password))) {
     throw new ErrorResponse(httpStatus.UNAUTHORIZED, 'Wrong email or password');
   }
-  // if token already exists
-  await Token.deleteToken(user._id);
+  // if refresh_token already exists
+  await Token.deleteToken({ userId: user._id });
   return user;
 };
 
@@ -62,7 +77,7 @@ const loginUserWithEmailAndPassword = async (email, password) => {
  */
 const logoutUserWithToken = async (userId) => {
   // find and delete refresh_token from DB
-  const refreshTokenDoc = await Token.deleteToken(userId);
+  const refreshTokenDoc = await Token.deleteToken({ userId });
   if (!refreshTokenDoc) {
     throw new ErrorResponse(httpStatus.UNAUTHORIZED, 'Please authenticate');
   }
@@ -79,11 +94,47 @@ const logoutUserWithCookie = async (res, cookieName) => {
   return res.clearCookie(cookieName);
 };
 
+/**
+ * Process request for forgot password
+ * @param {string} email
+ * @returns {Promise<User>}
+ */
+const requestPasswordReset = async (email) => {
+  const user = await User.findByEmail(email);
+  if (!user) {
+    throw new ErrorResponse(httpStatus.NOT_FOUND, 'User not found');
+  }
+  // if resetToken already exists
+  await Token.deleteToken({
+    userId: user._id,
+    type: tokenTypes.RESET_PASSWORD,
+  });
+  return user;
+};
+
+/**
+ * Reset password
+ * @param {string} resetPasswordToken
+ * @param {string} newPassword
+ * @returns {Promise}
+ */
+const resetPassword = async (userId, newPassword) => {
+  await updateUserById(userId, { password: newPassword });
+  // remove resetPasswordToken from DB
+  await Token.deleteToken({
+    userId,
+    type: tokenTypes.RESET_PASSWORD,
+  });
+};
+
 // Module exports
 module.exports = {
   createUser,
-  getUser,
+  getUserById,
+  updateUserById,
   loginUserWithEmailAndPassword,
   logoutUserWithToken,
   logoutUserWithCookie,
+  requestPasswordReset,
+  resetPassword,
 };

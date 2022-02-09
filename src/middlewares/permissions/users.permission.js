@@ -59,8 +59,9 @@ const grantRules = function (...actions) {
       hasPermission = roleRights
         .can(req.user.role)
         [readAny](resourceTypes.USER.value);
-      const user = await authService.getUser(req.params.userId);
-      hasRoleAccess = allRoles[req.user.role].level > allRoles[user.role].level;
+      const user = await authService.getUserById(req.params.userId);
+      hasRoleAccess =
+        allRoles[req.user.role].level > allRoles[user?.role]?.level;
       req.user = user;
     }
     // check whether loggedIn user is allowed to access

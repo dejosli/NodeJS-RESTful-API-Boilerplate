@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 const { ErrorResponse } = require('../utils');
 const { tokenTypes } = require('../config/tokens');
-const { Token, User } = require('../models');
+const { Token } = require('../models');
 
 /**
  * Save a token
@@ -36,7 +36,7 @@ const saveToken = async (userId, token, type, expires, blacklisted = false) => {
 };
 
 /**
- * @desc Generate signed jwt
+ * Generate signed jwt
  * @param {ObjectId} userId
  * @param {Moment} expires
  * @param {string} type
@@ -125,31 +125,25 @@ const refreshAuthTokens = async (refreshTokenDoc) => {
 
 /**
  * Generate reset password token
- * @param {string} email
+ * @param {ObjectId} userId
  * @returns {Promise<string>}
  */
-const generateResetPasswordToken = async (email) => {
-  const user = await User.findByEmail(email);
-  if (!user) {
-    throw new ErrorResponse(
-      httpStatus.NOT_FOUND,
-      'No users found with this email'
-    );
-  }
-  const resetPasswordExpires = moment().add(
+const generateResetPasswordToken = async (userId) => {
+  const resetPasswordTokenExpires = moment().add(
     config.jwt.resetPasswordExpirationMinutes,
     'minutes'
   );
+  // generate access_token
   const resetPasswordToken = generateSignedJWT(
-    user._id,
-    resetPasswordExpires,
+    userId,
+    resetPasswordTokenExpires,
     tokenTypes.RESET_PASSWORD
   );
   await saveToken(
-    user._id,
+    userId,
     resetPasswordToken,
     tokenTypes.RESET_PASSWORD,
-    resetPasswordExpires
+    resetPasswordTokenExpires
   );
   return resetPasswordToken;
 };
