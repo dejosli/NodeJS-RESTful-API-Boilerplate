@@ -13,7 +13,9 @@ const { tokenTypes } = require('../config/tokens');
  */
 const getUserById = async (userId) => {
   const user = await User.findById(userId);
-
+  if (!user) {
+    throw new ErrorResponse(httpStatus.NOT_FOUND, 'User not found');
+  }
   return user;
 };
 
@@ -24,15 +26,13 @@ const getUserById = async (userId) => {
  * @returns {Promise<User>}
  */
 const updateUserById = async (userId, updateBody) => {
-  const user = await getUserById(userId);
-  if (!user) {
-    throw new ErrorResponse(httpStatus.NOT_FOUND, 'User not found');
-  }
   if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
     throw new ErrorResponse(httpStatus.BAD_REQUEST, 'Email already taken');
   }
-  Object.assign(user, updateBody);
-  await user.save();
+  const user = await User.findByIdAndUpdate(userId, updateBody, { new: true });
+  if (!user) {
+    throw new ErrorResponse(httpStatus.NOT_FOUND, 'User update failed');
+  }
   return user;
 };
 
@@ -66,7 +66,7 @@ const loginUserWithEmailAndPassword = async (email, password) => {
     throw new ErrorResponse(httpStatus.UNAUTHORIZED, 'Wrong email or password');
   }
   // if refresh_token already exists
-  await Token.deleteToken({ userId: user._id });
+  await Token.deleteOneToken({ userId: user._id });
   return user;
 };
 
@@ -77,7 +77,7 @@ const loginUserWithEmailAndPassword = async (email, password) => {
  */
 const logoutUserWithToken = async (userId) => {
   // find and delete refresh_token from DB
-  const refreshTokenDoc = await Token.deleteToken({ userId });
+  const refreshTokenDoc = await Token.deleteOneToken({ userId });
   if (!refreshTokenDoc) {
     throw new ErrorResponse(httpStatus.UNAUTHORIZED, 'Please authenticate');
   }
@@ -95,7 +95,7 @@ const logoutUserWithCookie = async (res, cookieName) => {
 };
 
 /**
- * Process request for forgot password
+ * Process request for reset password
  * @param {string} email
  * @returns {Promise<User>}
  */
@@ -105,7 +105,7 @@ const requestPasswordReset = async (email) => {
     throw new ErrorResponse(httpStatus.NOT_FOUND, 'User not found');
   }
   // if resetToken already exists
-  await Token.deleteToken({
+  await Token.deleteOneToken({
     userId: user._id,
     type: tokenTypes.RESET_PASSWORD,
   });
@@ -119,12 +119,37 @@ const requestPasswordReset = async (email) => {
  * @returns {Promise}
  */
 const resetPassword = async (userId, newPassword) => {
-  await updateUserById(userId, { password: newPassword });
-  // remove resetPasswordToken from DB
-  await Token.deleteToken({
-    userId,
-    type: tokenTypes.RESET_PASSWORD,
-  });
+  try {
+    await updateUserById(userId, { password: newPassword });
+    // remove resetPasswordToken from DB
+    await Token.deleteOneToken({
+      userId,
+      type: tokenTypes.RESET_PASSWORD,
+    });
+  } catch (err) {
+    throw new ErrorResponse(httpStatus.UNAUTHORIZED, 'Password reset failed');
+  }
+};
+
+/**
+ * Verify email
+ * @param {ObjectId} userId
+ * @returns {Promise}
+ */
+const verifyEmail = async (userId) => {
+  try {
+    await updateUserById(userId, { isEmailVerified: true });
+    // remove verifyEmailToken from DB
+    await Token.deleteManyToken({
+      userId,
+      type: tokenTypes.VERIFY_EMAIL,
+    });
+  } catch (err) {
+    throw new ErrorResponse(
+      httpStatus.UNAUTHORIZED,
+      'Email verification failed'
+    );
+  }
 };
 
 // Module exports
@@ -137,4 +162,5 @@ module.exports = {
   logoutUserWithCookie,
   requestPasswordReset,
   resetPassword,
+  verifyEmail,
 };

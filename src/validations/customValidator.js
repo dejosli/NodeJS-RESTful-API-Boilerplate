@@ -1,19 +1,19 @@
 // External module imports
 const mongoose = require('mongoose');
-
+const obj = require('express-validator');
 // Internal module imports
 const { User } = require('../models');
+const { allRoles, roles } = require('../config/roles');
 
-// if email already exists
-const isUsernameTaken = (username) => {
-  return User.findByUsername(username).then((user) => {
-    if (user) {
-      return Promise.reject(new Error('Username already exists'));
-    }
-  });
+// check whether id is ObjectId or not
+const isObjectId = (id) => {
+  if (mongoose.Types.ObjectId.isValid(id)) {
+    return true;
+  }
+  return Promise.reject(new Error('Invalid params value'));
 };
 
-// if email already exists
+// check whether email already exists or not
 const isEmailTaken = (email) => {
   return User.findByEmail(email).then((user) => {
     if (user) {
@@ -22,11 +22,33 @@ const isEmailTaken = (email) => {
   });
 };
 
-const isObjectId = (value) => mongoose.Types.ObjectId.isValid(value);
+// check whether username already exists or not
+const isUsernameTaken = (username) => {
+  return User.findByUsername(username).then((user) => {
+    if (user) {
+      return Promise.reject(new Error('Username already exists'));
+    }
+  });
+};
+
+const isInRoles = (role, { req }) => {
+  if (!role) {
+    return Promise.reject(new Error('Role is required'));
+  }
+  if (req.baseUrl.includes('auth')) {
+    return role === allRoles.USER.value
+      ? true
+      : Promise.reject(new Error('Invalid role'));
+  }
+  return roles.indexOf(role) > -1
+    ? true
+    : Promise.reject(new Error('Invalid role'));
+};
 
 // Module exports
 module.exports = {
-  isUsernameTaken,
-  isEmailTaken,
   isObjectId,
+  isEmailTaken,
+  isUsernameTaken,
+  isInRoles,
 };

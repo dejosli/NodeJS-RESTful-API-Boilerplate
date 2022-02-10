@@ -9,6 +9,7 @@ const {
   authorizeAccessToken,
   authorizeRefreshToken,
   authorizeResetPasswordToken,
+  authorizeVerifyEmailToken,
 } = require('../../middlewares/auth');
 const {
   authorizeUsersReadPermission,
@@ -51,19 +52,18 @@ router.post(
   authorizeResetPasswordToken,
   authController.resetPassword
 );
-
-// router.post(
-//   '/send-verification-email',
-//   authorizeAccessToken,
-//   authController.sendVerificationEmail
-// );
-// router.post(
-//   '/verify-email',
-//   authorizeAccessToken,
-//   authValidator.verifyEmail,
-//   validate,
-//   authController.verifyEmail
-// );
+router.post(
+  '/send-verification-email',
+  authorizeAccessToken,
+  authController.sendVerificationEmail
+);
+router.post(
+  '/verify-email',
+  authValidator.verifyEmail,
+  validate,
+  authorizeVerifyEmailToken,
+  authController.verifyEmail
+);
 
 // Module exports
 module.exports = router;

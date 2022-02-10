@@ -100,18 +100,18 @@ const generateAuthTokens = async (userId) => {
 };
 
 /**
- * Generate auth tokens
+ * Generate access token
  * @param {Object} refreshTokenDoc
  * @returns {Promise}
  */
 const refreshAuthTokens = async (refreshTokenDoc) => {
   const { user } = refreshTokenDoc;
-  // access_token expires time
+  // token expires time
   const accessTokenExpires = moment().add(
     config.jwt.accessExpirationMinutes,
     'minutes'
   );
-  // generate access_token
+  // generate token
   const accessToken = generateSignedJWT(
     user._id,
     accessTokenExpires,
@@ -133,7 +133,7 @@ const generateResetPasswordToken = async (userId) => {
     config.jwt.resetPasswordExpirationMinutes,
     'minutes'
   );
-  // generate access_token
+  // generate token
   const resetPasswordToken = generateSignedJWT(
     userId,
     resetPasswordTokenExpires,
@@ -148,6 +148,31 @@ const generateResetPasswordToken = async (userId) => {
   return resetPasswordToken;
 };
 
+/**
+ * Generate verify email token
+ * @param {ObjectId} userId
+ * @returns {Promise<string>}
+ */
+const generateVerifyEmailToken = async (userId) => {
+  const verifyEmailTokenExpires = moment().add(
+    config.jwt.verifyEmailExpirationMinutes,
+    'minutes'
+  );
+  // generate token
+  const verifyEmailToken = generateSignedJWT(
+    userId,
+    verifyEmailTokenExpires,
+    tokenTypes.VERIFY_EMAIL
+  );
+  await saveToken(
+    userId,
+    verifyEmailToken,
+    tokenTypes.VERIFY_EMAIL,
+    verifyEmailTokenExpires
+  );
+  return verifyEmailToken;
+};
+
 // Module exports
 module.exports = {
   saveToken,
@@ -155,4 +180,5 @@ module.exports = {
   generateAuthTokens,
   refreshAuthTokens,
   generateResetPasswordToken,
+  generateVerifyEmailToken,
 };

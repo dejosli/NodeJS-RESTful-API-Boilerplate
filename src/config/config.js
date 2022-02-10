@@ -16,7 +16,9 @@ const envVarsSchema = Joi.object()
     ADMIN_EMAIL: Joi.string()
       .default('admin@example.com')
       .description('Admin registration email'),
-    BCRYPT_SALT: Joi.number().default(10).description('Bcrypt salt rounds'),
+    BCRYPT_SALT_ROUNDS: Joi.number()
+      .default(15)
+      .description('Bcrypt salt rounds'),
     JWT_SECRET: Joi.string().required().description('JWT secret key'),
     JWT_SESSION: Joi.string()
       .valid('true', 'false')
@@ -61,7 +63,7 @@ module.exports = {
   port: envVars.PORT,
   mongodbUrl: envVars.MONGODB_URL,
   adminEmail: envVars.ADMIN_EMAIL,
-  bcryptSalt: envVars.BCRYPT_SALT,
+  bcryptSaltRounds: envVars.BCRYPT_SALT_ROUNDS,
   jwt: {
     secret: envVars.JWT_SECRET,
     session: envVars.JWT_SESSION,

@@ -8,6 +8,9 @@ const { ErrorResponse } = require('../utils');
 
 const verifyCallback = {};
 
+/**
+ * Callbacks
+ */
 verifyCallback.ACCESS = (req, resolve, reject) => {
   return (err, user, info) => {
     if (err || info || !user) {
@@ -50,6 +53,23 @@ verifyCallback.RESET_PASSWORD = (req, resolve, reject) => {
   };
 };
 
+verifyCallback.VERIFY_EMAIL = (req, resolve, reject) => {
+  return (err, verifyEmailTokenDoc, info) => {
+    if (err || info || !verifyEmailTokenDoc) {
+      return reject(
+        new ErrorResponse(httpStatus.UNAUTHORIZED, 'Invalid verify email token')
+      );
+    }
+    // set resetPasswordToken to request object
+    req.verifyEmailTokenDoc = verifyEmailTokenDoc;
+    resolve();
+  };
+};
+
+/**
+ * Authentications
+ */
+
 const authorizeAccessToken = (req, res, next) => {
   return new Promise((resolve, reject) => {
     passport.authenticate(
@@ -86,9 +106,22 @@ const authorizeResetPasswordToken = (req, res, next) => {
     .catch((err) => next(err));
 };
 
+const authorizeVerifyEmailToken = (req, res, next) => {
+  return new Promise((resolve, reject) => {
+    passport.authenticate(
+      'jwt_verifyEmail',
+      { session: config.jwt.session },
+      verifyCallback.VERIFY_EMAIL(req, resolve, reject)
+    )(req, res, next);
+  })
+    .then(() => next())
+    .catch((err) => next(err));
+};
+
 // Module exports
 module.exports = {
   authorizeAccessToken,
   authorizeRefreshToken,
   authorizeResetPasswordToken,
+  authorizeVerifyEmailToken,
 };

@@ -7,8 +7,6 @@ const config = require('../config/config');
 const { toJSON } = require('./plugins');
 const { allRoles, roles } = require('../config/roles');
 
-const saltRounds = 15; // required for hashing the password
-
 /**
  * User Schema
  * @private
@@ -45,7 +43,7 @@ const userSchema = new mongoose.Schema(
       enum: roles,
       default: allRoles.USER.value,
     },
-    verified: {
+    isEmailVerified: {
       type: Boolean,
       default: false,
     },
@@ -74,13 +72,29 @@ userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
       return next();
     }
-    const salt = await bcrypt.genSalt(saltRounds);
+    const salt = await bcrypt.genSalt(config.bcryptSaltRounds);
     this.password = await bcrypt.hash(this.password, salt);
     next();
   } catch (err) {
     next(err);
   }
 });
+
+userSchema.pre(
+  ['updateOne', 'updateById', 'findOneAndUpdate', 'findByIdAndUpdate'],
+  async function (next) {
+    try {
+      // if password is updated
+      if (this._update.password) {
+        const salt = await bcrypt.genSalt(config.bcryptSaltRounds);
+        this._update.password = await bcrypt.hash(this._update.password, salt);
+      }
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 /**
  * Statics

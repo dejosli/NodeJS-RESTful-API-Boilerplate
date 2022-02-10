@@ -2,11 +2,11 @@
 const { body, param, query } = require('express-validator');
 
 // Internal module imports
-const { roles } = require('../config/roles');
 const {
   isUsernameTaken,
   isEmailTaken,
   isObjectId,
+  isInRoles,
 } = require('./customValidator');
 
 const login = [
@@ -61,14 +61,7 @@ const register = [
     .withMessage(
       'Password should contain at least 1 lowercase, 1 uppercase, 1 number & 1 symbol'
     ),
-  body('role')
-    .not()
-    .notEmpty()
-    .withMessage('Role is required')
-    .isIn(roles)
-    .withMessage('Invalid role')
-    .trim()
-    .escape(),
+  body('role').custom(isInRoles).trim().escape(),
 ];
 
 const forgotPassword = body('email')
@@ -95,9 +88,13 @@ const resetPassword = [
     ),
 ];
 
-const profile = [
-  param('userId').custom(isObjectId).withMessage('Invalid params value'),
-];
+const verifyEmail = query('token')
+  .notEmpty()
+  .withMessage('Token is required')
+  .isJWT()
+  .withMessage('Invalid token');
+
+const profile = [param('userId').custom(isObjectId)];
 
 // Module exports
 module.exports = {
@@ -105,5 +102,6 @@ module.exports = {
   register,
   forgotPassword,
   resetPassword,
+  verifyEmail,
   profile,
 };

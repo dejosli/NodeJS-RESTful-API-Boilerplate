@@ -108,12 +108,21 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   );
   // send response to client
   res.status(httpStatus.OK).json(
-    new SuccessResponse(httpStatus.OK, `You've received an email`, {
-      resetPasswordToken,
-    })
+    new SuccessResponse(
+      httpStatus.OK,
+      `Password reset link has been sent to: ${user.email}`,
+      {
+        resetPasswordToken,
+      }
+    )
   );
 });
 
+/**
+ * @desc Reset password
+ * @route POST /api/v1/auth/reset-password
+ * @access Private
+ */
 const resetPassword = asyncHandler(async (req, res, next) => {
   const { user } = req.resetPasswordTokenDoc;
   const { password } = req.body;
@@ -122,12 +131,75 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   await emailService.sendEmail(
     user.email,
     'Reset Password Confirmation',
-    'Password Changed Successfully'
+    'Password changed successful'
   );
   // send response to client
   res
     .status(httpStatus.OK)
-    .json(new SuccessResponse(httpStatus.OK, `You've received an email`));
+    .json(
+      new SuccessResponse(
+        httpStatus.OK,
+        'Password changed successful. Please check your email'
+      )
+    );
+});
+
+/**
+ * @desc Send verification email
+ * @route POST /api/v1/auth/send-verify-email
+ * @access Public
+ */
+const sendVerificationEmail = asyncHandler(async (req, res, next) => {
+  // if current user email already verified
+  if (req.user.isEmailVerified) {
+    return res
+      .status(httpStatus.OK)
+      .json(new SuccessResponse(httpStatus.OK, 'Email already verified'));
+  }
+  const verifyEmailToken = await tokenService.generateVerifyEmailToken(
+    req.user._id
+  );
+  // email resetToken to client
+  await emailService.sendVerificationEmail(
+    req.user.email,
+    req.user.name,
+    verifyEmailToken
+  );
+  // send response to client
+  res.status(httpStatus.OK).json(
+    new SuccessResponse(
+      httpStatus.OK,
+      `Email verification link has been sent to: ${req.user.email}`,
+      {
+        verifyEmailToken,
+      }
+    )
+  );
+});
+
+/**
+ * @desc Verify email
+ * @route POST /api/v1/auth/verify-email
+ * @access Private
+ */
+const verifyEmail = asyncHandler(async (req, res, next) => {
+  const { user } = req.verifyEmailTokenDoc;
+  await authService.verifyEmail(user._id);
+  // confirmation email to client
+  await emailService.sendEmail(
+    user.email,
+    'Email Verification Confirm',
+    'Email verification successful'
+  );
+  // send response to client
+  res
+    .status(httpStatus.OK)
+    .json(
+      new SuccessResponse(
+        httpStatus.OK,
+        'Email verification successful. Please check your email'
+      )
+    );
 });
 
 // Module exports
@@ -139,4 +211,6 @@ module.exports = {
   refreshTokens,
   forgotPassword,
   resetPassword,
+  sendVerificationEmail,
+  verifyEmail,
 };

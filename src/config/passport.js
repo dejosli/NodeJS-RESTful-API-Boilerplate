@@ -59,6 +59,12 @@ jwtOptions.RESET_PASSWORD = {
   // passReqToCallback: true, // if req (object) need in callback
 };
 
+jwtOptions.VERIFY_EMAIL = {
+  secretOrKey: config.jwt.secret,
+  jwtFromRequest: ExtractJwt.fromUrlQueryParameter('token'),
+  // passReqToCallback: true, // if req (object) need in callback
+};
+
 /**
  * JWT Strategy
  */
@@ -134,10 +140,35 @@ jwtStrategy.RESET_PASSWORD = new Strategy(
   }
 );
 
+jwtStrategy.VERIFY_EMAIL = new Strategy(
+  jwtOptions.VERIFY_EMAIL,
+  async (jwtPayload, done) => {
+    try {
+      // check token type
+      if (jwtPayload.type === tokenTypes.VERIFY_EMAIL) {
+        // find verifyEmailToken in DB
+        const verifyEmailTokenDoc = await Token.findToken({
+          userId: jwtPayload.sub,
+          type: tokenTypes.VERIFY_EMAIL,
+        });
+        // if verifyEmailToken exists
+        if (verifyEmailTokenDoc) {
+          return done(null, verifyEmailTokenDoc);
+        }
+        return done(null, false);
+      }
+      return done(null, false);
+    } catch (err) {
+      return done(err, false);
+    }
+  }
+);
+
 // Register Passport Strategy
 passport.use('jwt_access', jwtStrategy.ACCESS);
 passport.use('jwt_refresh', jwtStrategy.REFRESH);
 passport.use('jwt_resetPassword', jwtStrategy.RESET_PASSWORD);
+passport.use('jwt_verifyEmail', jwtStrategy.VERIFY_EMAIL);
 
 // Module exports
 module.exports = passport;

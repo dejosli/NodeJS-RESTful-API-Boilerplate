@@ -86,14 +86,32 @@ tokenSchema.statics.findToken = async function ({
  * @param {Boolean} blacklisted
  * @returns {Promise<Token>}
  */
-tokenSchema.statics.deleteToken = async function ({
+tokenSchema.statics.deleteOneToken = async function ({
   userId,
   type = tokenTypes.REFRESH,
   blacklisted = false,
 }) {
-  return this.findOneAndDelete({
+  return this.deleteOne({
     $and: [{ user: userId }, { type }, { blacklisted }],
   });
+};
+
+/**
+ * Remove token
+ * @param {ObjectID} userId
+ * @param {string} type
+ * @param {Boolean} blacklisted
+ * @returns {Promise<Token>}
+ */
+tokenSchema.statics.deleteManyToken = async function ({
+  userId,
+  type = tokenTypes.REFRESH,
+  blacklisted = false,
+}) {
+  return this.deleteMany({
+    $and: [{ user: userId }, { type }, { blacklisted }],
+  });
+  // return tokens;
 };
 
 /**
