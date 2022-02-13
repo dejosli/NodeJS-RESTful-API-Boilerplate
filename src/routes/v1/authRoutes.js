@@ -11,21 +11,11 @@ const {
   authorizeResetPasswordToken,
   authorizeVerifyEmailToken,
 } = require('../../middlewares/auth');
-const {
-  authorizeUsersReadPermission,
-} = require('../../middlewares/permissions/users.permission');
 
+// init express router
 const router = express.Router();
 
 // mount routes
-router.get(
-  '/user/:userId',
-  authValidator.profile,
-  validate,
-  authorizeAccessToken,
-  authorizeUsersReadPermission,
-  authController.profile
-);
 router.post(
   '/register',
   authValidator.register,

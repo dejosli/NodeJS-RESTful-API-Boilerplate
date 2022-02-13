@@ -4,20 +4,12 @@ const httpStatus = require('http-status');
 // Internal module imports
 const asyncHandler = require('../middlewares/common/asyncHandler');
 const { SuccessResponse, sendTokenResponse } = require('../utils');
-const { authService, tokenService, emailService } = require('../services');
-
-/**
- * @desc Get current logged in user
- * @route GET /api/v1/auth/me
- * @access Private
- */
-const profile = asyncHandler(async (req, res, next) => {
-  return res.status(httpStatus.OK).json(
-    new SuccessResponse(httpStatus.OK, httpStatus[httpStatus.OK], {
-      user: req.user,
-    })
-  );
-});
+const {
+  authService,
+  userService,
+  tokenService,
+  emailService,
+} = require('../services');
 
 /**
  * @desc Register user
@@ -26,7 +18,7 @@ const profile = asyncHandler(async (req, res, next) => {
  */
 const register = asyncHandler(async (req, res, next) => {
   // create a new user
-  const user = await authService.createUser(req.body);
+  const user = await userService.createUser(req.body);
   // generate access and refresh token
   const tokens = await tokenService.generateAuthTokens(user._id);
   // send response
@@ -204,7 +196,6 @@ const verifyEmail = asyncHandler(async (req, res, next) => {
 
 // Module exports
 module.exports = {
-  profile,
   register,
   login,
   logout,

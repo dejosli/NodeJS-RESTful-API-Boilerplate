@@ -6,6 +6,7 @@ const httpStatus = require('http-status');
 const { SuccessResponse } = require('../../utils/SuccessResponse');
 const docsRoutes = require('./docsRoutes');
 const authRoutes = require('./authRoutes');
+const userRoutes = require('./userRoutes');
 
 const router = express.Router();
 
@@ -14,6 +15,9 @@ router.use('/docs', docsRoutes);
 
 // mount authentication routes
 router.use('/auth', authRoutes);
+
+// mount users routes
+router.use('/users', userRoutes);
 
 /**
  * @swagger

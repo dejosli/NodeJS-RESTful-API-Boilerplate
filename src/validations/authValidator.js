@@ -1,11 +1,10 @@
 // External module imports
-const { body, param, query } = require('express-validator');
+const { body, query } = require('express-validator');
 
 // Internal module imports
 const {
   isUsernameTaken,
   isEmailTaken,
-  isObjectId,
   isInRoles,
 } = require('./customValidator');
 
@@ -94,8 +93,6 @@ const verifyEmail = query('token')
   .isJWT()
   .withMessage('Invalid token');
 
-const profile = [param('userId').custom(isObjectId)];
-
 // Module exports
 module.exports = {
   login,
@@ -103,5 +100,4 @@ module.exports = {
   forgotPassword,
   resetPassword,
   verifyEmail,
-  profile,
 };
