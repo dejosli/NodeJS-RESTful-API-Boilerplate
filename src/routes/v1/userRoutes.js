@@ -19,13 +19,13 @@ const router = express.Router();
 // mount routes
 router
   .route('/')
-  // .get(
-  //   userValidator.getUsers,
-  //   validate,
-  //   authorizeAccessToken,
-  //   authorizeUsersReadPermission,
-  //   userController.getUsers
-  // )
+  .get(
+    userValidator.getUsers,
+    validate,
+    authorizeAccessToken,
+    authorizeUsersReadPermission,
+    userController.getUsers
+  )
   .post(
     userValidator.createUser,
     validate,
@@ -41,15 +41,21 @@ router
     authorizeAccessToken,
     authorizeUsersReadPermission,
     userController.getUser
+  )
+  .put(
+    userValidator.updateUser,
+    validate,
+    authorizeAccessToken,
+    authorizeUsersUpdatePermission,
+    userController.updateUser
+  )
+  .delete(
+    userValidator.deleteUser,
+    validate,
+    authorizeAccessToken,
+    authorizeUsersDeletePermission,
+    userController.deleteUser
   );
-//   .put(
-//     userValidator,
-//     validate,
-//     authorizeAccessToken,
-//     authorizeUsersUpdatePermission,
-//     userController
-//   )
-//   .delete(authorizeAccessToken, authorizeUsersDeletePermission, userController);
 
 // Module exports
 module.exports = router;

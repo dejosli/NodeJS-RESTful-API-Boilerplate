@@ -1,6 +1,6 @@
 // External module imports
 const mongoose = require('mongoose');
-const obj = require('express-validator');
+
 // Internal module imports
 const { User } = require('../models');
 const { allRoles, roles } = require('../config/roles');

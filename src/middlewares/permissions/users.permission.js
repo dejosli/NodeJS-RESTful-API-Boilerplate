@@ -24,7 +24,6 @@ const resourceTypes = {
 /**
  * Define roles and grants one by one
  */
-
 // user role permissions
 roleRights
   .grant(allRoles.USER.value)
@@ -44,28 +43,54 @@ roleRights
 /**
  * Define action rules for the permission
  */
-const grantRules = function (...actions) {
+const grantRules = function (actionAny, actionOwn) {
   return asyncHandler(async (req, res, next) => {
-    const [readAny, readOwn] = actions; // array destructuring
+    let { user } = req;
+    let hasPermission;
     let hasRoleAccess = false;
-    // check whether loggedIn user itself
-    const hasPermission =
-      req.user.id === req.params.userId
-        ? roleRights.can(req.user.role)[readOwn](resourceTypes.USER.value)
-        : roleRights.can(req.user.role)[readAny](resourceTypes.USER.value);
 
-    if (hasPermission.granted) {
-      const user = await userService.getUserById(req.params.userId);
-      hasRoleAccess =
-        allRoles[req.user.role].level > allRoles[user.role].level ||
-        allRoles[req.user.role].level === allRoles.ADMIN.level;
-      req.user = user;
+    // if there is no parameters named usedId
+    if (!req.params.userId) {
+      hasPermission = roleRights
+        .can(req.user.role)
+        [actionAny](resourceTypes.USER.value);
+      hasRoleAccess = !!hasPermission.granted;
     }
+
+    // if loggedIn user access himself
+    if (req.params.userId && req.user.id === req.params.userId) {
+      hasPermission = roleRights
+        .can(req.user.role)
+        [actionOwn](resourceTypes.USER.value);
+      hasRoleAccess = !!hasPermission.granted;
+    }
+
+    // if loggedIn user access others
+    if (req.params.userId && req.user.id !== req.params.userId) {
+      hasPermission = roleRights
+        .can(req.user.role)
+        [actionAny](resourceTypes.USER.value);
+      if (hasPermission.granted) {
+        user = await userService.getUserById(req.params.userId);
+        hasRoleAccess =
+          allRoles[req.user.role].level > allRoles[user.role].level ||
+          allRoles[req.user.role].level === allRoles.ADMIN.level;
+      }
+    }
+
+    // if loggedIn user updating role
+    if (req.params.userId && hasRoleAccess && req.body.role) {
+      hasRoleAccess =
+        allRoles[req.user.role].level > allRoles[req.body.role].level ||
+        allRoles[req.user.role].level === allRoles.ADMIN.level;
+    }
+
     // check whether loggedIn user is allowed to access
     if (hasRoleAccess) {
       permissionObject.allow = true;
       permissionObject.attributes = hasPermission.attributes;
       permissionObject.resource = resourceTypes.USER.value;
+      req.user = user;
       req.permission = permissionObject;
     }
     next();
@@ -76,6 +101,7 @@ const grantUsersCreateRules = asyncHandler(async (req, res, next) => {
   const hasPermission = roleRights
     .can(req.user.role)
     .createAny(resourceTypes.USER.value);
+
   const hasRoleAccess =
     allRoles[req.user.role].level > allRoles[req.body.role].level ||
     allRoles[req.user.role].level === allRoles.ADMIN.level;

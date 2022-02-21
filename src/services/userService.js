@@ -21,6 +21,11 @@ const createUser = async (userBody) => {
   return user;
 };
 
+const queryUsers = async (filter, options) => {
+  const users = await User.find(filter);
+  return users;
+};
+
 /**
  * Get user by id
  * @param {string} userId
@@ -51,9 +56,19 @@ const updateUserById = async (userId, updateBody) => {
   return user;
 };
 
+const deleteUserById = async (userId) => {
+  const user = await User.findByIdAndDelete(userId);
+  if (!user) {
+    throw new ErrorResponse(httpStatus.NOT_FOUND, 'User deletion failed');
+  }
+  return user;
+};
+
 // Module exports
 module.exports = {
   createUser,
+  queryUsers,
   getUserById,
   updateUserById,
+  deleteUserById,
 };
