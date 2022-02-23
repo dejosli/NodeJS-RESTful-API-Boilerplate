@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 
 // Internal module imports
 const config = require('../config/config');
-const { toJSON } = require('./plugins');
+const { toJSON, paginate } = require('./plugins');
 const { allRoles, roles } = require('../config/roles');
 
 /**
@@ -52,11 +52,18 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+// create a text index
+userSchema.index({
+  name: 'text',
+  email: 'text',
+  role: 'text',
+});
 
 /**
  * Plugins
  */
 userSchema.plugin(toJSON);
+userSchema.plugin(paginate.offsetBasedPaginate);
 
 /**
  * Hooks

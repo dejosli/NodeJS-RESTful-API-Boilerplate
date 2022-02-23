@@ -39,11 +39,36 @@ const getUser = asyncHandler(async (req, res, next) => {
  * @access Private
  */
 const getUsers = asyncHandler(async (req, res, next) => {
-  const users = await userService.queryUsers({});
+  // eslint-disable-next-line camelcase
+  const { include_meta: meta } = req.query;
+  const { docs: users, ...paginator } = await userService.queryUsers(req.query);
+
+  let prevPage;
+  let nextPage;
+
+  const currentPage = `${req.baseUrl}?page=${paginator.page}&limit=${paginator.limit}&include_meta=${meta}`;
+
+  if (paginator.hasPrevPage) {
+    prevPage = `${req.baseUrl}?page=${paginator.prevPage}&limit=${paginator.limit}&include_meta=${meta}`;
+  }
+  if (paginator.hasNextPage) {
+    nextPage = `${req.baseUrl}?page=${paginator.nextPage}&limit=${paginator.limit}&include_meta=${meta}`;
+  }
+  const links = { prevPage, currentPage, nextPage };
+
+  // set response headers
+  res.header('Links', new URLSearchParams(links));
+  res.header('totalPages', paginator.totalPages);
+  // send response
   res.status(httpStatus.OK).json(
-    new SuccessResponse(httpStatus.OK, httpStatus[httpStatus.OK], {
-      users,
-    })
+    new SuccessResponse(
+      httpStatus.OK,
+      httpStatus[httpStatus.OK],
+      {
+        users,
+      },
+      { ...paginator, links }
+    )
   );
 });
 

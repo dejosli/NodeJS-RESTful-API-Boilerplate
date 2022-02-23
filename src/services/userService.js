@@ -21,9 +21,50 @@ const createUser = async (userBody) => {
   return user;
 };
 
-const queryUsers = async (filter, options) => {
-  const users = await User.find(filter);
-  return users;
+/**
+ * Get users
+ * @param {Object<Request.query>} query
+ * @returns {Promise<Object>}
+ */
+const queryUsers = async (query) => {
+  const filter =
+    query.search && query.search !== undefined
+      ? {
+          $match: {
+            $text: {
+              $search: query.search,
+              $caseSensitive: false,
+              $diacriticSensitive: true,
+            },
+          },
+        }
+      : {
+          $match: {},
+        };
+
+  const pipeline = [
+    filter,
+    {
+      $project: {
+        id: '$_id',
+        _id: 0,
+        name: 1,
+        username: 1,
+        email: 1,
+        role: 1,
+        isEmailVerified: 1,
+      },
+    },
+  ];
+
+  const options = {
+    ...query,
+    sortBy: { name: query?.name, role: query?.role },
+    countQuery: filter,
+    meta: query.include_meta,
+  };
+
+  return User.offsetPaginate(pipeline, options);
 };
 
 /**

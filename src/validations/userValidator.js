@@ -49,17 +49,15 @@ const createUser = [
 ];
 
 const getUsers = [
-  // query('name'),
-  // query('role'),
-  // query('sortBy'),
-  query('limit').optional().isDecimal({
-    force_decimal: true,
-    decimal_digits: '20,100',
-    locale: 'en-US',
-  }),
-  query('page')
+  query('search').optional().notEmpty().trim().escape(),
+  query('name').optional().notEmpty().isIn(['asc', 'desc']).trim().escape(),
+  query('role').optional().notEmpty().isIn(['asc', 'desc']).trim().escape(),
+  query('offset').optional().isInt({ min: 0, allow_leading_zeroes: false }),
+  query('page').optional().isInt({ gt: 0, allow_leading_zeroes: false }),
+  query('limit')
     .optional()
-    .isDecimal({ force_decimal: true, decimal_digits: '1,', locale: 'en-US' }),
+    .isInt({ min: 2, max: 10, allow_leading_zeroes: false }),
+  query('include_meta').optional().isBoolean(),
 ];
 
 const getUser = param('userId').custom(isObjectId);
