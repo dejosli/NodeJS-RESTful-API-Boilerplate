@@ -10,6 +10,7 @@ const {
   tokenService,
   emailService,
 } = require('../services');
+const { Token } = require('../models');
 
 /**
  * @desc Register user
@@ -194,6 +195,26 @@ const verifyEmail = asyncHandler(async (req, res, next) => {
     );
 });
 
+/**
+ * @desc Login user
+ * @route GET /api/v1/auth/<provider>/callback
+ * @access Public
+ */
+const oauthLogin = asyncHandler(async (req, res, next) => {
+  // if refresh_token already exists
+  await Token.deleteOneToken({ userId: req.user._id });
+  // generate and save tokens
+  const tokens = await tokenService.generateAuthTokens(req.user._id);
+  // send response
+  sendTokenResponse(
+    res,
+    null,
+    tokens,
+    httpStatus.OK,
+    'You logged in successfully'
+  );
+});
+
 // Module exports
 module.exports = {
   register,
@@ -204,4 +225,5 @@ module.exports = {
   resetPassword,
   sendVerificationEmail,
   verifyEmail,
+  oauthLogin,
 };

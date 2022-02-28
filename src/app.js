@@ -52,6 +52,7 @@ app.use(cors(corsOptionsDelegate));
 
 // passport config
 app.use(passport.initialize());
+require('./config/passportOAuth')(passport);
 
 // mount api v1 routes
 app.use('/api/v1', routes);

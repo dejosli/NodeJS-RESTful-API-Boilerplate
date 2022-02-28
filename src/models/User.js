@@ -9,7 +9,6 @@ const { allRoles, roles } = require('../config/roles');
 
 /**
  * User Schema
- * @private
  */
 const userSchema = new mongoose.Schema(
   {
@@ -32,7 +31,7 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
+      required: false,
       minLength: 8,
       trim: true,
       select: false,
@@ -43,9 +42,24 @@ const userSchema = new mongoose.Schema(
       enum: roles,
       default: allRoles.USER.value,
     },
+    profilePicture: {
+      // link
+      type: String,
+      required: false,
+      trim: true,
+      default: '',
+    },
     isEmailVerified: {
       type: Boolean,
       default: false,
+    },
+    OAuthProvider: {
+      type: String,
+      required: false,
+    },
+    OAuthID: {
+      type: String,
+      required: false,
     },
   },
   {
@@ -110,7 +124,7 @@ userSchema.pre(
 /**
  * @desc Check if username already exists in the database
  * @param {string} username
- * @returns {Promise<boolean>}
+ * @returns {Promise<User>}
  */
 userSchema.statics.findByUsername = async function (username) {
   return this.findOne({ username });
@@ -119,21 +133,39 @@ userSchema.statics.findByUsername = async function (username) {
 /**
  * @desc Check if email already exists in the database
  * @param {string} email
- * @returns {Promise<boolean>}
+ * @returns {Promise<User>}
  */
 userSchema.statics.findByEmail = async function (email) {
   return this.findOne({ email });
 };
 
 /**
+ * @desc Check if email already exists in the database
+ * @param {string} OAuthID
+ * @returns {Promise<User>}
+ */
+userSchema.statics.findByOAuthID = async function (OAuthID) {
+  return this.findOne({ OAuthID });
+};
+
+/**
  * Check if email is taken
  * @param {string} email - The user's email
  * @param {ObjectId} [excludeUserId] - The id of the user to be excluded
- * @returns {Promise<boolean>}
+ * @returns {Promise<User>}
  */
 userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
-  const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
-  return !!user;
+  return this.findOne({ email, _id: { $ne: excludeUserId } });
+};
+
+userSchema.statics.generateUniqueUsername = async function (givenName) {
+  let proposedName = givenName;
+  const user = await this.findOne({ username: proposedName });
+  if (user) {
+    proposedName += Math.floor(Math.random() * 100 + 1);
+    return this.generateUniqueUsername(proposedName);
+  }
+  return proposedName;
 };
 
 /**

@@ -1,5 +1,6 @@
 // External module imports
 const express = require('express');
+const passport = require('passport');
 
 // Internal module imports
 const validate = require('../../middlewares/validate');
@@ -11,6 +12,10 @@ const {
   authorizeResetPasswordToken,
   authorizeVerifyEmailToken,
 } = require('../../middlewares/auth');
+const {
+  authorizeGoogleOAuth,
+  authorizeFacebookOAuth,
+} = require('../../middlewares/OAuth');
 
 // init express router
 const router = express.Router();
@@ -53,6 +58,26 @@ router.post(
   validate,
   authorizeVerifyEmailToken,
   authController.verifyEmail
+);
+// mount google oauth routes
+router.get(
+  '/google',
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+  })
+);
+router.get('/google/callback', authorizeGoogleOAuth, authController.oauthLogin);
+// mount facebook oauth routes
+router.get(
+  '/facebook',
+  passport.authenticate('facebook', {
+    scope: ['email'],
+  })
+);
+router.get(
+  '/facebook/callback',
+  authorizeFacebookOAuth,
+  authController.oauthLogin
 );
 
 // Module exports
