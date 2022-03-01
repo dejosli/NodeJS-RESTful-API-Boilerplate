@@ -11,7 +11,7 @@ const userRoutes = require('./userRoutes');
 const router = express.Router();
 
 // mount swagger docs routes
-router.use('/docs', docsRoutes);
+router.use('/api-docs', docsRoutes);
 
 // mount authentication routes
 router.use('/auth', authRoutes);
@@ -28,7 +28,7 @@ router.use('/users', userRoutes);
 
 /**
  * @swagger
- * /api/v1/ping:
+ * /ping:
  *  get:
  *    summary: Checks if the server is running
  *    tags: [Default]
