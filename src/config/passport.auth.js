@@ -1,6 +1,5 @@
 // External module imports
 const { Strategy, ExtractJwt } = require('passport-jwt');
-const passport = require('passport');
 
 // Internal module imports
 const config = require('./config');
@@ -164,11 +163,11 @@ jwtStrategy.VERIFY_EMAIL = new Strategy(
   }
 );
 
-// Register Passport Strategy
-passport.use('jwt_access', jwtStrategy.ACCESS);
-passport.use('jwt_refresh', jwtStrategy.REFRESH);
-passport.use('jwt_resetPassword', jwtStrategy.RESET_PASSWORD);
-passport.use('jwt_verifyEmail', jwtStrategy.VERIFY_EMAIL);
-
 // Module exports
-module.exports = passport;
+module.exports = (passport) => {
+  // Register Passport Strategy
+  passport.use('jwt_access', jwtStrategy.ACCESS);
+  passport.use('jwt_refresh', jwtStrategy.REFRESH);
+  passport.use('jwt_resetPassword', jwtStrategy.RESET_PASSWORD);
+  passport.use('jwt_verifyEmail', jwtStrategy.VERIFY_EMAIL);
+};

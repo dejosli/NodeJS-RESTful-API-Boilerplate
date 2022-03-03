@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cors = require('cors');
+const passport = require('passport');
 const methodOverride = require('method-override');
 const cookieParser = require('cookie-parser');
 const mongoSanitize = require('express-mongo-sanitize');
@@ -15,7 +16,6 @@ const morgan = require('./config/morgan');
 const routes = require('./routes/v1');
 const errorHandler = require('./middlewares/common/errorHandler');
 const notFoundHandler = require('./middlewares/common/notFoundHandler');
-const passport = require('./config/passport');
 
 // create express app
 const app = express();
@@ -51,8 +51,10 @@ app.use(compression);
 app.use(cors(corsOptionsDelegate));
 
 // passport config
+require('./config/passport.auth')(passport);
+require('./config/passport.oauth')(passport);
+
 app.use(passport.initialize());
-require('./config/passportOAuth')(passport);
 
 // mount api v1 routes
 app.use('/api/v1', routes);

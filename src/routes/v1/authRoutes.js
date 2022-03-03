@@ -15,7 +15,7 @@ const {
 const {
   authorizeGoogleOAuth,
   authorizeFacebookOAuth,
-} = require('../../middlewares/OAuth');
+} = require('../../middlewares/oauth');
 
 // init express router
 const router = express.Router();
