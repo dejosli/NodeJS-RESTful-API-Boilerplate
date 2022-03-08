@@ -4,13 +4,14 @@ const httpStatus = require('http-status');
 
 // Internal module imports
 const { SuccessResponse } = require('../../utils');
+
 const docsRoutes = require('./docsRoutes');
 const authRoutes = require('./authRoutes');
 const userRoutes = require('./userRoutes');
 
 const router = express.Router();
 
-// mount swagger docs routes
+// mount documentation routes
 router.use('/api-docs', docsRoutes);
 
 // mount authentication routes

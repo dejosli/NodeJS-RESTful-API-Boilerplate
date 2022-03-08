@@ -52,6 +52,9 @@ const envVarsSchema = Joi.object()
     ),
     FACEBOOK_APP_ID: Joi.string().description('facebook OAuth app id'),
     FACEBOOK_APP_SECRET: Joi.string().description('facebook OAuth app secret'),
+    TWILIO_ACCOUNT_SID: Joi.string().description('twilio account id'),
+    TWILIO_AUTH_TOKEN: Joi.string().description('twilio account auth token'),
+    TWILIO_NUMBER: Joi.string().description('twilio phone number'),
   })
   .unknown();
 
@@ -99,5 +102,10 @@ module.exports = {
   facebook: {
     clientID: envVars.FACEBOOK_APP_ID,
     clientSecret: envVars.FACEBOOK_APP_SECRET,
+  },
+  twilio: {
+    accountSid: envVars.TWILIO_ACCOUNT_SID,
+    authToken: envVars.TWILIO_AUTH_TOKEN,
+    phoneNumber: envVars.TWILIO_NUMBER,
   },
 };

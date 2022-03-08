@@ -60,6 +60,7 @@
     "pm2": "^5.1.2",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.3.0",
+    "twilio": "^3.75.0",
     "winston": "^3.4.0",
     "xss-clean": "^0.1.1"
   },
