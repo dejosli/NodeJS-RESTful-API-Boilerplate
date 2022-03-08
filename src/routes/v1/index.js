@@ -4,6 +4,7 @@ const httpStatus = require('http-status');
 
 // Internal module imports
 const { SuccessResponse } = require('../../utils');
+const authLimiter = require('../../middlewares/authLimiter');
 
 const docsRoutes = require('./docsRoutes');
 const authRoutes = require('./authRoutes');
@@ -15,7 +16,7 @@ const router = express.Router();
 router.use('/api-docs', docsRoutes);
 
 // mount authentication routes
-router.use('/auth', authRoutes);
+router.use('/auth', authLimiter, authRoutes);
 
 // mount users routes
 router.use('/users', userRoutes);
