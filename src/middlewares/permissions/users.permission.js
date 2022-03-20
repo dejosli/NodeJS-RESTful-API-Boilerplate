@@ -103,7 +103,7 @@ const grantUsersCreateRules = asyncHandler(async (req, res, next) => {
     .createAny(resourceTypes.USER.value);
 
   const hasRoleAccess =
-    allRoles[req.user.role].level > allRoles[req.body.role].level ||
+    allRoles[req.user.role].level > allRoles[req.body?.role]?.level ||
     allRoles[req.user.role].level === allRoles.ADMIN.level;
 
   // check whether loggedIn user is allowed to access

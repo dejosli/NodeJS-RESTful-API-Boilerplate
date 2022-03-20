@@ -9,8 +9,6 @@ const {
   isInRoles,
 } = require('./customValidator');
 
-const role = body('role').optional().custom(isInRoles).trim().escape();
-
 const createUser = [
   body('name')
     .isLength({ min: 1 })
@@ -45,7 +43,7 @@ const createUser = [
     .withMessage(
       'Password should contain at least 1 lowercase, 1 uppercase, 1 number & 1 symbol'
     ),
-  role,
+  body('role').custom(isInRoles).trim().escape(),
 ];
 
 const getUsers = [
@@ -90,7 +88,7 @@ const updateUser = [
     .withMessage(
       'Password should contain at least 1 lowercase, 1 uppercase, 1 number & 1 symbol'
     ),
-  role,
+  body('role').optional().custom(isInRoles).trim().escape(),
 ];
 
 const deleteUser = param('userId').custom(isObjectId);

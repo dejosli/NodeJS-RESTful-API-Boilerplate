@@ -21,6 +21,7 @@
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --check **/*.js",
     "prettier:fix": "prettier --write **/*.js",
+    "validate": "yarn lint:fix && yarn prettier:fix",
     "prepare": "husky install",
     "commit": "cz"
   },

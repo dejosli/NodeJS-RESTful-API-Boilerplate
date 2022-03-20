@@ -21,25 +21,8 @@ router.use('/auth', authLimiter, authRoutes);
 // mount users routes
 router.use('/users', userRoutes);
 
-/**
- * @swagger
- * tags:
- *   name: Default
- *   description: Default documentation description
- */
-
-/**
- * @swagger
- * /ping:
- *  get:
- *    summary: Checks if the server is running
- *    tags: [Default]
- *    responses:
- *      200:
- *        description: Server is up and running
- */
 router.get('/ping', (req, res, next) => {
-  res.status(httpStatus.OK).json(new SuccessResponse(httpStatus.OK, 'Pong!'));
+  res.status(httpStatus.OK).json(new SuccessResponse(httpStatus.OK, 'Pong!!'));
 });
 
 // Module exports

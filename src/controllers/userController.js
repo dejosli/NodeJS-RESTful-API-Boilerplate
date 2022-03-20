@@ -12,7 +12,9 @@ const { userService } = require('../services');
  * @access Private
  */
 const createUser = asyncHandler(async (req, res) => {
-  const user = await userService.createUser(req.body);
+  const { name, username, email, password, role } = req.body;
+  const newUser = { name, username, email, password, role };
+  const user = await userService.createUser(newUser);
   res.status(httpStatus.CREATED).json(
     new SuccessResponse(httpStatus.OK, httpStatus[httpStatus.OK], {
       user,
@@ -78,7 +80,14 @@ const getUsers = asyncHandler(async (req, res, next) => {
  * @access Private
  */
 const updateUser = asyncHandler(async (req, res, next) => {
-  const user = await userService.updateUserById(req.params.userId, req.body);
+  const { name, email, password, role } = req.body;
+  const updateBody = {
+    name,
+    email,
+    password,
+    role,
+  };
+  const user = await userService.updateUserById(req.params.userId, updateBody);
   res.status(httpStatus.OK).json(
     new SuccessResponse(httpStatus.OK, httpStatus[httpStatus.OK], {
       user,

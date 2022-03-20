@@ -38,7 +38,7 @@ The skeleton has many built-in features, such as authentication using JWT, reque
 
 ## Quick Start
 
-### Clone the repo and make it yours:
+### Clone the repo and make it yours
 
 ```bash
 git clone https://github.com/dejosli/NodeJS-RESTful-API-Boilerplate.git
@@ -46,13 +46,13 @@ cd NodeJS-RESTful-API-Boilerplate
 rm -rf .git
 ```
 
-### Install Yarn:
+### Install Yarn
 
 ```bash
 npm install -g yarn # if yarn is not installed
 ```
 
-### Install dependencies:
+### Install dependencies
 
 ```bash
 yarn install
@@ -60,7 +60,7 @@ or
 yarn install --frozen-lockfile # recommended
 ```
 
-### Set environment variables:
+### Set environment variables
 
 ```bash
 cp .env.example .env
@@ -92,13 +92,13 @@ cp .env.example .env
 
 ## How to Run
 
-### Running Locally:
+### Running Locally
 
 ```bash
 yarn dev
 ```
 
-### Running in Production:
+### Running in Production
 
 ```bash
 yarn start
@@ -106,7 +106,7 @@ yarn start
 
 ## Response Format
 
-### Success Response:
+### Success Response
 
 ```json
 {
@@ -117,7 +117,7 @@ yarn start
 }
 ```
 
-### Error Response:
+### Error Response
 
 ```json
 {
@@ -135,7 +135,7 @@ yarn start
 
 ## Commands
 
-### Linting:
+### Linting
 
 Linting is done using [ESLint](https://eslint.org/) and [Prettier](https://prettier.io).
 
@@ -161,7 +161,7 @@ To prevent a certain file or directory from being linted, add it to `.eslintigno
 
 To maintain a consistent coding style across different IDEs, the project contains `.editorconfig`
 
-### Testing:
+### Testing
 
 ```bash
 # run all tests
@@ -177,7 +177,7 @@ yarn test:coverage
 yarn test:coveralls
 ```
 
-### Conventional Commits:
+### Conventional Commits
 
 ```bash
 # add all changes to staged
@@ -187,7 +187,7 @@ git add .
 yarn commit
 ```
 
-### Husky Install:
+### Husky Install
 
 ```bash
 yarn prepare
