@@ -1,6 +1,7 @@
 // External module imports
 const httpStatus = require('http-status');
 const mongoose = require('mongoose');
+const multer = require('multer');
 
 // Internal module imports
 const { ErrorResponse } = require('../../utils');
@@ -20,7 +21,9 @@ const errorHandler = function (err, req, res, next) {
 
   if (!isOperationalError(err)) {
     const statusCode =
-      error.statusCode || error instanceof mongoose.Error
+      error.statusCode ||
+      error instanceof mongoose.Error ||
+      error instanceof multer.MulterError
         ? httpStatus.BAD_REQUEST
         : httpStatus.INTERNAL_SERVER_ERROR;
     const message = error.message || httpStatus[statusCode];

@@ -1,6 +1,6 @@
 {
   "name": "NodeJS-RESTful-API-Boilerplate",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "main": "index.js",
   "repository": "https://github.com/dejosli/NodeJS-RESTful-API-Boilerplate.git",
   "author": "Josli Shubho Biswas <bjoslishubho@gmail.com>",
@@ -42,6 +42,7 @@
     "express-session": "^1.17.2",
     "express-slow-down": "^1.4.0",
     "express-validator": "^6.14.0",
+    "fs-extra": "^10.0.1",
     "helmet": "^5.0.1",
     "hpp": "^0.2.3",
     "http-status": "^1.5.0",
@@ -83,7 +84,7 @@
     "lint-staged": "^12.1.7",
     "nodemon": "^2.0.15",
     "prettier": "^2.5.1",
-    "supertest": "^6.2.1"
+    "supertest": "^6.2.2"
   },
   "config": {
     "commitizen": {

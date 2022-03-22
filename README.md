@@ -7,19 +7,20 @@ The skeleton has many built-in features, such as authentication using JWT, reque
 
 - **NoSQL database**: [MongoDB](https://www.mongodb.com) object data modeling using [Mongoose](https://mongoosejs.com)
 - **Authentication and authorization**: using [JWT](https://github.com/auth0/node-jsonwebtoken) and [Passport](http://www.passportjs.org)
+- **Two-factor authentication**: using [Speakeasy](https://github.com/speakeasyjs/speakeasy)
 - **Validation**: request data validation using [Express Validator](https://github.com/express-validator/express-validator) and environment vars validation with [Joi](https://github.com/hapijs/joi)
-- **File uploading**: using [Multer](https://github.com/expressjs/multer)
+- **Files uploading**: using [Multer](https://github.com/expressjs/multer)
 - **Email sending**: using [Nodemailer](https://nodemailer.com/about/)
-- **SMS sending**: using [Axios](https://axios-http.com/docs/intro)
+- **SMS sending**: using [Twilio](https://github.com/twilio/twilio-node)
 - **Logging**: using [Winston](https://github.com/winstonjs/winston) and [Morgan](https://github.com/expressjs/morgan)
-- **Testing**: unit and integration tests using [Jest](https://jestjs.io)
+- **Testing**: unit and integration tests using [Jest](https://jestjs.io) and [SuperTest](https://github.com/visionmedia/supertest)
 - **Error handling**: centralized error handling mechanism
 - **API documentation**: with [swagger-jsdoc](https://github.com/Surnet/swagger-jsdoc) and [swagger-ui-express](https://github.com/scottie1984/swagger-ui-express) `or` with [Postman](https://www.postman.com/) and [docgen](https://github.com/thedevsaddam/docgen)
 - **Process management**: advanced production process management using [PM2](https://pm2.keymetrics.io)
 - **Dependency management**: with [Yarn](https://yarnpkg.com)
 - **Environment variables**: using [dotenv](https://github.com/motdotla/dotenv) and [cross-env](https://github.com/kentcdodds/cross-env#readme)
 - **Security**: set security HTTP headers using [Helmet](https://helmetjs.github.io)
-- **Santizing**: sanitize request data against xss and query injection
+- **Sanitizing**: sanitize request data against xss and query injection
 - **CORS**: Cross-Origin Resource-Sharing enabled using [Cors](https://github.com/expressjs/cors)
 - **Compression**: gzip compression with [Compression](https://github.com/expressjs/compression)
 - **CI**: continuous integration with [Github actions](https://travis-ci.org)
