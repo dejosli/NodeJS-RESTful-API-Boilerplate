@@ -24,7 +24,7 @@ const createUser = async (userBody) => {
 /**
  * Get users
  * @param {Object<Request.query>} query
- * @returns {Promise<Object>}
+ * @returns {Promise<object>}
  */
 const queryUsers = async (query) => {
   const filter =
@@ -52,6 +52,7 @@ const queryUsers = async (query) => {
         username: 1,
         email: 1,
         role: 1,
+        profilePicture: 1,
         isEmailVerified: 1,
       },
     },

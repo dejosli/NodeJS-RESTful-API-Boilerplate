@@ -13,6 +13,7 @@ const {
   authorizeUsersUpdatePermission,
   authorizeUsersDeletePermission,
 } = require('../../middleware/permissions/users.permission');
+const profilePicUpload = require('../../middleware/users/profilePicUpload');
 
 // init express router
 const router = express.Router();
@@ -21,15 +22,14 @@ const router = express.Router();
 router
   .route('/')
   .get(
-    userValidator.getUsers,
-    validate,
+    [userValidator.getUsers, validate],
     authorizeAccessToken,
     authorizeUsersReadPermission,
     userController.getUsers
   )
   .post(
-    userValidator.createUser,
-    validate,
+    profilePicUpload,
+    [userValidator.createUser, validate],
     authorizeAccessToken,
     authorizeUsersCreatePermission,
     userController.createUser
@@ -37,22 +37,19 @@ router
 router
   .route('/:userId')
   .get(
-    userValidator.getUser,
-    validate,
+    [userValidator.getUser, validate],
     authorizeAccessToken,
     authorizeUsersReadPermission,
     userController.getUser
   )
   .put(
-    userValidator.updateUser,
-    validate,
+    [userValidator.updateUser, validate],
     authorizeAccessToken,
     authorizeUsersUpdatePermission,
     userController.updateUser
   )
   .delete(
-    userValidator.deleteUser,
-    validate,
+    [userValidator.deleteUser, validate],
     authorizeAccessToken,
     authorizeUsersDeletePermission,
     userController.deleteUser

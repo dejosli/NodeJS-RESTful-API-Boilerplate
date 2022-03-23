@@ -15,6 +15,7 @@ const {
   authorizeGoogleOAuth,
   authorizeFacebookOAuth,
 } = require('../../middleware/authentication/oauth');
+const profilePicUpload = require('../../middleware/users/profilePicUpload');
 
 // init express router
 const router = express.Router();
@@ -22,11 +23,11 @@ const router = express.Router();
 // mount routes
 router.post(
   '/register',
-  authValidator.register,
-  validate,
+  profilePicUpload,
+  [authValidator.register, validate],
   authController.register
 );
-router.post('/login', authValidator.login, validate, authController.login);
+router.post('/login', [authValidator.login, validate], authController.login);
 router.delete('/logout', authorizeAccessToken, authController.logout);
 router.get(
   '/refresh-tokens',
@@ -35,14 +36,12 @@ router.get(
 );
 router.post(
   '/forgot-password',
-  authValidator.forgotPassword,
-  validate,
+  [authValidator.forgotPassword, validate],
   authController.forgotPassword
 );
 router.post(
   '/reset-password',
-  authValidator.resetPassword,
-  validate,
+  [authValidator.resetPassword, validate],
   authorizeResetPasswordToken,
   authController.resetPassword
 );
@@ -53,8 +52,7 @@ router.post(
 );
 router.post(
   '/verify-email',
-  authValidator.verifyEmail,
-  validate,
+  [authValidator.verifyEmail, validate],
   authorizeVerifyEmailToken,
   authController.verifyEmail
 );

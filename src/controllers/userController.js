@@ -13,8 +13,12 @@ const { userService } = require('../services');
  */
 const createUser = asyncHandler(async (req, res) => {
   const { name, username, email, password, role } = req.body;
-  const newUser = { name, username, email, password, role };
+  const { path: profilePicture } = req.file;
+  // define user object
+  const newUser = { name, username, email, password, role, profilePicture };
+  // create a new user
   const user = await userService.createUser(newUser);
+  // send response
   res.status(httpStatus.CREATED).json(
     new SuccessResponse(httpStatus.OK, httpStatus[httpStatus.OK], {
       user,
