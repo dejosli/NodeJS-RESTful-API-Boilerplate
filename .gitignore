@@ -23,7 +23,10 @@ build
 *#
 ssl
 .idea
+.vscode
 nbproject
+uploads/*
+!uploads/.gitkeep
 public/uploads/*
 !public/uploads/.gitkeep
 

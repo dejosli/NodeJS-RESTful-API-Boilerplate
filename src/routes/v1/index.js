@@ -4,7 +4,7 @@ const httpStatus = require('http-status');
 
 // Internal module imports
 const { SuccessResponse } = require('../../utils');
-const authLimiter = require('../../middlewares/authLimiter');
+const authLimiter = require('../../middleware/authentication/authLimiter');
 
 const docsRoutes = require('./docsRoutes');
 const authRoutes = require('./authRoutes');

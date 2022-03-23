@@ -14,8 +14,8 @@ const compression = require('./config/compression');
 const corsOptionsDelegate = require('./config/cors');
 const morgan = require('./config/morgan');
 const routes = require('./routes/v1');
-const errorHandler = require('./middlewares/common/errorHandler');
-const notFoundHandler = require('./middlewares/common/notFoundHandler');
+const errorHandler = require('./middleware/common/errorHandler');
+const notFoundHandler = require('./middleware/common/notFoundHandler');
 
 // create express app
 const app = express();
@@ -51,8 +51,8 @@ app.use(compression);
 app.use(cors(corsOptionsDelegate));
 
 // passport config
-require('./config/passport.auth')(passport);
-require('./config/passport.oauth')(passport);
+require('./config/passport-auth')(passport);
+require('./config/passport-oauth')(passport);
 
 app.use(passport.initialize());
 

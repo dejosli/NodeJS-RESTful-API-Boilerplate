@@ -1,12 +1,3 @@
-// remove undefined field (property) from one-level object
-const removeUndefined = (obj) => {
-  const newObj = { ...obj };
-  Object.keys(newObj).forEach(
-    (key) => newObj[key] === undefined && delete newObj[key]
-  );
-  return newObj;
-};
-
 // remove undefined field (property) from nested objects
 const cleanedObject = (obj) => {
   const newObj = {};
@@ -18,4 +9,4 @@ const cleanedObject = (obj) => {
 };
 
 // Module exports
-module.exports = { removeUndefined, cleanedObject };
+module.exports = cleanedObject;

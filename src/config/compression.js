@@ -1,3 +1,4 @@
+// External module imports
 const compression = require('compression');
 
 // Compress all HTTP responses
@@ -10,6 +11,7 @@ const shouldCompress = (req, res) => {
   return compression.filter(req, res);
 };
 
+// Module exports
 module.exports = compression({
   // filter: Decide if the answer should be compressed or not,
   // depending on the 'shouldCompress' function above

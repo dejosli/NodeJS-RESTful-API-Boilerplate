@@ -1,4 +1,7 @@
+// External module imports
 const morgan = require('morgan');
+
+// Internal module imports
 const config = require('./config');
 const logger = require('./logger');
 
@@ -19,6 +22,7 @@ const errorHandler = morgan(errorResponseFormat, {
   stream: { write: (message) => logger.error(message.trim()) },
 });
 
+// Module exports
 module.exports = {
   successHandler,
   errorHandler,

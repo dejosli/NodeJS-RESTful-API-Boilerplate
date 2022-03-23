@@ -4,7 +4,7 @@ const multer = require('multer');
 
 // Internal module imports
 const ErrorResponse = require('./ErrorResponse');
-const multerStorage = require('../config/multerStorage');
+const multerDiskStorage = require('../config/multer-disk-storage');
 
 const mappedErrors = (err) => {
   if (err.code === 'LIMIT_UNEXPECTED_FILE') {
@@ -22,6 +22,18 @@ const mappedErrors = (err) => {
   return errors;
 };
 
+const onErrorHandler = (err, next) => {
+  const errors = mappedErrors(err);
+  // pass the errors to next
+  return next(
+    new ErrorResponse(
+      httpStatus.BAD_REQUEST,
+      httpStatus[httpStatus.BAD_REQUEST],
+      errors
+    )
+  );
+};
+
 /**
  * Upload files to the specified destination
  * @param {string} subdirectory
@@ -29,13 +41,13 @@ const mappedErrors = (err) => {
  * @param {number} maxFileSize Max field value size (in bytes)
  * @param {string} errorMessage
  */
-const multerUpload = (
+const fileUpload = (
   subdirectory = '/tmp',
   allowedMimeTypes = [],
-  maxFileSize = 1048576
+  maxFileSize = 1048576 // 1 MB
 ) => {
   // init storage
-  const storage = multerStorage(subdirectory);
+  const storage = multerDiskStorage(subdirectory);
 
   // specifying the limits
   const limits = {
@@ -90,21 +102,13 @@ const singleFileUpload = (
   { subdirectory, allowedMimeTypes, maxFileSize }
 ) => {
   return (req, res, next) => {
-    const upload = multerUpload(subdirectory, allowedMimeTypes, maxFileSize);
+    const upload = fileUpload(subdirectory, allowedMimeTypes, maxFileSize);
     // invoke the middleware function
     upload.single(fieldName)(req, res, (err) => {
-      if (err) {
-        const errors = mappedErrors(err);
-        // pass the errors to next
-        return next(
-          new ErrorResponse(
-            httpStatus.BAD_REQUEST,
-            httpStatus[httpStatus.BAD_REQUEST],
-            errors
-          )
-        );
+      if (!err) {
+        return next();
       }
-      return next();
+      onErrorHandler(err, next);
     });
   };
 };
@@ -121,21 +125,13 @@ const manyFilesUpload = (
   { subdirectory, allowedMimeTypes, maxFileSize }
 ) => {
   return (req, res, next) => {
-    const upload = multerUpload(subdirectory, allowedMimeTypes, maxFileSize);
+    const upload = fileUpload(subdirectory, allowedMimeTypes, maxFileSize);
     // invoke the middleware function
     upload.array(fieldName, maxCount)(req, res, (err) => {
-      if (err) {
-        const errors = mappedErrors(err);
-        // pass the errors to next
-        return next(
-          new ErrorResponse(
-            httpStatus.BAD_REQUEST,
-            httpStatus[httpStatus.BAD_REQUEST],
-            errors
-          )
-        );
+      if (!err) {
+        return next();
       }
-      return next();
+      onErrorHandler(err, next);
     });
   };
 };
@@ -150,21 +146,13 @@ const mixedFilesUpload = (
   { subdirectory, allowedMimeTypes, maxFileSize }
 ) => {
   return (req, res, next) => {
-    const upload = multerUpload(subdirectory, allowedMimeTypes, maxFileSize);
+    const upload = fileUpload(subdirectory, allowedMimeTypes, maxFileSize);
     // invoke the middleware function
     upload.fields(fields)(req, res, (err) => {
-      if (err) {
-        const errors = mappedErrors(err);
-        // pass the errors to next
-        return next(
-          new ErrorResponse(
-            httpStatus.BAD_REQUEST,
-            httpStatus[httpStatus.BAD_REQUEST],
-            errors
-          )
-        );
+      if (!err) {
+        return next();
       }
-      return next();
+      onErrorHandler(err, next);
     });
   };
 };
@@ -172,7 +160,8 @@ const mixedFilesUpload = (
 // Module exports
 module.exports = {
   mappedErrors,
-  multerUpload,
+  onErrorHandler,
+  fileUpload,
   singleFileUpload,
   manyFilesUpload,
   mixedFilesUpload,

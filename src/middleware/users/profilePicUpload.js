@@ -11,7 +11,7 @@ const profilePicUpload = (req, res, next) => {
         message: 'Only .jpg, .jpeg or .png format allowed!',
       },
     ],
-    maxFileSize: 5242880, // 5 MB,
+    maxFileSize: 3145728, // 3 MB
   })(req, res, next);
 };
 

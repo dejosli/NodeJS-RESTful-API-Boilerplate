@@ -1,4 +1,7 @@
+// External module imports
 const winston = require('winston');
+
+// Internal module imports
 const config = require('./config');
 
 const enumerateErrorFormat = winston.format((info) => {
@@ -25,4 +28,5 @@ const logger = winston.createLogger({
   ],
 });
 
+// Module exports
 module.exports = logger;

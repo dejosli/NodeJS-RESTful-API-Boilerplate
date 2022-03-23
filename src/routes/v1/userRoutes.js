@@ -2,16 +2,17 @@
 const express = require('express');
 
 // Internal module imports
-const validate = require('../../middlewares/validate');
 const { userController } = require('../../controllers');
-const { userValidator } = require('../../validations');
-const { authorizeAccessToken } = require('../../middlewares/auth');
+const { userValidator, validate } = require('../../validations');
+const {
+  authorizeAccessToken,
+} = require('../../middleware/authentication/auth');
 const {
   authorizeUsersCreatePermission,
   authorizeUsersReadPermission,
   authorizeUsersUpdatePermission,
   authorizeUsersDeletePermission,
-} = require('../../middlewares/permissions/users.permission');
+} = require('../../middleware/permissions/users.permission');
 
 // init express router
 const router = express.Router();

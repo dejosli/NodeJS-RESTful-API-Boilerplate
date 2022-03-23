@@ -1,5 +1,7 @@
+// External module imports
 const mongoose = require('mongoose');
 
+// Internal module imports
 const config = require('./config');
 const logger = require('./logger');
 
@@ -13,7 +15,7 @@ const mongodb = {
   },
 };
 
-const connectDB = function () {
+const connectDB = () => {
   mongoose
     .connect(mongodb.url, mongoose.config)
     .then(() => {
@@ -30,4 +32,5 @@ const connectDB = function () {
     });
 };
 
+// Module exports
 module.exports = connectDB;

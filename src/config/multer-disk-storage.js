@@ -5,7 +5,7 @@ const multer = require('multer');
 const mongoose = require('mongoose');
 
 // file upload directory
-const UPLOAD_DIR = path.join(__dirname, '../../uploads');
+const UPLOAD_DIR = path.join(__dirname, '../../public/uploads');
 
 // define storage
 const storage = (subdirectory) => {

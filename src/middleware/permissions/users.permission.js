@@ -3,8 +3,8 @@ const AccessControl = require('accesscontrol');
 
 // Internal module imports
 const { allRoles } = require('../../config/roles');
-const { permissionObject } = require('../../utils');
-const grantAccess = require('../grantAccess');
+const { mappedPermissions } = require('../../utils');
+const grantAccess = require('./grantAccess');
 const asyncHandler = require('../common/asyncHandler');
 const { userService } = require('../../services');
 
@@ -24,6 +24,7 @@ const resourceTypes = {
 /**
  * Define roles and grants one by one
  */
+
 // user role permissions
 roleRights
   .grant(allRoles.USER.value)
@@ -43,6 +44,7 @@ roleRights
 /**
  * Define action rules for the permission
  */
+
 const grantRules = function (actionAny, actionOwn) {
   return asyncHandler(async (req, res, next) => {
     let { user } = req;
@@ -87,11 +89,12 @@ const grantRules = function (actionAny, actionOwn) {
 
     // check whether loggedIn user is allowed to access
     if (hasRoleAccess) {
-      permissionObject.allow = true;
-      permissionObject.attributes = hasPermission.attributes;
-      permissionObject.resource = resourceTypes.USER.value;
       req.user = user;
-      req.permission = permissionObject;
+      req.permission = mappedPermissions(
+        true,
+        resourceTypes.USER.value,
+        hasPermission.attributes
+      );
     }
     next();
   });
@@ -108,10 +111,11 @@ const grantUsersCreateRules = asyncHandler(async (req, res, next) => {
 
   // check whether loggedIn user is allowed to access
   if (hasPermission.granted && hasRoleAccess) {
-    permissionObject.allow = true;
-    permissionObject.attributes = hasPermission.attributes;
-    permissionObject.resource = resourceTypes.USER.value;
-    req.permission = permissionObject;
+    req.permission = mappedPermissions(
+      true,
+      resourceTypes.USER.value,
+      hasPermission.attributes
+    );
   }
   next();
 });

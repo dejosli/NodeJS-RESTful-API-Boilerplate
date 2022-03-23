@@ -9,17 +9,16 @@ const validate = (req, res, next) => {
   const errors = validationResult(req);
   const mappedErrors = errors.mapped();
   if (Object.keys(mappedErrors).length === 0) {
-    next();
-  } else {
-    // pass the errors to next
-    next(
-      new ErrorResponse(
-        httpStatus.BAD_REQUEST,
-        httpStatus[httpStatus.BAD_REQUEST],
-        mappedErrors
-      )
-    );
+    return next();
   }
+  // pass the errors to next
+  return next(
+    new ErrorResponse(
+      httpStatus.BAD_REQUEST,
+      httpStatus[httpStatus.BAD_REQUEST],
+      mappedErrors
+    )
+  );
 };
 
 // Module exports

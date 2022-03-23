@@ -31,6 +31,7 @@ const isUsernameTaken = (username) => {
   });
 };
 
+// check whether user role valid or not
 const isInRoles = (role, { req }) => {
   if (!role) {
     return Promise.reject(new Error('Role is required'));

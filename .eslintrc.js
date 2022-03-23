@@ -18,6 +18,14 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['prettier'],
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        moduleDirectory: ['node_modules', 'src/'],
+      },
+    },
+  },
   rules: {
     'prettier/prettier': [
       'error',
@@ -25,6 +33,7 @@ module.exports = {
         endOfLine: 'auto',
       },
     ],
+    'import/extensions': 'off',
     'arrow-body-style': 'off',
     'no-unused-vars': ['warn', { args: 'none' }],
     'func-names': 'off',

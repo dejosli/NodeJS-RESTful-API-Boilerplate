@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 
 // Internal module imports
 const config = require('../config/config');
-const { toJSON, paginate } = require('./plugins');
+const { toJSON, offsetBasedPaginate } = require('./plugins');
 const { allRoles, roles } = require('../config/roles');
 
 /**
@@ -77,7 +77,7 @@ userSchema.index({
  * Plugins
  */
 userSchema.plugin(toJSON);
-userSchema.plugin(paginate.offsetBasedPaginate);
+userSchema.plugin(offsetBasedPaginate);
 
 /**
  * Hooks

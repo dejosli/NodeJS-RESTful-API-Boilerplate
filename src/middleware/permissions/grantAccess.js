@@ -2,7 +2,7 @@
 const httpStatus = require('http-status');
 
 // Internal module imports
-const { ErrorResponse } = require('../utils');
+const { ErrorResponse } = require('../../utils');
 
 // check whether permissions are allowed or denied
 const grantAccess = (req, res, next) => {

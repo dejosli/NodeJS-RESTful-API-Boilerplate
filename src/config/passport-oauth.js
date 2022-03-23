@@ -92,7 +92,6 @@ OAuthStrategy.FACEBOOK = new FacebookStrategy(
           OAuthProvider: provider,
           OAuthID: payload.id,
         });
-        console.log(newUser);
         return done(null, newUser);
       }
       // user exists but provider does not match

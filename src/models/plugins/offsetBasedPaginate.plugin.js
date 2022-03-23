@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 
 // Internal module imports
-const { pickBy } = require('../../utils');
+const { cleanedObject } = require('../../utils');
 
 /**
  * Default options having properties
@@ -55,7 +55,7 @@ const offsetBasedPaginate = (schema) => {
     pipeline = Array.isArray(pipeline) ? pipeline : [];
 
     // remove undefined properties from objects
-    options = pickBy.cleanedObject(options);
+    options = cleanedObject(options);
     options = {
       ...defaultOptions,
       ...options,
@@ -200,6 +200,4 @@ const offsetBasedPaginate = (schema) => {
 };
 
 // Module exports
-module.exports = {
-  offsetBasedPaginate,
-};
+module.exports = offsetBasedPaginate;

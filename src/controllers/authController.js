@@ -2,7 +2,7 @@
 const httpStatus = require('http-status');
 
 // Internal module imports
-const asyncHandler = require('../middlewares/common/asyncHandler');
+const asyncHandler = require('../middleware/common/asyncHandler');
 const { SuccessResponse, sendTokenResponse } = require('../utils');
 const {
   authService,

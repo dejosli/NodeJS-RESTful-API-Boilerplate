@@ -2,8 +2,8 @@ const httpStatus = require('http-status');
 const passport = require('passport');
 
 // Internal module imports
-const config = require('../config/config');
-const { ErrorResponse } = require('../utils');
+const config = require('../../config/config');
+const { ErrorResponse } = require('../../utils');
 
 /**
  * Callbacks
