@@ -8,6 +8,7 @@ const {
   SuccessResponse,
   mappedDocuments,
   mappedMetadata,
+  sendMetadataResponse,
 } = require('../utils');
 const { userService } = require('../services');
 
@@ -63,30 +64,8 @@ const getUsers = asyncHandler(async (req, res, next) => {
   // mapped metadata object
   const metadata = mappedMetadata(meta, fullUrl, req.query);
 
-  // set response headers
-  res.header('X-Total-Count', metadata.totalDocs);
-  res.header('X-Total-Pages', metadata.totalPages);
-  res.links(metadata.links);
-
-  // send response with metadata
-  if (req.query.include_metadata) {
-    return res
-      .status(httpStatus.OK)
-      .json(
-        new SuccessResponse(
-          httpStatus.OK,
-          httpStatus[httpStatus.OK],
-          { users },
-          { ...metadata }
-        )
-      );
-  }
-  // send response without metadata
-  return res
-    .status(httpStatus.OK)
-    .json(
-      new SuccessResponse(httpStatus.OK, httpStatus[httpStatus.OK], { users })
-    );
+  // send response
+  sendMetadataResponse(res, users, metadata, req.query.include_metadata);
 });
 
 /**

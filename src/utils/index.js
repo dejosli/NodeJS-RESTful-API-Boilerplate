@@ -9,3 +9,4 @@ module.exports.removeUndefined = require('./removeUndefined');
 module.exports.queryStringify = require('./queryStringify');
 module.exports.mappedDocuments = require('./mappedDocuments');
 module.exports.uploader = require('./uploader');
+module.exports.sendMetadataResponse = require('./sendMetadataResponse');

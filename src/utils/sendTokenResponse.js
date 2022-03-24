@@ -7,12 +7,12 @@ const SuccessResponse = require('./SuccessResponse');
 
 /**
  * Send cookie(jsonwebtoken) as response
- * @param {Object} res
+ * @param {object.<Response>} res
  * @param {User} user
- * @param {Object} tokens
+ * @param {object} tokens
  * @param {number} statusCode
  * @param {string} msg
- * @return {Object<Response>}
+ * @return send response to client
  */
 const sendTokenResponse = (res, user, tokens, statusCode, msg) => {
   // set cookie expires time
