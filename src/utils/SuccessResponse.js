@@ -2,8 +2,8 @@
  * @class SuccessResponse
  * @param {number} statusCode
  * @param {string} message
- * @param {Object} data
- * @param {Object} metadata
+ * @param {object} data
+ * @param {object} metadata
  */
 class SuccessResponse {
   constructor(

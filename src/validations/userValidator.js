@@ -55,7 +55,7 @@ const getUsers = [
   query('limit')
     .optional()
     .isInt({ min: 2, max: 10, allow_leading_zeroes: false }),
-  query('include_meta').optional().isBoolean(),
+  query('include_metadata').optional().isBoolean(),
 ];
 
 const getUser = param('userId').custom(isObjectId);

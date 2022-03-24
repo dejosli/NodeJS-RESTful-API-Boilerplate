@@ -4,7 +4,7 @@ const multer = require('multer');
 
 // Internal module imports
 const ErrorResponse = require('./ErrorResponse');
-const multerDiskStorage = require('../config/multer-disk-storage');
+const diskStorage = require('../config/multer-disk-storage');
 
 const mappedErrors = (err) => {
   if (err.code === 'LIMIT_UNEXPECTED_FILE') {
@@ -37,7 +37,7 @@ const onErrorHandler = (err, next) => {
 /**
  * Upload files to the specified destination
  * @param {string} subdirectory
- * @param {Array<object>} allowedMimeTypes
+ * @param {Array.<object>} allowedMimeTypes
  * @param {number} maxFileSize Max field value size (in bytes)
  * @param {string} errorMessage
  */
@@ -47,7 +47,7 @@ const fileUpload = (
   maxFileSize = 1048576 // 1 MB
 ) => {
   // init storage
-  const storage = multerDiskStorage(subdirectory);
+  const storage = diskStorage(subdirectory);
 
   // specifying the limits
   const limits = {

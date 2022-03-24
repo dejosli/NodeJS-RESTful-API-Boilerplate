@@ -1,5 +1,9 @@
 /**
  * @extends Error
+ * @param {number} statusCode
+ * @param {string} message
+ * @param {object} errors
+ * @param {boolean} isOperational
  */
 class ErrorResponse extends Error {
   constructor(statusCode, message, errors = null, isOperational = true) {

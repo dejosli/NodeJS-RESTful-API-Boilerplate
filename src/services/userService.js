@@ -23,8 +23,8 @@ const createUser = async (userBody) => {
 
 /**
  * Get users
- * @param {Object<Request.query>} query
- * @returns {Promise<object>}
+ * @param {object} query
+ * @return {Promise<object[]>} an array of objects representing users
  */
 const queryUsers = async (query) => {
   const filter =
@@ -62,7 +62,7 @@ const queryUsers = async (query) => {
     ...query,
     sortBy: { name: query?.name, role: query?.role },
     countQuery: filter,
-    meta: query.include_meta,
+    meta: query.include_metadata,
   };
 
   return User.offsetPaginate(pipeline, options);

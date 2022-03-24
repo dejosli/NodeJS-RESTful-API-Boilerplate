@@ -2,8 +2,13 @@
 const httpStatus = require('http-status');
 
 // Internal module imports
+const config = require('../config/config');
 const asyncHandler = require('../middleware/common/asyncHandler');
-const { SuccessResponse } = require('../utils');
+const {
+  SuccessResponse,
+  mappedDocuments,
+  mappedMetadata,
+} = require('../utils');
 const { userService } = require('../services');
 
 /**
@@ -45,37 +50,43 @@ const getUser = asyncHandler(async (req, res, next) => {
  * @access Private
  */
 const getUsers = asyncHandler(async (req, res, next) => {
-  // eslint-disable-next-line camelcase
-  const { include_meta: meta } = req.query;
-  const { docs: users, ...paginator } = await userService.queryUsers(req.query);
+  // define query object
+  const query = { ...req.query, include_metadata: true };
+  const { docs, ...meta } = await userService.queryUsers(query);
 
-  let prevPage;
-  let nextPage;
+  // create full url
+  const fullUrl = `${req.protocol}://${req.hostname}:${config.port}${req.baseUrl}`;
 
-  const currentPage = `${req.baseUrl}?page=${paginator.page}&limit=${paginator.limit}&include_meta=${meta}`;
+  // mapped users object
+  const users = await mappedDocuments(docs, fullUrl, 'GET');
 
-  if (paginator.hasPrevPage) {
-    prevPage = `${req.baseUrl}?page=${paginator.prevPage}&limit=${paginator.limit}&include_meta=${meta}`;
-  }
-  if (paginator.hasNextPage) {
-    nextPage = `${req.baseUrl}?page=${paginator.nextPage}&limit=${paginator.limit}&include_meta=${meta}`;
-  }
-  const links = { prevPage, currentPage, nextPage };
+  // mapped metadata object
+  const metadata = mappedMetadata(meta, fullUrl, req.query);
 
   // set response headers
-  res.header('Links', new URLSearchParams(links));
-  res.header('totalPages', paginator.totalPages);
-  // send response
-  res.status(httpStatus.OK).json(
-    new SuccessResponse(
-      httpStatus.OK,
-      httpStatus[httpStatus.OK],
-      {
-        users,
-      },
-      { ...paginator, links }
-    )
-  );
+  res.header('X-Total-Count', metadata.totalDocs);
+  res.header('X-Total-Pages', metadata.totalPages);
+  res.links(metadata.links);
+
+  // send response with metadata
+  if (req.query.include_metadata) {
+    return res
+      .status(httpStatus.OK)
+      .json(
+        new SuccessResponse(
+          httpStatus.OK,
+          httpStatus[httpStatus.OK],
+          { users },
+          { ...metadata }
+        )
+      );
+  }
+  // send response without metadata
+  return res
+    .status(httpStatus.OK)
+    .json(
+      new SuccessResponse(httpStatus.OK, httpStatus[httpStatus.OK], { users })
+    );
 });
 
 /**
