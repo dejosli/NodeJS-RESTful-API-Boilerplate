@@ -3,7 +3,7 @@ const moment = require('moment');
 
 // Internal module imports
 const config = require('../config/config');
-const SuccessResponse = require('./SuccessResponse');
+const SuccessResponse = require('./lib/SuccessResponse');
 
 /**
  * Send cookie(jsonwebtoken) as response

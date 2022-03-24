@@ -2,7 +2,7 @@
 const httpStatus = require('http-status');
 
 // Internal module imports
-const { SuccessResponse } = require('.');
+const SuccessResponse = require('./lib/SuccessResponse');
 
 /**
  *

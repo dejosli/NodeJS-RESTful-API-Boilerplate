@@ -3,7 +3,7 @@ const httpStatus = require('http-status');
 const multer = require('multer');
 
 // Internal module imports
-const ErrorResponse = require('./ErrorResponse');
+const ErrorResponse = require('./lib/ErrorResponse');
 const diskStorage = require('../config/multer-disk-storage');
 
 const mappedErrors = (err) => {

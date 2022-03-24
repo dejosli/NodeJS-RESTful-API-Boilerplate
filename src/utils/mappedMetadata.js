@@ -1,5 +1,5 @@
 // Internal module imports
-const queryStringify = require('./queryStringify');
+const queryStringify = require('./lib/queryStringify');
 
 /**
  * Wraps metadata with links property
