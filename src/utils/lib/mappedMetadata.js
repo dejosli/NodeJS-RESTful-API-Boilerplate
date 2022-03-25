@@ -1,5 +1,13 @@
-// Internal module imports
-const queryStringify = require('./lib/queryStringify');
+/**
+ * Create complete url
+ * @param {string} url
+ * @param {object} object
+ * @return complete url
+ */
+const createLink = (url, object) => {
+  const querystring = new URLSearchParams(object).toString();
+  return `${url}?${querystring}`;
+};
 
 /**
  * Wraps metadata with links property
@@ -11,51 +19,45 @@ const queryStringify = require('./lib/queryStringify');
 const mappedMetadata = (metadata, url, query) => {
   let prev;
   let next;
-  let querystring;
 
   // create link for current page
-  querystring = queryStringify({
+  const self = createLink(url, {
     ...query,
     page: metadata.page,
     limit: metadata.limit,
   });
-  const self = `${url}?${querystring}`;
-
-  // create link for previous page
-  if (metadata.hasPrevPage) {
-    querystring = queryStringify({
-      ...query,
-      page: metadata.prevPage,
-      limit: metadata.limit,
-    });
-    prev = `${url}?${querystring}`;
-  }
-
-  // create link for next page
-  if (metadata.hasNextPage) {
-    querystring = queryStringify({
-      ...query,
-      page: metadata.nextPage,
-      limit: metadata.limit,
-    });
-    next = `${url}?${querystring}`;
-  }
 
   // create link for first page
-  querystring = queryStringify({
+  const first = createLink(url, {
     ...query,
     page: 1,
     limit: metadata.limit,
   });
-  const first = `${url}?${querystring}`;
 
   // create link for last page
-  querystring = queryStringify({
+  const last = createLink(url, {
     ...query,
     page: metadata.totalPages,
     limit: metadata.limit,
   });
-  const last = `${url}?${querystring}`;
+
+  // create link for previous page
+  if (metadata.hasPrevPage) {
+    prev = createLink(url, {
+      ...query,
+      page: metadata.prevPage,
+      limit: metadata.limit,
+    });
+  }
+
+  // create link for next page
+  if (metadata.hasNextPage) {
+    next = createLink(url, {
+      ...query,
+      page: metadata.nextPage,
+      limit: metadata.limit,
+    });
+  }
 
   // create links object
   const links = { self, prev, next, first, last };

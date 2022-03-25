@@ -5,7 +5,7 @@ const httpStatus = require('http-status');
 const SuccessResponse = require('./lib/SuccessResponse');
 
 /**
- *
+ * Set response headers and send metadata as response
  * @param {object.<Response>} res
  * @param {Array.<object>} users
  * @param {object} metadata

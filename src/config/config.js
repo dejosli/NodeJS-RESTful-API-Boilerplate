@@ -55,6 +55,9 @@ const envVarsSchema = Joi.object()
     TWILIO_ACCOUNT_SID: Joi.string().description('twilio account id'),
     TWILIO_AUTH_TOKEN: Joi.string().description('twilio account auth token'),
     TWILIO_NUMBER: Joi.string().description('twilio phone number'),
+    CLOUD_NAME: Joi.string().description('cloud name'),
+    CLOUDINARY_API_KEY: Joi.string().description('cloudinary api key'),
+    CLOUDINARY_API_SECRET: Joi.string().description('cloudinary api secret'),
   })
   .unknown();
 
@@ -107,5 +110,10 @@ module.exports = {
     accountSid: envVars.TWILIO_ACCOUNT_SID,
     authToken: envVars.TWILIO_AUTH_TOKEN,
     phoneNumber: envVars.TWILIO_NUMBER,
+  },
+  cloudinary: {
+    cloudName: envVars.CLOUD_NAME,
+    apiKey: envVars.CLOUDINARY_API_KEY,
+    apiSecret: envVars.CLOUDINARY_API_SECRET,
   },
 };

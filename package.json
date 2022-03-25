@@ -30,6 +30,7 @@
     "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
     "bull": "^4.5.1",
+    "cloudinary": "^1.29.0",
     "compression": "^1.7.4",
     "connect-mongo": "^4.6.0",
     "cookie-parser": "^1.4.6",
