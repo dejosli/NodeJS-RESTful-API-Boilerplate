@@ -17,13 +17,19 @@ const { userService } = require('../services');
  * @route POST /api/v1/users
  * @access Private
  */
-const createUser = asyncHandler(async (req, res) => {
+const createUser = asyncHandler(async (req, res, next) => {
   const { name, username, email, password, role } = req.body;
-  const { path: profilePicture } = req.file;
   // define user object
-  const newUser = { name, username, email, password, role, profilePicture };
+  const userBody = {
+    name,
+    username,
+    email,
+    password,
+    role,
+    profilePicture: req?.file?.path,
+  };
   // create a new user
-  const user = await userService.createUser(newUser);
+  const user = await userService.createUser(userBody);
   // send response
   res.status(httpStatus.CREATED).json(
     new SuccessResponse(httpStatus.OK, httpStatus[httpStatus.OK], {

@@ -19,11 +19,17 @@ const { Token } = require('../models');
  */
 const register = asyncHandler(async (req, res, next) => {
   const { name, username, email, password, role } = req.body;
-  const { path: profilePicture } = req.file;
   // define user object
-  const newUser = { name, username, email, password, role, profilePicture };
+  const userBody = {
+    name,
+    username,
+    email,
+    password,
+    role,
+    profilePicture: req?.file?.path,
+  };
   // create a new user
-  const user = await userService.createUser(newUser);
+  const user = await userService.createUser(userBody);
   // generate access and refresh token
   const tokens = await tokenService.generateAuthTokens(user._id);
   // send response

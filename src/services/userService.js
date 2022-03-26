@@ -3,21 +3,52 @@ const httpStatus = require('http-status');
 
 // Internal module imports
 const { User } = require('../models');
-const { ErrorResponse } = require('../utils');
+const { ErrorResponse, cloudinaryUploader } = require('../utils');
+
+// define upload folder for profile picture
+const AVATAR_UPLOAD_FOLDER = 'avatar';
 
 /**
  * Create a user
- * @param {Object} userBody
+ * @param {object} userBody
  * @returns {Promise<User>}
  */
 const createUser = async (userBody) => {
-  const user = await User.create(userBody);
+  // construct new user object
+  const newUser = { ...userBody };
+  const { profilePicture } = newUser;
+
+  // check if user object has profile picture
+  if (profilePicture) {
+    const options = {
+      folder: AVATAR_UPLOAD_FOLDER,
+      access_mode: 'authenticated',
+      eager: [{ width: 90, height: 90, crop: 'thumb', gravity: 'face' }],
+      eager_async: true,
+    };
+    // upload profile picture to cloudinary
+    const result = await cloudinaryUploader.uploadSingleFile(
+      profilePicture,
+      options
+    );
+    // const result = await cloudinaryUploader.uploadSingleFileStream(profilePicture, options);
+    newUser.profilePicture = result.secure_url;
+  }
+
+  // save user to db
+  const user = await User.create(newUser);
+
   if (!user) {
+    // remove profile picture from cloudinary
+    if (newUser.profilePicture) {
+      await cloudinaryUploader.deleteFile(newUser.profilePicture);
+    }
     throw new ErrorResponse(
       httpStatus.INTERNAL_SERVER_ERROR,
       httpStatus[httpStatus.INTERNAL_SERVER_ERROR]
     );
   }
+
   return user;
 };
 

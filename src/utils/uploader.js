@@ -1,10 +1,15 @@
 // External module imports
+const path = require('path');
+const fs = require('fs-extra');
 const httpStatus = require('http-status');
 const multer = require('multer');
+const mongoose = require('mongoose');
 
 // Internal module imports
 const ErrorResponse = require('./lib/ErrorResponse');
-const diskStorage = require('../config/multer-disk-storage');
+
+// file upload directory
+const UPLOAD_DIR = path.join(__dirname, '../../public/uploads');
 
 const mappedErrors = (err) => {
   if (err.code === 'LIMIT_UNEXPECTED_FILE') {
@@ -34,20 +39,39 @@ const onErrorHandler = (err, next) => {
   );
 };
 
+// define multer disk storage
+const diskStorage = (folder) => {
+  return multer.diskStorage({
+    destination(req, file, cb) {
+      const dest = `${UPLOAD_DIR}${folder}`;
+      fs.mkdirsSync(dest);
+      cb(null, dest);
+    },
+
+    filename(req, file, cb) {
+      const extension = path.extname(file.originalname);
+      const uniquePrefix = new mongoose.Types.ObjectId().toHexString();
+      const fileName = `${uniquePrefix}${extension}`;
+      cb(null, fileName);
+    },
+  });
+};
+
 /**
  * Upload files to the specified destination
- * @param {string} subdirectory
+ * @param {string} folder
  * @param {Array.<object>} allowedMimeTypes
  * @param {number} maxFileSize Max field value size (in bytes)
  * @param {string} errorMessage
+ * @return multer object for uploads file
  */
-const fileUpload = (
-  subdirectory = '/tmp',
+const upload = (
+  folder = '/tmp',
   allowedMimeTypes = [],
   maxFileSize = 1048576 // 1 MB
 ) => {
   // init storage
-  const storage = diskStorage(subdirectory);
+  const storage = diskStorage(folder);
 
   // specifying the limits
   const limits = {
@@ -56,21 +80,25 @@ const fileUpload = (
 
   // checks which file should be uploaded and which should be skipped
   const fileFilter = (req, file, cb) => {
-    let errorMessage;
+    let errorMessage = null;
 
+    // if there is no mimetype defined then silently ignore uploads
     if (allowedMimeTypes.length === 0) {
       return cb(null, false);
     }
 
+    // check whether file will be allowed to be uploaded or not
     const isFileAllowed = allowedMimeTypes.every(
       (allowedMimeType) =>
         allowedMimeType.field === file.fieldname &&
         allowedMimeType.types.includes(file.mimetype)
     );
+
     if (isFileAllowed) {
       return cb(null, true);
     }
 
+    // set error message for not allowed file
     allowedMimeTypes.forEach((allowedMimeType) => {
       if (
         allowedMimeType.field === file.fieldname &&
@@ -80,15 +108,16 @@ const fileUpload = (
       }
     });
 
-    // create error object
+    // construct error object
     const errors = {
       field: file.fieldname,
       message: errorMessage,
     };
+
     return cb(errors);
   };
 
-  // return multer upload object
+  // return multer object for uploads file
   return multer({ storage, limits, fileFilter });
 };
 
@@ -96,18 +125,21 @@ const fileUpload = (
  * Upload a single file with the name fieldname
  * @param {string} fieldName
  * @param {object} options
+ * @return pass to next middleware
  */
-const singleFileUpload = (
+const uploadSingleFile = (
   fieldName,
-  { subdirectory, allowedMimeTypes, maxFileSize }
+  { folder, allowedMimeTypes, maxFileSize }
 ) => {
   return (req, res, next) => {
-    const upload = fileUpload(subdirectory, allowedMimeTypes, maxFileSize);
+    const uploader = upload(folder, allowedMimeTypes, maxFileSize);
     // invoke the middleware function
-    upload.single(fieldName)(req, res, (err) => {
+    uploader.single(fieldName)(req, res, (err) => {
       if (!err) {
+        // pass to next middleware
         return next();
       }
+      // handle the errors and send the error response
       onErrorHandler(err, next);
     });
   };
@@ -118,19 +150,22 @@ const singleFileUpload = (
  * @param {string} fieldName
  * @param {number} maxCount
  * @param {object} options
+ * @return pass to next middleware
  */
-const manyFilesUpload = (
+const uploadManyFiles = (
   fieldName,
   maxCount,
-  { subdirectory, allowedMimeTypes, maxFileSize }
+  { folder, allowedMimeTypes, maxFileSize }
 ) => {
   return (req, res, next) => {
-    const upload = fileUpload(subdirectory, allowedMimeTypes, maxFileSize);
+    const uploader = upload(folder, allowedMimeTypes, maxFileSize);
     // invoke the middleware function
-    upload.array(fieldName, maxCount)(req, res, (err) => {
+    uploader.array(fieldName, maxCount)(req, res, (err) => {
       if (!err) {
+        // pass to next middleware
         return next();
       }
+      // handle the errors and send the error response
       onErrorHandler(err, next);
     });
   };
@@ -140,18 +175,21 @@ const manyFilesUpload = (
  * Upload a mix of files, specified by fields
  * @param {Array<object>} fields
  * @param {object} options
+ * @return pass to next middleware
  */
-const mixedFilesUpload = (
+const uploadMixedFiles = (
   fields,
-  { subdirectory, allowedMimeTypes, maxFileSize }
+  { folder, allowedMimeTypes, maxFileSize }
 ) => {
   return (req, res, next) => {
-    const upload = fileUpload(subdirectory, allowedMimeTypes, maxFileSize);
+    const uploader = upload(folder, allowedMimeTypes, maxFileSize);
     // invoke the middleware function
-    upload.fields(fields)(req, res, (err) => {
+    uploader.fields(fields)(req, res, (err) => {
       if (!err) {
+        // pass to next middleware
         return next();
       }
+      // handle the errors and send the error response
       onErrorHandler(err, next);
     });
   };
@@ -159,10 +197,8 @@ const mixedFilesUpload = (
 
 // Module exports
 module.exports = {
-  mappedErrors,
-  onErrorHandler,
-  fileUpload,
-  singleFileUpload,
-  manyFilesUpload,
-  mixedFilesUpload,
+  upload,
+  uploadSingleFile,
+  uploadManyFiles,
+  uploadMixedFiles,
 };
