@@ -62,7 +62,6 @@ const uploadManyFiles = async (files, options) => {
     const results = await Promise.all(uploaderPromises);
     return results;
   } catch (err) {
-    console.log(err);
     throw new Error('Cloudinary many files upload failed');
   }
 };
