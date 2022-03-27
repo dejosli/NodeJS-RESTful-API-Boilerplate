@@ -89,6 +89,7 @@ const updateUser = [
       'Password should contain at least 1 lowercase, 1 uppercase, 1 number & 1 symbol'
     ),
   body('role').optional().custom(isInRoles).trim().escape(),
+  body('isActive').optional().isBoolean().trim().escape(),
 ];
 
 const deleteUser = param('userId').custom(isObjectId);

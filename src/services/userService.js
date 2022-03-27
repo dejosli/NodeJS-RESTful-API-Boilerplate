@@ -115,7 +115,7 @@ const getUserById = async (userId) => {
 /**
  * Update user by id
  * @param {ObjectId} userId
- * @param {Object} updateBody
+ * @param {object} updateBody
  * @returns {Promise<User>}
  */
 const updateUserById = async (userId, updateBody) => {
@@ -129,6 +129,11 @@ const updateUserById = async (userId, updateBody) => {
   return user;
 };
 
+/**
+ * Remove user by id
+ * @param {string} userId
+ * @return {Promise<User>}
+ */
 const deleteUserById = async (userId) => {
   const user = await User.findByIdAndDelete(userId);
   if (!user) {

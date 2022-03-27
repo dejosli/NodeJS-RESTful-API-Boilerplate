@@ -80,14 +80,16 @@ const getUsers = asyncHandler(async (req, res, next) => {
  * @access Private
  */
 const updateUser = asyncHandler(async (req, res, next) => {
-  const { name, email, password, role } = req.body;
+  const { userId } = req.params;
+  const { name, email, password, role, isActive } = req.body;
   const updateBody = {
     name,
     email,
     password,
     role,
+    isActive,
   };
-  const user = await userService.updateUserById(req.params.userId, updateBody);
+  const user = await userService.updateUserById(userId, updateBody);
   res.status(httpStatus.OK).json(
     new SuccessResponse(httpStatus.OK, httpStatus[httpStatus.OK], {
       user,
