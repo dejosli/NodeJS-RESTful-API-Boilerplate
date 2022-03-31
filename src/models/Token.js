@@ -66,7 +66,7 @@ tokenSchema.plugin(toJSON);
  * Find token
  * @param {ObjectID} userId
  * @param {string} type
- * @param {Boolean} blacklisted
+ * @param {boolean} blacklisted
  * @returns {Promise<Token>}
  */
 tokenSchema.statics.findToken = async function ({
@@ -83,7 +83,7 @@ tokenSchema.statics.findToken = async function ({
  * Remove token
  * @param {ObjectID} userId
  * @param {string} type
- * @param {Boolean} blacklisted
+ * @param {boolean} blacklisted
  * @returns {Promise<Token>}
  */
 tokenSchema.statics.deleteOneToken = async function ({
@@ -100,7 +100,7 @@ tokenSchema.statics.deleteOneToken = async function ({
  * Remove token
  * @param {ObjectID} userId
  * @param {string} type
- * @param {Boolean} blacklisted
+ * @param {boolean} blacklisted
  * @returns {Promise<Token>}
  */
 tokenSchema.statics.deleteManyToken = async function ({
@@ -111,7 +111,6 @@ tokenSchema.statics.deleteManyToken = async function ({
   return this.deleteMany({
     $and: [{ user: userId }, { type }, { blacklisted }],
   });
-  // return tokens;
 };
 
 /**

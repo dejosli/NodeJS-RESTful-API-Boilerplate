@@ -26,7 +26,7 @@ if (config.env !== 'test') {
  * @param {string} to
  * @param {string} subject
  * @param {string} text
- * @returns {Promise}
+ * @return {Promise<object>}
  */
 const sendEmail = async (to, subject, text) => {
   const msg = { from: config.email.from, to, subject, text };
@@ -45,7 +45,7 @@ const sendEmail = async (to, subject, text) => {
  * @param {string} to
  * @param {string} name
  * @param {string} token
- * @returns {Promise}
+ * @return {Promise}
  */
 const sendResetPasswordEmail = async (to, name, token) => {
   const subject = 'Reset Password';
@@ -53,7 +53,8 @@ const sendResetPasswordEmail = async (to, name, token) => {
   const resetPasswordUrl = `http://link-to-app/reset-password?token=${token}`;
   const text = `Dear ${name}, To reset your password, please click on this link: ${resetPasswordUrl}
   If you did not request any password resets, then ignore this email.`;
-  await sendEmail(to, subject, text);
+  const info = await sendEmail(to, subject, text);
+  return info;
 };
 
 /**
@@ -61,7 +62,7 @@ const sendResetPasswordEmail = async (to, name, token) => {
  * @param {string} to
  * @param {string} name
  * @param {string} token
- * @returns {Promise}
+ * @return {Promise}
  */
 const sendVerificationEmail = async (to, name, token) => {
   const subject = 'Email Verification';
@@ -69,7 +70,22 @@ const sendVerificationEmail = async (to, name, token) => {
   const verificationEmailUrl = `http://link-to-app/verify-email?token=${token}`;
   const text = `Dear ${name}, To verify your email, please click on this link: ${verificationEmailUrl}
   If you did not create an account, then ignore this email.`;
-  await sendEmail(to, subject, text);
+  const info = await sendEmail(to, subject, text);
+  return info;
+};
+
+/**
+ * Send two factor authentication code in email
+ * @param {string} to
+ * @param {string} name
+ * @param {string} otpCode
+ * @return {Promise}
+ */
+const sendOtpEmail = async (to, name, otpCode) => {
+  const subject = 'Authentication Code';
+  const text = `Dear ${name}, ${otpCode} is your authentication code.`;
+  const info = await sendEmail(to, subject, text);
+  return info;
 };
 
 // Module exports
@@ -78,4 +94,5 @@ module.exports = {
   sendEmail,
   sendResetPasswordEmail,
   sendVerificationEmail,
+  sendOtpEmail,
 };

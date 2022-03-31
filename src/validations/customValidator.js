@@ -5,12 +5,12 @@ const mongoose = require('mongoose');
 const { User } = require('../models');
 const { allRoles, roles } = require('../config/roles');
 
-// check whether id is ObjectId or not
+// check whether id is mongo ObjectId or not
 const isObjectId = (id) => {
   if (mongoose.Types.ObjectId.isValid(id)) {
     return true;
   }
-  return Promise.reject(new Error('Invalid params value'));
+  return Promise.reject(new Error('Invalid value'));
 };
 
 // check whether email already exists or not
@@ -46,10 +46,23 @@ const isInRoles = (role, { req }) => {
     : Promise.reject(new Error('Invalid role'));
 };
 
+const is2faEnabled = (type, { req }) => {
+  const { enabled } = req.body;
+  const types = ['email', 'sms', 'none'];
+  if (enabled === 'true' && !type) {
+    return Promise.reject(new Error('Service type is required'));
+  }
+  if (enabled === 'true' && !types.includes(type)) {
+    return Promise.reject(new Error('Invalid service type'));
+  }
+  return true;
+};
+
 // Module exports
 module.exports = {
   isObjectId,
   isEmailTaken,
   isUsernameTaken,
   isInRoles,
+  is2faEnabled,
 };

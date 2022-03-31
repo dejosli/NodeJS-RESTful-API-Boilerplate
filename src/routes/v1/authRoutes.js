@@ -56,6 +56,7 @@ router.post(
   authorizeVerifyEmailToken,
   authController.verifyEmail
 );
+
 // mount google oauth routes
 router.get(
   '/google',
@@ -64,6 +65,7 @@ router.get(
   })
 );
 router.get('/google/callback', authorizeGoogleOAuth, authController.oauthLogin);
+
 // mount facebook oauth routes
 router.get(
   '/facebook',
@@ -75,6 +77,24 @@ router.get(
   '/facebook/callback',
   authorizeFacebookOAuth,
   authController.oauthLogin
+);
+
+// mount two factor authentication routes
+router.post(
+  '/otp/send',
+  [authValidator.enable2FA, validate],
+  authorizeAccessToken,
+  authController.enable2FA
+);
+router.post(
+  '/otp/verify',
+  [authValidator.verify2FA, validate],
+  authController.verify2FA
+);
+router.post(
+  '/otp/resend',
+  [authValidator.resend2FA, validate],
+  authController.resend2FA
 );
 
 // Module exports

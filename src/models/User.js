@@ -37,6 +37,10 @@ const userSchema = new mongoose.Schema(
       select: false,
       private: true, // used by the toJSON plugin
     },
+    phoneNumber: {
+      type: String,
+      required: true,
+    },
     role: {
       type: String,
       enum: roles,
@@ -49,13 +53,17 @@ const userSchema = new mongoose.Schema(
       trim: true,
       default: '',
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
     isEmailVerified: {
       type: Boolean,
       default: false,
     },
-    isActive: {
+    isTwoFactorAuthEnabled: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     OAuthProvider: {
       type: String,

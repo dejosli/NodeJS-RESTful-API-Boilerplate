@@ -13,3 +13,4 @@ module.exports.uploader = require('./uploader');
 module.exports.cloudinaryUploader = require('./cloudinaryUploader');
 module.exports.sendTokenResponse = require('./sendTokenResponse');
 module.exports.sendMetadataResponse = require('./sendMetadataResponse');
+module.exports.sendOtpResponse = require('./sendOtpResponse');

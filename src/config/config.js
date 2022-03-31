@@ -8,10 +8,11 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const envVarsSchema = Joi.object()
   .keys({
+    PORT: Joi.number().default(5000),
     NODE_ENV: Joi.string()
       .valid('production', 'development', 'test')
       .required(),
-    PORT: Joi.number().default(3000),
+    APP_NAME: Joi.string().description('Application name'),
     MONGODB_URL: Joi.string().required().description('Mongo DB url'),
     ADMIN_EMAIL: Joi.string()
       .default('admin@example.com')
@@ -61,18 +62,21 @@ const envVarsSchema = Joi.object()
   })
   .unknown();
 
+// validations
 const { value: envVars, error } = envVarsSchema
   .prefs({ errors: { label: 'key' } })
   .validate(process.env);
 
+// error handler
 if (error) {
   throw new Error(`Config Validation Error: ${error.message}`);
 }
 
 // Module exports
 module.exports = {
-  env: envVars.NODE_ENV,
   port: envVars.PORT,
+  env: envVars.NODE_ENV,
+  appName: envVars.APP_NAME,
   mongodbUrl: envVars.MONGODB_URL,
   adminEmail: envVars.ADMIN_EMAIL,
   bcryptSaltRounds: envVars.BCRYPT_SALT_ROUNDS,
