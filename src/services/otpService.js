@@ -49,14 +49,15 @@ const generateSecretKey = (email) => {
  * @param {string} secret
  * @return {number} otp code
  */
-const generateOTP = (secret) => {
+const getToken = (secret) => {
   const options = {
     secret,
+    // time: Date.now(),
     algorithm: 'sha512',
     encoding: 'base32', // encoding used for secret
   };
   // return time-based token
-  return speakeasy.totp(options);
+  return speakeasy.time(options);
 };
 
 /**
@@ -67,16 +68,21 @@ const generateOTP = (secret) => {
  * @param {number} window
  * @return {boolean} boolean
  */
-const verifyOTP = (token, secret, step = 30, window = 0) => {
+const verifyToken = (token, secret, step = 30, window = 0) => {
   const options = {
     token,
     secret,
     step,
     window,
+    // time: Date.now(),
+    algorithm: 'sha512',
     encoding: 'base32', // encoding used for secret
   };
-  // return token validation result
-  return speakeasy.totp.verify(options);
+  const verified = speakeasy.totp.verify(options);
+  if (!verified) {
+    throw new ErrorResponse(httpStatus.UNAUTHORIZED, 'Failed to verify');
+  }
+  return verified;
 };
 
 const saveSecretKey = async (secretKey, userId, verified, serviceType) => {
@@ -95,10 +101,10 @@ const saveSecretKey = async (secretKey, userId, verified, serviceType) => {
   return otpDoc;
 };
 
-const findSecretKey = async (filter) => {
+const getSecretKey = async (filter) => {
   const otpDoc = await OTP.findOne(filter);
   if (!otpDoc) {
-    throw new ErrorResponse(httpStatus.NOT_FOUND, 'OTP secret key not found');
+    throw new ErrorResponse(httpStatus.NOT_FOUND, 'Not found');
   }
   return otpDoc;
 };
@@ -109,10 +115,7 @@ const updateSecretKey = async (filter, updateBody) => {
     runValidators: true,
   });
   if (!otpDoc) {
-    throw new ErrorResponse(
-      httpStatus.NOT_FOUND,
-      'OTP secret key update failed'
-    );
+    throw new ErrorResponse(httpStatus.NOT_FOUND, 'Not found');
   }
   return otpDoc;
 };
@@ -120,10 +123,7 @@ const updateSecretKey = async (filter, updateBody) => {
 const deleteOneSecretKey = async (filter) => {
   const otpDoc = await OTP.deleteOne(filter);
   if (!otpDoc) {
-    throw new ErrorResponse(
-      httpStatus.NOT_FOUND,
-      'OTP secret key deletion failed'
-    );
+    throw new ErrorResponse(httpStatus.NOT_FOUND, 'Not found');
   }
   return otpDoc;
 };
@@ -131,10 +131,7 @@ const deleteOneSecretKey = async (filter) => {
 const deleteManySecretKey = async (filter) => {
   const otpDoc = await OTP.deleteMany(filter);
   if (!otpDoc) {
-    throw new ErrorResponse(
-      httpStatus.NOT_FOUND,
-      'OTP secret key deletion failed'
-    );
+    throw new ErrorResponse(httpStatus.NOT_FOUND, 'Not found');
   }
   return otpDoc;
 };
@@ -143,10 +140,10 @@ const deleteManySecretKey = async (filter) => {
 module.exports = {
   generateQRCodeURL,
   generateSecretKey,
-  generateOTP,
-  verifyOTP,
+  getToken,
+  verifyToken,
   saveSecretKey,
-  findSecretKey,
+  getSecretKey,
   updateSecretKey,
   deleteOneSecretKey,
   deleteManySecretKey,

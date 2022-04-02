@@ -12,24 +12,25 @@ const sendOtpResponse = async (res, user, otpDoc) => {
 
   if (serviceType === serviceTypes.EMAIL) {
     // generate time-based token
-    const token = otpService.generateOTP(secretKey);
+    const token = otpService.getToken(secretKey);
     // calculate otp token remaining time
-    // const remaining = 30 - Math.floor((new Date().getTime() / 1000) % 30);
+    const remaining = 30 - Math.floor((new Date().getTime() / 1000) % 30); // TODO: comment later
     // send token via email
-    await emailService.sendOtpEmail(user.phoneNumber, user.name, token);
+    // await emailService.sendOtpEmail(user.email, user.name, token);
     return res
       .status(httpStatus.OK)
       .json(
         new SuccessResponse(
           httpStatus.OK,
-          `OTP code sent via ${serviceTypes.EMAIL}`
+          `Authentication code sent via ${serviceTypes.EMAIL}`,
+          { otp_id: otpDoc._id, otp_code: token, expiry: remaining }
         )
       );
   }
 
   if (serviceType === serviceTypes.SMS) {
     // generate time-based token
-    const token = otpService.generateOTP(secretKey);
+    const token = otpService.getToken(secretKey);
     // calculate otp token remaining time
     // const remaining = 30 - Math.floor((new Date().getTime() / 1000) % 30);
     // send token via sms
@@ -39,7 +40,7 @@ const sendOtpResponse = async (res, user, otpDoc) => {
       .json(
         new SuccessResponse(
           httpStatus.OK,
-          `OTP code sent via ${serviceTypes.SMS}`
+          `Authentication code sent via ${serviceTypes.SMS}`
         )
       );
   }
@@ -49,16 +50,21 @@ const sendOtpResponse = async (res, user, otpDoc) => {
     const url = otpService.generateQRCodeURL(secretKey, user.email);
     // send qrcode url
     return res.status(httpStatus.OK).json(
-      new SuccessResponse(httpStatus.OK, `OTP qrcode url sent`, {
-        otpauth_url: url,
-      })
+      new SuccessResponse(
+        httpStatus.OK,
+        `Authentication QR code url generated`,
+        {
+          otpauth_url: url,
+        }
+      )
     );
   }
 
+  // default response
   return res
     .status(httpStatus.UNAUTHORIZED)
     .json(
-      new ErrorResponse(httpStatus.UNAUTHORIZED, 'Invalid OTP service type')
+      new ErrorResponse(httpStatus.UNAUTHORIZED, 'Unknown error occurred!')
     );
 };
 

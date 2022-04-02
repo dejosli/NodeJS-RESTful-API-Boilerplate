@@ -5,7 +5,6 @@ const httpStatus = require('http-status');
 const asyncHandler = require('../middleware/common/asyncHandler');
 const {
   SuccessResponse,
-  ErrorResponse,
   sendTokenResponse,
   sendOtpResponse,
 } = require('../utils');
@@ -60,7 +59,7 @@ const login = asyncHandler(async (req, res, next) => {
   const user = await authService.loginUserWithEmailAndPassword(email, password);
   // check whether user has 2FA enabled or not
   if (user.isTwoFactorAuthEnabled) {
-    const otpDoc = await otpService.findSecretKey({ user: user._id });
+    const otpDoc = await otpService.getSecretKey({ user: user._id });
     return sendOtpResponse(res, user, otpDoc);
   }
   // generate and save tokens
@@ -278,31 +277,31 @@ const enable2FA = asyncHandler(async (req, res, next) => {
  */
 const verify2FA = asyncHandler(async (req, res, next) => {
   const { otp_id: otpId, otp_code: otpCode } = req.body;
-  const otpDoc = await otpService.findSecretKey({ _id: otpId });
-  const verified = otpService.verifyOTP(otpCode, otpDoc.secretKey, 30, 1);
 
-  if (verified) {
-    // enable two factor authentication for the user
-    await userService.updateUserById(otpDoc.user, {
-      isTwoFactorAuthEnabled: true,
-    });
-    // update otp status
+  // find otp secret key and verify it against given otp code
+  const otpDoc = await otpService.getSecretKey({ _id: otpId });
+  otpService.verifyToken(otpCode, otpDoc.secretKey, 30, 1);
+
+  // enable two factor authentication for the user
+  await userService.updateUserById(otpDoc.user, {
+    isTwoFactorAuthEnabled: true,
+  });
+  // update otp status
+  if (!otpDoc.verified) {
     await otpService.updateSecretKey({ _id: otpId }, { verified: true });
-    // if refresh_token already exists
-    await Token.deleteOneToken({ userId: otpDoc.user });
-    // generate and save tokens
-    const tokens = await tokenService.generateAuthTokens(otpDoc.user);
-    // send response
-    return sendTokenResponse(
-      res,
-      null,
-      tokens,
-      httpStatus.OK,
-      'You logged in successfully'
-    );
   }
+  // if refresh_token already exists
+  await Token.deleteOneToken({ userId: otpDoc.user });
+  // generate and save tokens
+  const tokens = await tokenService.generateAuthTokens(otpDoc.user);
   // send response
-  throw new ErrorResponse(httpStatus.UNAUTHORIZED, 'OTP verification failed!');
+  sendTokenResponse(
+    res,
+    null,
+    tokens,
+    httpStatus.OK,
+    'You logged in successfully'
+  );
 });
 
 /**
