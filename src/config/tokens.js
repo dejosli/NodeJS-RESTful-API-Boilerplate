@@ -6,7 +6,11 @@ const tokenTypes = {
   VERIFY_EMAIL: 'verifyEmail',
 };
 
+// list of types
+const types = Object.keys(tokenTypes);
+
 // Module exports
 module.exports = {
   tokenTypes,
+  types,
 };

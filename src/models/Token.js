@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 // Internal module imports
 const { toJSON } = require('./plugins');
-const { tokenTypes } = require('../config/tokens');
+const { tokenTypes, types } = require('../config/tokens');
 
 /**
  * Token Schema
@@ -23,11 +23,7 @@ const tokenSchema = mongoose.Schema(
     },
     type: {
       type: String,
-      enum: [
-        tokenTypes.REFRESH,
-        tokenTypes.RESET_PASSWORD,
-        tokenTypes.VERIFY_EMAIL,
-      ],
+      enum: types,
       required: true,
     },
     expireAt: {

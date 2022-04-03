@@ -5,7 +5,7 @@ const serviceTypes = {
   GOOGLE_AUTHENTICATOR: 'google-authenticator',
 };
 
-// create an array of service types
+// list of service types
 const services = Object.values(serviceTypes);
 
 // Module exports

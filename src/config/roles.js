@@ -1,6 +1,4 @@
-/**
- * Roles
- */
+// define roles
 const allRoles = {
   ADMIN: {
     value: 'ADMIN',

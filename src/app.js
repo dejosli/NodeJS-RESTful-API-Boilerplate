@@ -51,8 +51,8 @@ app.use(compression);
 app.use(cors(corsOptionsDelegate));
 
 // passport config
-require('./config/passport-auth')(passport);
-require('./config/passport-oauth')(passport);
+require('./config/auth.passport')(passport);
+require('./config/oauth.passport')(passport);
 
 app.use(passport.initialize());
 

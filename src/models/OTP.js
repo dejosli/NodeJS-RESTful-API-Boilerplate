@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 // Internal module imports
 const { toJSON } = require('./plugins');
-const { services, serviceTypes } = require('../config/otpServices');
+const { services, serviceTypes } = require('../config/otps');
 
 /**
  * Time-based One Time Password Schema

@@ -2,7 +2,7 @@
 const httpStatus = require('http-status');
 
 // Internal module imports
-const { serviceTypes } = require('../config/otpServices');
+const { serviceTypes } = require('../config/otps');
 const SuccessResponse = require('./lib/SuccessResponse');
 const ErrorResponse = require('./lib/ErrorResponse');
 const { otpService, emailService, messagingService } = require('../services');
@@ -14,16 +14,15 @@ const sendOtpResponse = async (res, user, otpDoc) => {
     // generate time-based token
     const token = otpService.getToken(secretKey);
     // calculate otp token remaining time
-    const remaining = 30 - Math.floor((new Date().getTime() / 1000) % 30); // TODO: comment later
+    // const remaining = 30 - Math.floor((new Date().getTime() / 1000) % 30);
     // send token via email
-    // await emailService.sendOtpEmail(user.email, user.name, token);
+    await emailService.sendOtpEmail(user.email, user.name, token);
     return res
       .status(httpStatus.OK)
       .json(
         new SuccessResponse(
           httpStatus.OK,
-          `Authentication code sent via ${serviceTypes.EMAIL}`,
-          { otp_id: otpDoc._id, otp_code: token, expiry: remaining }
+          `Authentication code sent via ${serviceTypes.EMAIL}`
         )
       );
   }
@@ -34,7 +33,7 @@ const sendOtpResponse = async (res, user, otpDoc) => {
     // calculate otp token remaining time
     // const remaining = 30 - Math.floor((new Date().getTime() / 1000) % 30);
     // send token via sms
-    await messagingService.sendOtpSms(user.phoneNumber, token);
+    await messagingService.sendOtpSMS(user.phoneNumber, token);
     return res
       .status(httpStatus.OK)
       .json(

@@ -22,7 +22,7 @@ const client = twilio(
  * @param {string} text
  * @return {Promise<object>}
  */
-const sendSms = async (to, text) => {
+const sendSMS = async (to, text) => {
   const msg = { body: text, to, from: config.twilio.phoneNumber };
   const info = await client.messages.create(msg);
   if (!info.sid || info.error_code || info.error_message) {
@@ -41,7 +41,7 @@ const sendSms = async (to, text) => {
  * @param {string} mediaUrl
  * @return {Promise<object>}
  */
-const sendMms = async (to, text, mediaUrl) => {
+const sendMMS = async (to, text, mediaUrl) => {
   const msg = { body: text, mediaUrl, to, from: config.twilio.phoneNumber };
   const info = await client.messages.create(msg);
   if (!info.sid || info.error_code || info.error_message) {
@@ -59,15 +59,15 @@ const sendMms = async (to, text, mediaUrl) => {
  * @param {string} token
  * @return {Promise<object>}
  */
-const sendOtpSms = async (to, token) => {
+const sendOtpSMS = async (to, token) => {
   const text = `${token} is your authentication code.`;
-  const info = await sendSms(to, text);
+  const info = await sendSMS(to, text);
   return info;
 };
 
 // Module exports
 module.exports = {
-  sendSms,
-  sendMms,
-  sendOtpSms,
+  sendSMS,
+  sendMMS,
+  sendOtpSMS,
 };
