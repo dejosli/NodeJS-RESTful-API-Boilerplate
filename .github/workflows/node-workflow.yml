@@ -1,8 +1,6 @@
 name: Node.js RESTFul API CI and CD
 
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
 
@@ -12,27 +10,37 @@ jobs:
       CI: true
       NODE_ENV: production
       PORT: 5000
-      MONGODB_URL: mongodb://localhost/boilerplate
+      MONGODB_URL: mongodb://localhost/node-boilerplate
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [16.x]
         mongodb-version: ['5.0']
     steps:
-      - uses: actions/checkout@v2
+      - name: Git checkout
+      - uses: actions/checkout@v3
+
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
-      - name: MongoDB in GitHub Actions
+
+      - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.7.0
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
+
+      - name: Install dependencies
       - run: yarn install --frozen-lockfile --production=false
+
+      - name: Run linting
       - run: yarn lint
+
+      - name: Make test-coverage
       - run: yarn test:coverage
-      - name: Coveralls GitHub Action
-        uses: coverallsapp/github-action@1.1.3
+
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
