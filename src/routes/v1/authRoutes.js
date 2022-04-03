@@ -82,19 +82,19 @@ router.get(
 // mount two factor authentication routes
 router.post(
   '/otp/send',
-  [authValidator.enable2FA, validate],
+  [authValidator.sendOTPMessage, validate],
   authorizeAccessToken,
-  authController.enable2FA
+  authController.sendOTPMessage
 );
 router.post(
   '/otp/verify',
-  [authValidator.verify2FA, validate],
-  authController.verify2FA
+  [authValidator.verifyOTPCode, validate],
+  authController.verifyOTPCode
 );
 router.post(
   '/otp/resend',
-  [authValidator.resend2FA, validate],
-  authController.resend2FA
+  [authValidator.resendOTPMessage, validate],
+  authController.resendOTPMessage
 );
 
 // Module exports

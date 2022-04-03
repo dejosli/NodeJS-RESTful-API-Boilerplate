@@ -242,7 +242,7 @@ const oauthLogin = asyncHandler(async (req, res, next) => {
  * @route POST /api/v1/auth/otp/send
  * @access Private
  */
-const enable2FA = asyncHandler(async (req, res, next) => {
+const sendOTPMessage = asyncHandler(async (req, res, next) => {
   const { enabled, send_otp: serviceType } = req.body;
   const { _id: userId, email } = req.user;
 
@@ -275,7 +275,7 @@ const enable2FA = asyncHandler(async (req, res, next) => {
  * @route POST /api/v1/auth/otp/verify
  * @access Public
  */
-const verify2FA = asyncHandler(async (req, res, next) => {
+const verifyOTPCode = asyncHandler(async (req, res, next) => {
   const { otp_id: otpId, otp_code: otpCode } = req.body;
 
   // find otp secret key and verify it against given otp code
@@ -309,7 +309,7 @@ const verify2FA = asyncHandler(async (req, res, next) => {
  * @route POST /api/v1/auth/otp/resend
  * @access Public
  */
-const resend2FA = asyncHandler(async (req, res, next) => {
+const resendOTPMessage = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true });
 });
 
@@ -324,7 +324,7 @@ module.exports = {
   sendVerificationEmail,
   verifyEmail,
   oauthLogin,
-  enable2FA,
-  verify2FA,
-  resend2FA,
+  sendOTPMessage,
+  verifyOTPCode,
+  resendOTPMessage,
 };

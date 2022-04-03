@@ -100,17 +100,19 @@ const verifyEmail = query('token')
 
 // validators for two factor authentication
 
-const enable2FA = [
+const sendOTPMessage = [
   body('enabled').isBoolean().withMessage('A boolean value must be provided'),
   body('send_otp').custom(is2faEnabled),
 ];
 
-const verify2FA = [
+const verifyOTPCode = [
   body('otp_id').notEmpty().withMessage('OTP id is missing').isMongoId(),
   body('otp_code').notEmpty().withMessage('OTP code is missing'),
 ];
 
-const resend2FA = body('otp_id').notEmpty().withMessage('OTP id is missing');
+const resendOTPMessage = body('otp_id')
+  .notEmpty()
+  .withMessage('OTP id is missing');
 
 // Module exports
 module.exports = {
@@ -119,7 +121,7 @@ module.exports = {
   forgotPassword,
   resetPassword,
   verifyEmail,
-  enable2FA,
-  verify2FA,
-  resend2FA,
+  sendOTPMessage,
+  verifyOTPCode,
+  resendOTPMessage,
 };
