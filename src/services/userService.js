@@ -4,6 +4,7 @@ const httpStatus = require('http-status');
 // Internal module imports
 const { User } = require('../models');
 const { ErrorResponse, cloudinaryUploader } = require('../utils');
+const errorMessages = require('../config/error-messages');
 
 // define upload folder for profile picture
 const AVATAR_UPLOAD_FOLDER = 'avatar';
@@ -107,7 +108,10 @@ const queryUsers = async (query) => {
 const getUserById = async (userId) => {
   const user = await User.findById(userId);
   if (!user) {
-    throw new ErrorResponse(httpStatus.NOT_FOUND, 'User not found');
+    throw new ErrorResponse(
+      httpStatus.NOT_FOUND,
+      errorMessages.USER_NOT_FOUND_ERR
+    );
   }
   return user;
 };
@@ -124,7 +128,10 @@ const updateUserById = async (userId, updateBody) => {
   }
   const user = await User.findByIdAndUpdate(userId, updateBody, { new: true });
   if (!user) {
-    throw new ErrorResponse(httpStatus.NOT_FOUND, 'User update failed');
+    throw new ErrorResponse(
+      httpStatus.NOT_FOUND,
+      errorMessages.USER_UPDATE_ERR
+    );
   }
   return user;
 };
@@ -137,7 +144,10 @@ const updateUserById = async (userId, updateBody) => {
 const deleteUserById = async (userId) => {
   const user = await User.findByIdAndDelete(userId);
   if (!user) {
-    throw new ErrorResponse(httpStatus.NOT_FOUND, 'User deletion failed');
+    throw new ErrorResponse(
+      httpStatus.NOT_FOUND,
+      errorMessages.USER_DELETE_ERR
+    );
   }
   return user;
 };

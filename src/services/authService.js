@@ -6,6 +6,7 @@ const { User, Token } = require('../models');
 const { ErrorResponse } = require('../utils');
 const { tokenTypes } = require('../config/tokens');
 const { updateUserById } = require('./userService');
+const errorMessages = require('../config/error-messages');
 
 /**
  * Login with username and password
@@ -18,7 +19,10 @@ const loginUserWithEmailAndPassword = async (email, password) => {
   const user = await User.findOne({ email }).select('+password');
   // if user not found
   if (!user || !(await user.isPasswordMatch(password))) {
-    throw new ErrorResponse(httpStatus.UNAUTHORIZED, 'Wrong email or password');
+    throw new ErrorResponse(
+      httpStatus.UNAUTHORIZED,
+      errorMessages.USER_LOGIN_ERR
+    );
   }
   // if refresh_token already exists
   await Token.deleteOneToken({ userId: user._id });
@@ -34,7 +38,10 @@ const logoutUserWithToken = async (userId) => {
   // find and delete refresh_token from DB
   const refreshTokenDoc = await Token.deleteOneToken({ userId });
   if (!refreshTokenDoc) {
-    throw new ErrorResponse(httpStatus.UNAUTHORIZED, 'Please authenticate');
+    throw new ErrorResponse(
+      httpStatus.UNAUTHORIZED,
+      errorMessages.USER_LOGOUT_ERR
+    );
   }
   return refreshTokenDoc;
 };
@@ -57,7 +64,10 @@ const logoutUserWithCookie = async (res, cookieName) => {
 const requestPasswordReset = async (email) => {
   const user = await User.findByEmail(email);
   if (!user) {
-    throw new ErrorResponse(httpStatus.NOT_FOUND, 'User not found');
+    throw new ErrorResponse(
+      httpStatus.NOT_FOUND,
+      errorMessages.USER_NOT_FOUND_ERR
+    );
   }
   // if resetToken already exists
   await Token.deleteOneToken({
@@ -82,7 +92,10 @@ const resetPassword = async (userId, newPassword) => {
       type: tokenTypes.RESET_PASSWORD,
     });
   } catch (err) {
-    throw new ErrorResponse(httpStatus.UNAUTHORIZED, 'Password reset failed');
+    throw new ErrorResponse(
+      httpStatus.UNAUTHORIZED,
+      errorMessages.USER_PASSWORD_RESET_ERR
+    );
   }
 };
 
@@ -102,7 +115,7 @@ const verifyEmail = async (userId) => {
   } catch (err) {
     throw new ErrorResponse(
       httpStatus.UNAUTHORIZED,
-      'Email verification failed'
+      errorMessages.USER_EMAIL_VERIFICATION_ERR
     );
   }
 };

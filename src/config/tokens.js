@@ -7,7 +7,7 @@ const tokenTypes = {
 };
 
 // list of types
-const types = Object.keys(tokenTypes);
+const types = Object.values(tokenTypes);
 
 // Module exports
 module.exports = {

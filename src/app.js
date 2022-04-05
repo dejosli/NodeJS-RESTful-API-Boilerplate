@@ -20,6 +20,9 @@ const notFoundHandler = require('./middleware/common/notFoundHandler');
 // create express app
 const app = express();
 
+// set number of trust proxies
+app.set('trust proxy', 1);
+
 // set logger
 app.use(morgan.successHandler);
 app.use(morgan.errorHandler);
@@ -51,8 +54,8 @@ app.use(compression);
 app.use(cors(corsOptionsDelegate));
 
 // passport config
-require('./config/auth.passport')(passport);
-require('./config/oauth.passport')(passport);
+require('./config/passport-auth')(passport);
+require('./config/passport-oauth')(passport);
 
 app.use(passport.initialize());
 

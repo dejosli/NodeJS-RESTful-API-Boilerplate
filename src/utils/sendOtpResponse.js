@@ -22,7 +22,8 @@ const sendOtpResponse = async (res, user, otpDoc) => {
       .json(
         new SuccessResponse(
           httpStatus.OK,
-          `Authentication code sent via ${serviceTypes.EMAIL}`
+          `Authentication code sent via ${serviceTypes.EMAIL}`,
+          { otp_id: otpDoc._id }
         )
       );
   }
@@ -39,7 +40,8 @@ const sendOtpResponse = async (res, user, otpDoc) => {
       .json(
         new SuccessResponse(
           httpStatus.OK,
-          `Authentication code sent via ${serviceTypes.SMS}`
+          `Authentication code sent via ${serviceTypes.SMS}`,
+          { otp_id: otpDoc._id }
         )
       );
   }
@@ -53,6 +55,7 @@ const sendOtpResponse = async (res, user, otpDoc) => {
         httpStatus.OK,
         `Authentication QR code url generated`,
         {
+          otp_id: otpDoc._id,
           otpauth_url: url,
         }
       )

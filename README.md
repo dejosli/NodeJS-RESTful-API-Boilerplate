@@ -80,7 +80,7 @@ cp .env.example .env
 │   ├───controllers
 │   │   └───tests
 │   ├───docs
-│   ├───middlewares
+│   ├───middleware
 │   ├───models
 │   ├───routes
 │   │   └───v1
