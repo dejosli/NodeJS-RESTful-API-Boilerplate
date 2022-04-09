@@ -32,8 +32,8 @@ The skeleton has many built-in features, such as authentication using JWT, reque
 
 ## Requirements
 
-- [Node.js v16.13.1+](https://nodejs.org/en/)
-- [Yarn v1.22.17+](https://classic.yarnpkg.com/en/docs/getting-started)
+- [Node.js v16.14.2+](https://nodejs.org/en/)
+- [Yarn v1.22.18+](https://classic.yarnpkg.com/en/docs/getting-started)
 - [MongoDB v4.4.1+](https://www.mongodb.com/try/download/compass)
 - Install Node.js using [Node Version Manager](https://github.com/nvm-sh/nvm#install--update-script)
 

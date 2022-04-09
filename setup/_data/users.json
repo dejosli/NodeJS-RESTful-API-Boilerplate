@@ -1,0 +1,40 @@
+[
+  {
+    "name": "Administrator",
+    "username": "admin",
+    "email": "admin@example.com",
+    "password": "Admin@1234",
+    "role": "ADMIN",
+    "phoneNumber": "01705799465"
+  },
+  {
+    "name": "Dylan Young",
+    "username": "Young",
+    "email": "dylan.young@example.com",
+    "password": "Dylan@1234",
+    "role": "EDITOR",
+    "phoneNumber": "01705799465"
+  },
+  {
+    "name": "Fraser Bond",
+    "username": "bond",
+    "email": "fraser.bond@example.com",
+    "password": "Bond@1234",
+    "role": "EDITOR",
+    "phoneNumber": "01705799465"
+  },
+  {
+    "name": "Ricky Ponting",
+    "username": "punter",
+    "email": "ricky.ponting@example.com",
+    "password": "Punter@1234",
+    "phoneNumber": "01705799465"
+  },
+  {
+    "name": "Micheal Clarke",
+    "username": "clarke",
+    "email": "micheal.clarke@example.com",
+    "password": "Clarke@1234",
+    "phoneNumber": "01705799465"
+  }
+]

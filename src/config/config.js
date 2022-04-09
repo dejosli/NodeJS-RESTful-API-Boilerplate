@@ -11,9 +11,9 @@ const envVarsSchema = Joi.object()
     PORT: Joi.number().default(5000),
     NODE_ENV: Joi.string()
       .valid('production', 'development', 'test')
-      .required(),
+      .default('development'),
     APP_NAME: Joi.string().description('Application name'),
-    MONGODB_URL: Joi.string().required().description('Mongo DB url'),
+    MONGODB_URL: Joi.string().required().description('MongoDB connection url'),
     ADMIN_EMAIL: Joi.string()
       .default('admin@example.com')
       .description('Admin registration email'),

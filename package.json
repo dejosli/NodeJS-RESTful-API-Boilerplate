@@ -14,6 +14,8 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
+    "db:seed": "node setup/seeder.js -i",
+    "db:remove": "node setup/seeder.js -r",
     "test": "jest --colors --verbose --detectOpenHandles",
     "test:watch": "jest --watchAll",
     "test:coverage": "jest --coverage",

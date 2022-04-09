@@ -1,25 +1,10 @@
 // External module imports
 const httpStatus = require('http-status');
-const nodemailer = require('nodemailer');
 
 // Internal module imports
 const config = require('../config/config');
-const logger = require('../config/logger');
 const { ErrorResponse } = require('../utils');
-
-// create reusable transporter object using the default SMTP transport
-const transporter = nodemailer.createTransport(config.email.smtp);
-
-if (config.env !== 'test') {
-  transporter
-    .verify()
-    .then(() => logger.info('Connected to email server'))
-    .catch(() =>
-      logger.warn(
-        'Unable to connect to email server. Make sure you have configured the SMTP options in .env'
-      )
-    );
-}
+const { createTransporter } = require('../config/nodemailer');
 
 /**
  * Send an email
@@ -29,7 +14,13 @@ if (config.env !== 'test') {
  * @return {Promise<object>}
  */
 const sendEmail = async (to, subject, text) => {
+  // get transporter object
+  const transporter = await createTransporter();
+
+  // make message body
   const msg = { from: config.email.from, to, subject, text };
+
+  // send email
   const info = await transporter.sendMail(msg);
   if (!info.messageId) {
     throw new ErrorResponse(
@@ -37,6 +28,7 @@ const sendEmail = async (to, subject, text) => {
       `Email sent error: ${info.messageId}`
     );
   }
+
   return info;
 };
 
@@ -90,7 +82,6 @@ const sendOtpEmail = async (to, name, otpCode) => {
 
 // Module exports
 module.exports = {
-  transporter,
   sendEmail,
   sendResetPasswordEmail,
   sendVerificationEmail,
