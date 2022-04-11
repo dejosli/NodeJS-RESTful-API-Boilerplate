@@ -4,7 +4,7 @@ const FacebookStrategy = require('passport-facebook').Strategy;
 
 // Internal module imports
 const config = require('./config');
-const { User } = require('../models');
+const { User } = require('../api/models');
 
 // Callback URLs
 const GOOGLE_CALLBACK_URL = `http://localhost:5000/api/v1/auth/google/callback`;

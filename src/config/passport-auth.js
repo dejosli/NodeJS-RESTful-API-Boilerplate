@@ -3,12 +3,18 @@ const { Strategy, ExtractJwt } = require('passport-jwt');
 
 // Internal module imports
 const config = require('./config');
-const { Token } = require('../models');
+const { Token } = require('../api/models');
 const { tokenTypes } = require('./tokens');
 
 const cookieExtractor = {};
 const jwtOptions = {};
 const jwtStrategy = {};
+
+const defaultOptions = {
+  issuer: config.jwt.issuer,
+  // audience: 'yoursite.net',
+  algorithm: 'HS384',
+};
 
 /**
  * Custom Extractors
@@ -35,7 +41,8 @@ cookieExtractor.REFRESH = function (req) {
  * JWT Strategy Options
  */
 jwtOptions.ACCESS = {
-  secretOrKey: config.jwt.secret,
+  ...defaultOptions,
+  secretOrKey: config.jwt.accessSecret,
   jwtFromRequest: ExtractJwt.fromExtractors([
     ExtractJwt.fromAuthHeaderAsBearerToken(),
     cookieExtractor.ACCESS,
@@ -44,7 +51,8 @@ jwtOptions.ACCESS = {
 };
 
 jwtOptions.REFRESH = {
-  secretOrKey: config.jwt.secret,
+  ...defaultOptions,
+  secretOrKey: config.jwt.refreshSecret,
   jwtFromRequest: ExtractJwt.fromExtractors([
     ExtractJwt.fromAuthHeaderAsBearerToken(),
     cookieExtractor.REFRESH,
@@ -53,13 +61,15 @@ jwtOptions.REFRESH = {
 };
 
 jwtOptions.RESET_PASSWORD = {
-  secretOrKey: config.jwt.secret,
+  ...defaultOptions,
+  secretOrKey: config.jwt.resetPasswordSecret,
   jwtFromRequest: ExtractJwt.fromUrlQueryParameter('token'),
   // passReqToCallback: true, // if req (object) need in callback
 };
 
 jwtOptions.VERIFY_EMAIL = {
-  secretOrKey: config.jwt.secret,
+  ...defaultOptions,
+  secretOrKey: config.jwt.verifyEmailSecret,
   jwtFromRequest: ExtractJwt.fromUrlQueryParameter('token'),
   // passReqToCallback: true, // if req (object) need in callback
 };

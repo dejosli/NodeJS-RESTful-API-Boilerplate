@@ -1,0 +1,10 @@
+// Module exports
+module.exports.helpers = require('./helpers');
+module.exports.SuccessResponse = require('./SuccessResponse');
+module.exports.ErrorResponse = require('./ErrorResponse');
+module.exports.mappedMetadata = require('./mappedMetadata');
+module.exports.mappedDocuments = require('./mappedDocuments');
+module.exports.mappedPermissions = require('./mappedPermissions');
+module.exports.sendTokenResponse = require('./sendTokenResponse');
+module.exports.sendMetadataResponse = require('./sendMetadataResponse');
+module.exports.sendOtpResponse = require('./sendOtpResponse');

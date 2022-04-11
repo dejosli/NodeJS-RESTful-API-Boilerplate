@@ -20,7 +20,19 @@ const envVarsSchema = Joi.object()
     BCRYPT_SALT_ROUNDS: Joi.number()
       .default(15)
       .description('Bcrypt salt rounds'),
-    JWT_SECRET: Joi.string().required().description('JWT secret key'),
+    JWT_ISSUER: Joi.string().required().description('JWT issuer'),
+    JWT_ACCESS_SECRET: Joi.string()
+      .required()
+      .description('JWT access token secret'),
+    JWT_REFRESH_SECRET: Joi.string()
+      .required()
+      .description('JWT refresh token secret'),
+    JWT_RESET_PASSWORD_SECRET: Joi.string()
+      .required()
+      .description('JWT reset password token secret'),
+    JWT_VERIFY_EMAIL_SECRET: Joi.string()
+      .required()
+      .description('JWT verify email token secret'),
     JWT_SESSION: Joi.string()
       .valid('true', 'false')
       .default('false')
@@ -81,7 +93,11 @@ module.exports = {
   adminEmail: envVars.ADMIN_EMAIL,
   bcryptSaltRounds: envVars.BCRYPT_SALT_ROUNDS,
   jwt: {
-    secret: envVars.JWT_SECRET,
+    issuer: envVars.JWT_ISSUER,
+    accessSecret: envVars.JWT_ACCESS_SECRET,
+    refreshSecret: envVars.JWT_REFRESH_SECRET,
+    resetPasswordSecret: envVars.JWT_RESET_PASSWORD_SECRET,
+    verifyEmailSecret: envVars.JWT_VERIFY_EMAIL_SECRET,
     session: envVars.JWT_SESSION,
     accessExpirationMinutes: envVars.JWT_ACCESS_EXPIRATION_MINUTES,
     refreshExpirationDays: envVars.JWT_REFRESH_EXPIRATION_DAYS,

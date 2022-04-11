@@ -1,6 +1,6 @@
 // Internal module imports
 const logger = require('../src/config/logger');
-const connectDB = require('../src/config/database');
+const { connectDB } = require('../src/core/database');
 const { seedUsers, dropUsers } = require('./users');
 
 // insert data into database

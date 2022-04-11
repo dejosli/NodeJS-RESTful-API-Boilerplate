@@ -1,5 +1,10 @@
+// External module imports
+const cors = require('cors');
+
+// allow the following origin
 const whitelist = ['http://localhost:3000', 'http://localhost:1337'];
 
+// configuration
 const corsOptions = {
   origin: false,
   optionsSuccessStatus: 200,
@@ -8,7 +13,8 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
 };
 
-const corsOptionsDelegate = function (req, callback) {
+// filter the requested origin
+const corsOptionsDelegate = (req, callback) => {
   if (whitelist.indexOf(req.header('Origin')) !== -1) {
     corsOptions.origin = true; // reflect (enable) the requested origin in the CORS response
   } else {
@@ -18,4 +24,4 @@ const corsOptionsDelegate = function (req, callback) {
 };
 
 // Module exports
-module.exports = corsOptionsDelegate;
+module.exports = cors(corsOptionsDelegate);

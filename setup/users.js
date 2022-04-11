@@ -1,7 +1,7 @@
 // Internal module imports
 const logger = require('../src/config/logger');
 const users = require('./_data/users.json');
-const User = require('../src/models/User');
+const User = require('../src/api/models/User');
 
 const seedUsers = async () => {
   await Promise.all(
