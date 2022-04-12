@@ -1,21 +1,22 @@
 // External module imports
+require('module-alias/register');
 const express = require('express');
 const passport = require('passport');
 
 // Internal module imports
-const { authController } = require('../../controllers');
-const { authValidator, validate } = require('../../validations');
+const { authController } = require('controllers');
+const { authValidator, validate } = require('validations');
 const {
   authorizeAccessToken,
   authorizeRefreshToken,
   authorizeResetPasswordToken,
   authorizeVerifyEmailToken,
-} = require('../../middleware/authentication/auth');
+} = require('middleware/authentication/auth');
 const {
   authorizeGoogleOAuth,
   authorizeFacebookOAuth,
-} = require('../../middleware/authentication/oauth');
-const profilePicUpload = require('../../middleware/users/profilePicUpload');
+} = require('middleware/authentication/oauth');
+const profilePicUpload = require('middleware/users/profilePicUpload');
 
 // init express router
 const router = express.Router();

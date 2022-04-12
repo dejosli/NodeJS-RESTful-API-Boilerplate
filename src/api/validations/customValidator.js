@@ -1,9 +1,10 @@
 // External module imports
+require('module-alias/register');
 const mongoose = require('mongoose');
 
 // Internal module imports
-const { User } = require('../models');
-const { allRoles, roles } = require('../../config/roles');
+const { User } = require('models');
+const { allRoles, roles } = require('config/roles');
 
 // check whether id is mongo ObjectId or not
 const isObjectId = (id) => {
@@ -37,7 +38,7 @@ const isInRoles = (role, { req }) => {
     return Promise.reject(new Error('Role is required'));
   }
   if (req.baseUrl.includes('auth')) {
-    return role === allRoles.USER.value
+    return role === allRoles.USER.alias
       ? true
       : Promise.reject(new Error('Invalid role'));
   }
@@ -46,7 +47,7 @@ const isInRoles = (role, { req }) => {
     : Promise.reject(new Error('Invalid role'));
 };
 
-const is2faEnabled = (type, { req }) => {
+const isOtpEnabled = (type, { req }) => {
   const { enabled } = req.body;
   const types = ['email', 'sms', 'none'];
   if (enabled === 'true' && !type) {
@@ -64,5 +65,5 @@ module.exports = {
   isEmailTaken,
   isUsernameTaken,
   isInRoles,
-  is2faEnabled,
+  isOtpEnabled,
 };

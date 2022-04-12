@@ -1,15 +1,15 @@
 // define roles
 const allRoles = {
   ADMIN: {
-    value: 'ADMIN',
-    level: 300,
+    alias: 'ADMIN',
+    level: 300, // permission level (higher value priority)
   },
   EDITOR: {
-    value: 'EDITOR',
+    alias: 'EDITOR',
     level: 200,
   },
   USER: {
-    value: 'USER',
+    alias: 'USER',
     level: 100,
   },
 };

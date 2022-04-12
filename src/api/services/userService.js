@@ -1,11 +1,14 @@
 // External module imports
+require('module-alias/register');
 const httpStatus = require('http-status');
 
 // Internal module imports
-const { User } = require('../models');
-const { ErrorResponse } = require('../utils');
-const errorMessages = require('../../config/error-messages');
-const { cloudinaryUploader } = require('../lib/cloudinary-uploader');
+const { User } = require('models');
+const { ErrorResponse, common } = require('utils');
+const errorMessages = require('config/error-messages');
+const { cloudinaryUploader } = require('lib/cloudinary-uploader');
+
+const { asyncFunction } = common;
 
 // define upload folder for profile picture
 const AVATAR_UPLOAD_FOLDER = 'avatar';
@@ -59,22 +62,46 @@ const createUser = async (userBody) => {
  * @param {object} query
  * @return {Promise<object[]>} an array of objects representing users
  */
-const queryUsers = async (query) => {
-  const filter =
-    query.search && query.search !== undefined
-      ? {
-          $match: {
-            $text: {
-              $search: query.search,
-              $caseSensitive: false,
-              $diacriticSensitive: true,
+const queryUsers = asyncFunction(async (query) => {
+  let filter = {
+    $match: {},
+  };
+
+  if (query.search && query.search !== undefined) {
+    filter = {
+      // $match: {
+      //   $text: {
+      //     $search: query.search,
+      //     $caseSensitive: false,
+      //     $diacriticSensitive: true,
+      //   },
+      // },
+      $match: {
+        $or: [
+          {
+            name: {
+              $regex: query.search,
+              $options: 'i',
             },
           },
-        }
-      : {
-          $match: {},
-        };
+          {
+            email: {
+              $regex: query.search,
+              $options: 'i',
+            },
+          },
+          {
+            role: {
+              $regex: query.search,
+              $options: 'i',
+            },
+          },
+        ],
+      },
+    };
+  }
 
+  // define aggregate pipeline
   const pipeline = [
     filter,
     {
@@ -84,22 +111,23 @@ const queryUsers = async (query) => {
         name: 1,
         username: 1,
         email: 1,
+        phoneNumber: 1,
         role: 1,
         profilePicture: 1,
+        active: 1,
         isEmailVerified: 1,
+        isTwoFactorAuthEnabled: 1,
       },
     },
   ];
-
+  // pagination configuration
   const options = {
     ...query,
     sortBy: { name: query?.name, role: query?.role },
-    countQuery: filter,
     meta: query.include_metadata,
   };
-
   return User.offsetPaginate(pipeline, options);
-};
+});
 
 /**
  * Get user by id

@@ -1,7 +1,7 @@
 [
   {
-    "name": "Administrator",
-    "username": "admin",
+    "name": "John Doe",
+    "username": "john",
     "email": "admin@example.com",
     "password": "Admin@1234",
     "role": "ADMIN",
@@ -9,7 +9,7 @@
   },
   {
     "name": "Dylan Young",
-    "username": "Young",
+    "username": "young",
     "email": "dylan.young@example.com",
     "password": "Dylan@1234",
     "role": "EDITOR",

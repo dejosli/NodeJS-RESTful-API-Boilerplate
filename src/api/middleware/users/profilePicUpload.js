@@ -1,5 +1,8 @@
+// External module imports
+require('module-alias/register');
+
 // Internal module imports
-const { multerUploader } = require('../../lib/multer-uploader');
+const { multerUploader } = require('lib/multer-uploader');
 
 const profilePicUpload = (req, res, next) => {
   const fieldName = 'profilePicture';

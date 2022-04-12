@@ -1,0 +1,100 @@
+{
+  "Print to console": {
+    "prefix": "log",
+    "body": ["console.log($1);"],
+    "description": "Log output to console"
+  },
+  "Print dicrectory to console": {
+    "prefix": "dir",
+    "body": ["console.dir($1);"],
+    "description": "Dir output to console"
+  },
+  "Default comments for author": {
+    "prefix": "author",
+    "body": [
+      "/**",
+      "* Title: $1",
+      "* Description: $1",
+      "* Author: Josli Shubho Biswas",
+      "* Date: $1",
+      "*/"
+    ],
+    "description": "Multiline comments for a author"
+  },
+  "Default comments for project": {
+    "prefix": "comment",
+    "body": [
+      "// External module imports\n",
+      "// Internal module imports\n",
+      "// Module exports\n"
+    ],
+    "description": "Multiline comments for a project"
+  },
+  "External module imports": {
+    "prefix": "external",
+    "body": ["// External module imports\n"],
+    "description": "Import a module from node_modules directory"
+  },
+  "Internal module imports": {
+    "prefix": "internal",
+    "body": ["// Internal module imports\n"],
+    "description": "Import a custom module from the project directory"
+  },
+  "Custom module exports": {
+    "prefix": "exports",
+    "body": ["// Module exports\n"],
+    "description": "Export a custom module to the project directory"
+  },
+  "Jest describe block": {
+    "prefix": "describe",
+    "body": ["// Unit under test/scenario", "describe('$1', () => {});"],
+    "description": "Jest testing describe block"
+  },
+  "Jest test block": {
+    "prefix": "test",
+    "body": [
+      "// Expectation",
+      "test('$1', () => {",
+      "  // Arrange",
+      "  // Act",
+      "  // Assert",
+      "});"
+    ],
+    "description": "Jest testing test block"
+  },
+  "Jest it block": {
+    "prefix": "it",
+    "body": [
+      "// Expectation",
+      "it('$1', () => {",
+      "  // Arrange",
+      "  // Act",
+      "  // Assert",
+      "});"
+    ],
+    "description": "Jest testing it block"
+  },
+  "Jest test suite": {
+    "prefix": "suite",
+    "body": [
+      "// Unit under test",
+      "describe('$1', () => {",
+      "  // Scenario",
+      "  describe('$1', () => {",
+      "    // Expectation",
+      "    test('$1', () => {",
+      "      // Arrange",
+      "      // Act",
+      "      // Assert",
+      "    });",
+      "  });",
+      "});"
+    ],
+    "description": "Structuring testing suite with the name of unit under test and scenarios"
+  },
+  "Module alias register": {
+    "prefix": "alias",
+    "body": "require('module-alias/register');",
+    "description": "Create aliases of directories and register custom module paths"
+  }
+}

@@ -1,12 +1,14 @@
 // External module imports
+require('module-alias/register');
 const AccessControl = require('accesscontrol');
 
 // Internal module imports
-const { allRoles } = require('../../../config/roles');
-const { mappedPermissions } = require('../../utils');
+const { allRoles } = require('config/roles');
+const { mappedPermissions, common } = require('utils');
+const { userService } = require('services');
 const grantAccess = require('./grantAccess');
-const asyncHandler = require('../common/asyncHandler');
-const { userService } = require('../../services');
+
+const { asyncHandler } = common;
 
 // init access-control
 const roleRights = new AccessControl();
@@ -16,7 +18,7 @@ const roleRights = new AccessControl();
  */
 const resourceTypes = {
   USER: {
-    value: 'users',
+    alias: 'users',
     attributes: ['*'],
   },
 };
@@ -27,19 +29,19 @@ const resourceTypes = {
 
 // user role permissions
 roleRights
-  .grant(allRoles.USER.value)
-  .readOwn(resourceTypes.USER.value)
-  .updateOwn(resourceTypes.USER.value)
-  .deleteOwn(resourceTypes.USER.value);
+  .grant(allRoles.USER.alias)
+  .readOwn(resourceTypes.USER.alias)
+  .updateOwn(resourceTypes.USER.alias)
+  .deleteOwn(resourceTypes.USER.alias);
 
 // admin role inherits both user and editor role permissions
 roleRights
-  .grant([allRoles.ADMIN.value, allRoles.EDITOR.value])
-  .extend(allRoles.USER.value)
-  .createAny(resourceTypes.USER.value)
-  .readAny(resourceTypes.USER.value)
-  .updateAny(resourceTypes.USER.value)
-  .deleteAny(resourceTypes.USER.value);
+  .grant([allRoles.ADMIN.alias, allRoles.EDITOR.alias])
+  .extend(allRoles.USER.alias)
+  .createAny(resourceTypes.USER.alias)
+  .readAny(resourceTypes.USER.alias)
+  .updateAny(resourceTypes.USER.alias)
+  .deleteAny(resourceTypes.USER.alias);
 
 /**
  * Define action rules for the permission
@@ -55,7 +57,7 @@ const grantRules = function (actionAny, actionOwn) {
     if (!req.params.userId) {
       hasPermission = roleRights
         .can(req.user.role)
-        [actionAny](resourceTypes.USER.value);
+        [actionAny](resourceTypes.USER.alias);
       hasRoleAccess = !!hasPermission.granted;
     }
 
@@ -63,7 +65,7 @@ const grantRules = function (actionAny, actionOwn) {
     if (req.params.userId && req.user.id === req.params.userId) {
       hasPermission = roleRights
         .can(req.user.role)
-        [actionOwn](resourceTypes.USER.value);
+        [actionOwn](resourceTypes.USER.alias);
       hasRoleAccess = !!hasPermission.granted;
     }
 
@@ -71,7 +73,7 @@ const grantRules = function (actionAny, actionOwn) {
     if (req.params.userId && req.user.id !== req.params.userId) {
       hasPermission = roleRights
         .can(req.user.role)
-        [actionAny](resourceTypes.USER.value);
+        [actionAny](resourceTypes.USER.alias);
       if (hasPermission.granted) {
         user = await userService.getUserById(req.params.userId);
         hasRoleAccess =
@@ -92,7 +94,7 @@ const grantRules = function (actionAny, actionOwn) {
       req.user = user;
       req.permission = mappedPermissions(
         true,
-        resourceTypes.USER.value,
+        resourceTypes.USER.alias,
         hasPermission.attributes
       );
     }
@@ -103,7 +105,7 @@ const grantRules = function (actionAny, actionOwn) {
 const grantUsersCreateRules = asyncHandler(async (req, res, next) => {
   const hasPermission = roleRights
     .can(req.user.role)
-    .createAny(resourceTypes.USER.value);
+    .createAny(resourceTypes.USER.alias);
 
   const hasRoleAccess =
     allRoles[req.user.role].level > allRoles[req.body?.role]?.level ||
@@ -113,7 +115,7 @@ const grantUsersCreateRules = asyncHandler(async (req, res, next) => {
   if (hasPermission.granted && hasRoleAccess) {
     req.permission = mappedPermissions(
       true,
-      resourceTypes.USER.value,
+      resourceTypes.USER.alias,
       hasPermission.attributes
     );
   }

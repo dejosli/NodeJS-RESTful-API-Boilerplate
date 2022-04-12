@@ -1,12 +1,13 @@
 // External module imports
+require('module-alias/register');
 const httpStatus = require('http-status');
 
 // Internal module imports
-const { User, Token } = require('../models');
-const { ErrorResponse } = require('../utils');
-const { tokenTypes } = require('../../config/tokens');
+const { User, Token } = require('models');
+const { ErrorResponse } = require('utils');
+const { tokenTypes } = require('config/tokens');
+const errorMessages = require('config/error-messages');
 const { updateUserById } = require('./userService');
-const errorMessages = require('../../config/error-messages');
 
 /**
  * Login with username and password

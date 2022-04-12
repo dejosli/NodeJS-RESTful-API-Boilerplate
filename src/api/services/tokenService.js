@@ -1,13 +1,14 @@
 // External module imports
+require('module-alias/register');
 const httpStatus = require('http-status');
 const moment = require('moment');
 const jwt = require('jsonwebtoken');
 
 // Internal module imports
-const config = require('../../config/config');
-const { ErrorResponse } = require('../utils');
-const { tokenTypes } = require('../../config/tokens');
-const { Token } = require('../models');
+const config = require('config/config');
+const { ErrorResponse } = require('utils');
+const { tokenTypes } = require('config/tokens');
+const { Token } = require('models');
 
 /**
  * Save a token

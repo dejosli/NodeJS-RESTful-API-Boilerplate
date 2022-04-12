@@ -6,7 +6,7 @@ const {
   isUsernameTaken,
   isEmailTaken,
   isInRoles,
-  is2faEnabled,
+  isOtpEnabled,
 } = require('./customValidator');
 
 const login = [
@@ -102,7 +102,7 @@ const verifyEmail = query('token')
 
 const sendOTPMessage = [
   body('enabled').isBoolean().withMessage('A boolean value must be provided'),
-  body('send_otp').custom(is2faEnabled),
+  body('send_otp').custom(isOtpEnabled),
 ];
 
 const verifyOTPCode = [

@@ -1,8 +1,9 @@
 // External module imports
+require('module-alias/register');
 const moment = require('moment');
 
 // Internal module imports
-const config = require('../../config/config');
+const config = require('config/config');
 const SuccessResponse = require('./SuccessResponse');
 
 /**

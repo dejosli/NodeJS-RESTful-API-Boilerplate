@@ -1,11 +1,13 @@
 // External module imports
+require('module-alias/register');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 // Internal module imports
-const config = require('../../config/config');
+const config = require('config/config');
+const { allRoles, roles } = require('config/roles');
+const { toTitleCase } = require('utils').common;
 const { toJSON, offsetBasedPaginate } = require('./plugins');
-const { allRoles, roles } = require('../../config/roles');
 
 /**
  * User Schema
@@ -16,6 +18,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      index: true,
     },
     username: {
       type: String,
@@ -28,6 +31,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
+      index: true,
     },
     password: {
       type: String,
@@ -44,7 +48,8 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: roles,
-      default: allRoles.USER.value,
+      default: allRoles.USER.alias,
+      index: true,
     },
     profilePicture: {
       // link
@@ -78,12 +83,12 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-// create a text index
-userSchema.index({
-  name: 'text',
-  email: 'text',
-  role: 'text',
-});
+// create a text index (compound indexes)
+// userSchema.index({
+//   name: 'text',
+//   email: 'text',
+//   role: 'text',
+// });
 
 /**
  * Plugins
@@ -99,12 +104,15 @@ userSchema.pre('save', async function (next) {
   try {
     // set user role to admin
     if (this.email === config.adminEmail) {
-      this.role = allRoles.ADMIN.value;
+      this.role = allRoles.ADMIN.alias;
     }
     // if password is not changed
     if (!this.isModified('password')) {
       return next();
     }
+    this.name = toTitleCase(this.name);
+    this.email = this.email.toLowerCase();
+    this.username = this.username.toLowerCase();
     const salt = await bcrypt.genSalt(config.bcryptSaltRounds);
     this.password = await bcrypt.hash(this.password, salt);
     next();
@@ -121,6 +129,12 @@ userSchema.pre(
       if (this._update.password) {
         const salt = await bcrypt.genSalt(config.bcryptSaltRounds);
         this._update.password = await bcrypt.hash(this._update.password, salt);
+      }
+      if (this._update.name) {
+        this.name = toTitleCase(this.name);
+      }
+      if (this._update.email) {
+        this.email = this.email.toLowerCase();
       }
       next();
     } catch (err) {
@@ -171,7 +185,7 @@ userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
 };
 
 userSchema.statics.generateUniqueUsername = async function (givenName) {
-  let proposedName = givenName;
+  let proposedName = givenName.toLowerCase();
   const user = await this.findOne({ username: proposedName });
   if (user) {
     proposedName += Math.floor(Math.random() * 100 + 1);

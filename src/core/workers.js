@@ -1,4 +1,5 @@
 // External module imports
+require('module-alias/register');
 
 // Internal module imports
 

@@ -1,9 +1,10 @@
 // External module imports
+require('module-alias/register');
 const mongoose = require('mongoose');
 
 // Internal module imports
+const { services, serviceTypes } = require('config/otps');
 const { toJSON } = require('./plugins');
-const { services, serviceTypes } = require('../../config/otps');
 
 /**
  * Time-based One Time Password Schema

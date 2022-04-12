@@ -1,16 +1,18 @@
 // External module imports
+require('module-alias/register');
 const httpStatus = require('http-status');
 
 // Internal module imports
-const config = require('../../config/config');
-const asyncHandler = require('../middleware/common/asyncHandler');
 const {
   SuccessResponse,
   mappedDocuments,
   mappedMetadata,
   sendMetadataResponse,
-} = require('../utils');
-const { userService } = require('../services');
+  common,
+} = require('utils');
+const { userService } = require('services');
+
+const { asyncHandler, getFullUrl } = common;
 
 /**
  * @desc Create user
@@ -57,12 +59,12 @@ const getUser = asyncHandler(async (req, res, next) => {
  * @access Private
  */
 const getUsers = asyncHandler(async (req, res, next) => {
-  // define query object
-  const query = { ...req.query, include_metadata: true };
-  const { docs, ...meta } = await userService.queryUsers(query);
+  // define search query
+  const searchQuery = { ...req.query, include_metadata: true };
+  const { docs, ...meta } = await userService.queryUsers(searchQuery);
 
-  // create full url
-  const fullUrl = `${req.protocol}://${req.hostname}:${config.port}${req.baseUrl}`;
+  // get full url
+  const fullUrl = getFullUrl(req);
 
   // mapped users object
   const users = await mappedDocuments(docs, fullUrl, 'GET');

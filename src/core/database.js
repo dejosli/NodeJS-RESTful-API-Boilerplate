@@ -1,9 +1,10 @@
 // External module imports
+require('module-alias/register');
 const mongoose = require('mongoose');
 
 // Internal module imports
-const config = require('../config/config');
-const logger = require('../config/logger');
+const config = require('config/config');
+const logger = require('config/logger');
 
 const mongodb = {
   url: config.env === 'test' ? `${config.mongodbUrl}-test` : config.mongodbUrl,

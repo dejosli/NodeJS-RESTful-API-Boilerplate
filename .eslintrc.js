@@ -22,7 +22,13 @@ module.exports = {
     'import/resolver': {
       node: {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
-        moduleDirectory: ['node_modules', 'src/'],
+        moduleDirectory: [
+          'node_modules',
+          'src/',
+          'src/api',
+          'src/core',
+          'src/config',
+        ],
       },
     },
   },
@@ -36,6 +42,7 @@ module.exports = {
     'func-names': 'off',
     'arrow-body-style': 'off',
     'import/extensions': 'off',
+    'import/no-unresolved': 'warn',
     'consistent-return': 'off',
     'jest/expect-expect': 'off',
     'no-underscore-dangle': 'off',

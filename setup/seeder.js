@@ -1,6 +1,9 @@
+// External module imports
+require('module-alias/register');
+
 // Internal module imports
-const logger = require('../src/config/logger');
-const { connectDB } = require('../src/core/database');
+const logger = require('config/logger');
+const { connectDB } = require('core/database');
 const { seedUsers, dropUsers } = require('./users');
 
 // insert data into database

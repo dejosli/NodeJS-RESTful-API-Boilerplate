@@ -1,21 +1,24 @@
 // External module imports
+require('module-alias/register');
 const httpStatus = require('http-status');
 
 // Internal module imports
-const asyncHandler = require('../middleware/common/asyncHandler');
 const {
   SuccessResponse,
   sendTokenResponse,
   sendOtpResponse,
-} = require('../utils');
+  common,
+} = require('utils');
 const {
   authService,
   userService,
   tokenService,
   emailService,
   otpService,
-} = require('../services');
-const { Token } = require('../models');
+} = require('services');
+const { Token } = require('models');
+
+const { asyncHandler } = common;
 
 /**
  * @desc Register user

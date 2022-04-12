@@ -49,6 +49,7 @@
     "joi": "^17.5.0",
     "jsonwebtoken": "^8.5.1",
     "method-override": "^3.0.0",
+    "module-alias": "^2.2.2",
     "moment": "^2.29.1",
     "mongoose": "^6.1.6",
     "morgan": "^1.10.0",
@@ -93,5 +94,21 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "_moduleAliases": {
+    "root": ".",
+    "api": "src/api",
+    "core": "src/core",
+    "config": "src/config",
+    "controllers": "src/api/controllers",
+    "docs": "src/api/docs",
+    "models": "src/api/models",
+    "middleware": "src/api/middleware",
+    "lib": "src/api/lib",
+    "routes": "src/api/routes/v1",
+    "services": "src/api/services",
+    "utils": "src/api/utils",
+    "validations": "src/api/validations",
+    "workers": "src/api/workers"
   }
 }

@@ -1,5 +1,5 @@
 // Module exports
-module.exports.helpers = require('./helpers');
+module.exports.common = require('./common');
 module.exports.SuccessResponse = require('./SuccessResponse');
 module.exports.ErrorResponse = require('./ErrorResponse');
 module.exports.mappedMetadata = require('./mappedMetadata');

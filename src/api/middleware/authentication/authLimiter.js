@@ -1,10 +1,11 @@
 // External module imports
+require('module-alias/register');
 const moment = require('moment');
 const rateLimit = require('express-rate-limit');
 const slowDown = require('express-slow-down');
 
 // Internal module imports
-const { ErrorResponse } = require('../../utils');
+const { ErrorResponse } = require('utils');
 
 // const windowMs = 15 * 60 * 1000; // 15 minutes
 const windowMs = moment().add(15, 'minutes').unix(); // 15 minutes

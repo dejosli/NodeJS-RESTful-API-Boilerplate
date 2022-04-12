@@ -1,11 +1,12 @@
 // External module imports
+require('module-alias/register');
 const httpStatus = require('http-status');
 
 // Internal module imports
-const { serviceTypes } = require('../../config/otps');
+const { serviceTypes } = require('config/otps');
+const { otpService, emailService, messagingService } = require('services');
 const SuccessResponse = require('./SuccessResponse');
 const ErrorResponse = require('./ErrorResponse');
-const { otpService, emailService, messagingService } = require('../services');
 
 const sendOtpResponse = async (res, user, otpDoc) => {
   const { secretKey, serviceType } = otpDoc;

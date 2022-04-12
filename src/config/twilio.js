@@ -14,7 +14,7 @@ const client = twilio(
   // clientOptions // uncomment if configuration is needed
 );
 
-const twilioPhoneNumber = config.twilio.phoneNumber;
+const { phoneNumber } = config.twilio;
 
 // Module exports
-module.exports = { client, twilioPhoneNumber };
+module.exports = { client, phoneNumber };

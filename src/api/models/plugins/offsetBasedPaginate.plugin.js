@@ -1,7 +1,8 @@
 /* eslint-disable no-param-reassign */
+require('module-alias/register');
 
 // Internal module imports
-const { cleanedObject } = require('../../utils').helpers;
+const { cleanedObject } = require('utils').common;
 
 /**
  * Default options having properties
@@ -36,11 +37,11 @@ const defaultOptions = {
     hasPrevPage: 'hasPrevPage',
     hasNextPage: 'hasNextPage',
   },
-  limit: 20,
+  limit: 30,
   // sortBy: { createdAt: -1 },
   sortBy: null,
   meta: false,
-  countQuery: { $match: {} },
+  // countQuery: { $match: {} },
   pagination: true,
   allowDiskUse: false,
 };
@@ -49,22 +50,24 @@ const offsetBasedPaginate = (schema) => {
   /**
    * Mongoose Aggregate Paginate
    * @param  {Aggregate} pipeline
-   * @param  {Object} options
-   * @returns {Promise<Object>}
+   * @param  {object} options
+   * @returns {Promise<object>}
    */
   schema.statics.offsetPaginate = async function (pipeline, options) {
-    pipeline = Array.isArray(pipeline) ? pipeline : [];
+    // const aggregatePipeline = Array.isArray(pipeline) ? pipeline : [{ $match: {} }];
+    const aggregatePipeline = Array.isArray(pipeline)
+      ? pipeline
+      : [{ $match: {} }];
 
     // remove undefined properties from objects
-    options = cleanedObject(options);
-    options = {
+    const customOptions = {
       ...defaultOptions,
-      ...options,
+      ...cleanedObject(options),
     };
 
     const customLabels = {
       ...defaultOptions.customLabels,
-      ...options.customLabels,
+      ...customOptions.customLabels,
     };
 
     // Custom Labels
@@ -79,7 +82,7 @@ const offsetBasedPaginate = (schema) => {
     const labelHasPrevPage = customLabels.hasPrevPage;
     const labelPageCounter = customLabels.pageCounter;
 
-    const maxLimit = 100;
+    const maxLimit = 1000; // max number of docs per page
 
     // default pagination based on page
     let docs;
@@ -89,49 +92,51 @@ const offsetBasedPaginate = (schema) => {
     let skip = offset;
 
     const limit =
-      parseInt(options.limit, 10) > 0 && parseInt(options.limit, 10) < maxLimit
-        ? parseInt(options.limit, 10)
+      parseInt(customOptions.limit, 10) > 0 &&
+      parseInt(customOptions.limit, 10) < maxLimit
+        ? parseInt(customOptions.limit, 10)
         : defaultOptions.limit;
     const sortBy =
-      typeof options.sortBy === 'object' &&
-      Object.keys(options.sortBy).length > 0
-        ? options.sortBy
+      typeof customOptions.sortBy === 'object' &&
+      Object.keys(customOptions.sortBy).length > 0
+        ? customOptions.sortBy
         : defaultOptions.sortBy;
 
     let pageCounter = (page - 1) * limit + 1;
 
-    if (Object.prototype.hasOwnProperty.call(options, 'offset')) {
-      offset = Math.abs(parseInt(options.offset, 10));
+    if (Object.prototype.hasOwnProperty.call(customOptions, 'offset')) {
+      offset = Math.abs(parseInt(customOptions.offset, 10));
       page = Math.ceil((offset + 1) / limit);
       skip = offset;
       pageCounter = offset + 1;
     }
 
-    if (Object.prototype.hasOwnProperty.call(options, 'page')) {
-      page = Math.abs(parseInt(options.page || 1, 10)) || 1;
+    if (Object.prototype.hasOwnProperty.call(customOptions, 'page')) {
+      page = Math.abs(parseInt(customOptions.page || 1, 10)) || 1;
       skip = (page - 1) * limit;
       pageCounter = (page - 1) * limit + 1;
     }
 
-    const allowDiskUse = !!options.allowDiskUse;
-    const isPaginationEnabled = !!options.pagination;
+    const allowDiskUse = !!customOptions.allowDiskUse;
+    const isPaginationEnabled = !!customOptions.pagination;
     const isIncludeMeta = !!(
-      options.meta && String(options.meta).toLowerCase() === 'true'
+      customOptions.meta && String(customOptions.meta).toLowerCase() === 'true'
     );
 
-    const countQuery =
-      typeof options.countQuery === 'object' &&
-      Object.keys(options.countQuery).length > 0
-        ? options.countQuery
-        : defaultOptions.countQuery;
+    // const countQuery =
+    //   typeof customOptions.countQuery === 'object' &&
+    //   Object.keys(customOptions.countQuery).length > 0
+    //     ? customOptions.countQuery
+    //     : defaultOptions.countQuery;
 
     // aggregate promises
-    const aggregateQuery = this.aggregate(pipeline, {
+    const aggregateQuery = this.aggregate(aggregatePipeline, {
       allowDiskUse,
     });
     const aggregateCountQuery = this.aggregate(
       [
-        countQuery,
+        // countQuery,
+        aggregatePipeline[0],
         {
           $count: 'totalDocs',
         },
@@ -170,18 +175,18 @@ const offsetBasedPaginate = (schema) => {
       let hasPrevPage = false;
       let hasNextPage = false;
 
-      // Set prev page
+      // set prev page
       if (page > 1) {
         hasPrevPage = true;
         prevPage = page - 1;
       }
-      // Set next page
+      // set next page
       if (page < totalPages) {
         hasNextPage = true;
         nextPage = page + 1;
       }
 
-      // metadata object
+      // metadata object scaffolding
       const meta = {
         [labelDocs]: docs,
         [labelPage]: page,
@@ -196,6 +201,7 @@ const offsetBasedPaginate = (schema) => {
       };
       return meta;
     }
+
     return { docs };
   };
 };

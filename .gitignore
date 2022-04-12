@@ -24,7 +24,6 @@ coverage
 *#
 ssl
 .idea
-.vscode
 nbproject
 uploads/*
 !uploads/.gitkeep

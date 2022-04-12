@@ -80,9 +80,7 @@ OAuthStrategy.FACEBOOK = new FacebookStrategy(
       // if user doesn't exists then create a new user
       if (!user) {
         const name = `${payload.first_name} ${payload.middle_name} ${payload.last_name}`;
-        const username = await User.generateUniqueUsername(
-          payload.first_name.toLowerCase()
-        );
+        const username = await User.generateUniqueUsername(payload.first_name);
         const newUser = await User.create({
           name,
           username,

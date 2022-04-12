@@ -1,19 +1,18 @@
 // External module imports
+require('module-alias/register');
 const express = require('express');
 
 // Internal module imports
-const { userController } = require('../../controllers');
-const { userValidator, validate } = require('../../validations');
-const {
-  authorizeAccessToken,
-} = require('../../middleware/authentication/auth');
+const { userController } = require('controllers');
+const { userValidator, validate } = require('validations');
+const { authorizeAccessToken } = require('middleware/authentication/auth');
 const {
   authorizeUsersCreatePermission,
   authorizeUsersReadPermission,
   authorizeUsersUpdatePermission,
   authorizeUsersDeletePermission,
-} = require('../../middleware/permissions/users.permission');
-const profilePicUpload = require('../../middleware/users/profilePicUpload');
+} = require('middleware/permissions/users.permission');
+const profilePicUpload = require('middleware/users/profilePicUpload');
 
 // init express router
 const router = express.Router();

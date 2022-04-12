@@ -1,9 +1,10 @@
 // External module imports
+require('module-alias/register');
 const httpStatus = require('http-status');
 
 // Internal module imports
-const { ErrorResponse } = require('../utils');
-const { client, twilioPhoneNumber } = require('../../config/twilio');
+const { ErrorResponse } = require('utils');
+const { client, phoneNumber } = require('config/twilio');
 
 /**
  * Send a SMS
@@ -12,7 +13,7 @@ const { client, twilioPhoneNumber } = require('../../config/twilio');
  * @return {Promise<object>}
  */
 const sendSMS = async (to, text) => {
-  const msg = { body: text, to, from: twilioPhoneNumber };
+  const msg = { body: text, to, from: phoneNumber };
   const info = await client.messages.create(msg);
   if (!info.sid || info.error_code || info.error_message) {
     throw new ErrorResponse(
@@ -31,7 +32,7 @@ const sendSMS = async (to, text) => {
  * @return {Promise<object>}
  */
 const sendMMS = async (to, text, mediaUrl) => {
-  const msg = { body: text, mediaUrl, to, from: twilioPhoneNumber };
+  const msg = { body: text, mediaUrl, to, from: phoneNumber };
   const info = await client.messages.create(msg);
   if (!info.sid || info.error_code || info.error_message) {
     throw new ErrorResponse(

@@ -1,10 +1,11 @@
 // External module imports
+require('module-alias/register');
 const http = require('http');
 
 // Internal module imports
+const config = require('config/config');
+const logger = require('config/logger');
 const app = require('./app');
-const config = require('../config/config');
-const logger = require('../config/logger');
 
 let server;
 

@@ -1,7 +1,10 @@
 // External module imports
+require('module-alias/register');
 const path = require('path');
 const fs = require('fs-extra');
-const cloudinary = require('../../config/cloudinary');
+
+// Internal module imports
+const cloudinary = require('config/cloudinary');
 
 /**
  * Create cloudinary public_id
