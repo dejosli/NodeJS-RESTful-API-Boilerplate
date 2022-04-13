@@ -5,22 +5,33 @@ const passport = require('passport');
 
 // Internal module imports
 const config = require('config/config');
+const errorMessages = require('config/error-messages');
 const { ErrorResponse } = require('utils');
 
+// callback - object scaffolding
 const verifyCallback = {};
 
 /**
  * Callbacks
  */
 verifyCallback.ACCESS = (req, resolve, reject) => {
-  return (err, user, info) => {
-    if (err || info || !user) {
+  // return (err, user, info) => {
+  return (err, refreshTokenDoc, info) => {
+    // if (err || info || !user) {
+    if (err || info || !refreshTokenDoc) {
       return reject(
-        new ErrorResponse(httpStatus.UNAUTHORIZED, 'Please authenticate')
+        new ErrorResponse(
+          httpStatus.UNAUTHORIZED,
+          errorMessages.USER_UNAUTHORIZED_ERR
+        )
       );
     }
     // set user to request object
-    req.user = user;
+    req.user = refreshTokenDoc.user;
+    // set device id to request object
+    req.deviceId = refreshTokenDoc.deviceId;
+    // set refreshToken to request object
+    req.refreshTokenDoc = refreshTokenDoc;
     resolve();
   };
 };

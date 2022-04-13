@@ -25,23 +25,22 @@ const loginUserWithEmailAndPassword = async (email, password) => {
       errorMessages.USER_LOGIN_ERR
     );
   }
-  // if refresh_token already exists
-  await Token.deleteOneToken({ userId: user._id });
   return user;
 };
 
 /**
  * Logout user via refresh token
  * @param {ObjectId} userId
+ * @param {ObjectId} deviceId
  * @returns {Promise<Token>}
  */
-const logoutUserWithToken = async (userId) => {
-  // find and delete refresh_token from DB
-  const refreshTokenDoc = await Token.deleteOneToken({ userId });
+const logoutUserWithToken = async (userId, deviceId) => {
+  // find and delete refreshToken from db
+  const refreshTokenDoc = await Token.deleteOneToken({ userId, deviceId });
   if (!refreshTokenDoc) {
     throw new ErrorResponse(
       httpStatus.UNAUTHORIZED,
-      errorMessages.USER_LOGOUT_ERR
+      errorMessages.USER_UNAUTHORIZED_ERR
     );
   }
   return refreshTokenDoc;
@@ -86,12 +85,10 @@ const requestPasswordReset = async (email) => {
  */
 const resetPassword = async (userId, newPassword) => {
   try {
+    // update user password
     await updateUserById(userId, { password: newPassword });
-    // remove resetPasswordToken from DB
-    await Token.deleteOneToken({
-      userId,
-      type: tokenTypes.RESET_PASSWORD,
-    });
+    // remove all tokens of user from db
+    await Token.deleteMany({ user: userId });
   } catch (err) {
     throw new ErrorResponse(
       httpStatus.UNAUTHORIZED,
@@ -108,7 +105,7 @@ const resetPassword = async (userId, newPassword) => {
 const verifyEmail = async (userId) => {
   try {
     await updateUserById(userId, { isEmailVerified: true });
-    // remove verifyEmailToken from DB
+    // remove verifyEmailToken from db
     await Token.deleteManyToken({
       userId,
       type: tokenTypes.VERIFY_EMAIL,

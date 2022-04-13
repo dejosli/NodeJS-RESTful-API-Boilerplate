@@ -59,7 +59,7 @@ const queryStringify = (object) => {
 };
 
 // generate unique id
-const uniqueId = () => new mongoose.Types.ObjectId().toHexString();
+const genUniqueId = () => new mongoose.Types.ObjectId().toHexString();
 
 // create full url
 const getFullUrl = (req) =>
@@ -73,6 +73,6 @@ module.exports = {
   removeUndefined,
   cleanedObject,
   queryStringify,
-  uniqueId,
+  genUniqueId,
   getFullUrl,
 };

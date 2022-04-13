@@ -20,9 +20,7 @@ const createTransporter = async () => {
     logger.info('Checking connection to email server');
     transporter
       .verify()
-      .then(() =>
-        logger.info(`Connected to email server at ${new Date().toISOString()}`)
-      )
+      .then(() => logger.info('Connected to email server'))
       .catch(() =>
         logger.warn(
           'Unable to connect to email server. Make sure you have configured the SMTP options in .env'

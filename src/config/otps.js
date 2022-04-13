@@ -1,15 +1,15 @@
-// define service types
-const serviceTypes = {
+// define verification methods
+const verificationMethods = {
   SMS: 'sms',
   EMAIL: 'email',
   GOOGLE_AUTHENTICATOR: 'google-authenticator',
 };
 
-// list of service types
-const services = Object.values(serviceTypes);
+// list of methods
+const methods = Object.values(verificationMethods);
 
 // Module exports
 module.exports = {
-  services,
-  serviceTypes,
+  methods,
+  verificationMethods,
 };

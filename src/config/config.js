@@ -8,7 +8,10 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const envVarsSchema = Joi.object()
   .keys({
-    PORT: Joi.number().default(5000),
+    PORT: Joi.number().default(5000).description('Server port number'),
+    HOST: Joi.string()
+      .default('localhost')
+      .description('Server hostname/ip address'),
     NODE_ENV: Joi.string()
       .valid('production', 'development', 'test')
       .default('development'),
@@ -87,6 +90,7 @@ if (error) {
 // Module exports
 module.exports = {
   port: envVars.PORT,
+  host: envVars.HOST,
   env: envVars.NODE_ENV,
   appName: envVars.APP_NAME,
   mongodbUrl: envVars.MONGODB_URL,

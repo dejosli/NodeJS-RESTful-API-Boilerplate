@@ -17,6 +17,7 @@ const {
   otpService,
 } = require('services');
 const { Token } = require('models');
+const { tokenTypes } = require('config/tokens');
 
 const { asyncHandler } = common;
 
@@ -70,10 +71,10 @@ const login = asyncHandler(async (req, res, next) => {
   // send response
   return sendTokenResponse(
     res,
-    null,
+    user,
     tokens,
     httpStatus.OK,
-    'You logged in successfully'
+    httpStatus[httpStatus.OK]
   );
 });
 
@@ -83,10 +84,11 @@ const login = asyncHandler(async (req, res, next) => {
  * @access Private
  */
 const logout = asyncHandler(async (req, res, next) => {
-  if (req.user) {
-    await authService.logoutUserWithToken(req.user._id);
+  const { user, deviceId, cookies } = req;
+  if (user) {
+    await authService.logoutUserWithToken(user._id, deviceId);
   }
-  if (req.user && req.cookies && req.cookies.tokens) {
+  if (user && cookies && cookies.tokens) {
     await authService.logoutUserWithCookie(res, 'tokens');
   }
   // send response to client
@@ -101,12 +103,19 @@ const logout = asyncHandler(async (req, res, next) => {
  * @access Private
  */
 const refreshTokens = asyncHandler(async (req, res, next) => {
-  const { user } = req.refreshTokenDoc;
-  // re-generate auth tokens and save
-  // const tokens = await tokenService.refreshAuthTokens(req.refreshTokenDoc);
+  const { user, deviceId } = req.refreshTokenDoc;
+  // delete old refreshToken
+  await Token.deleteOneToken({ userId: user._id, deviceId });
+  // re-generate new auth tokens
   const tokens = await tokenService.generateAuthTokens(user._id);
   // send response
-  sendTokenResponse(res, null, tokens, httpStatus.OK, 'Access token response');
+  sendTokenResponse(
+    res,
+    null,
+    tokens,
+    httpStatus.OK,
+    httpStatus[httpStatus.OK]
+  );
 });
 
 /**
@@ -126,15 +135,14 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     resetPasswordToken
   );
   // send response to client
-  res.status(httpStatus.OK).json(
-    new SuccessResponse(
-      httpStatus.OK,
-      `Password reset link has been sent to: ${user.email}`,
-      {
-        resetPasswordToken,
-      }
-    )
-  );
+  res
+    .status(httpStatus.OK)
+    .json(
+      new SuccessResponse(
+        httpStatus.OK,
+        `Password reset link has been sent to: ${user.email}`
+      )
+    );
 });
 
 /**
@@ -169,31 +177,30 @@ const resetPassword = asyncHandler(async (req, res, next) => {
  * @access Public
  */
 const sendVerificationEmail = asyncHandler(async (req, res, next) => {
-  // if current user email already verified
-  if (req.user.isEmailVerified) {
+  const { _id: userId, name, email, isEmailVerified } = req.user;
+  // if user email already verified
+  if (isEmailVerified) {
     return res
       .status(httpStatus.OK)
       .json(new SuccessResponse(httpStatus.OK, 'Email already verified'));
   }
-  const verifyEmailToken = await tokenService.generateVerifyEmailToken(
-    req.user._id
-  );
-  // email resetToken to client
-  await emailService.sendVerificationEmail(
-    req.user.email,
-    req.user.name,
-    verifyEmailToken
-  );
+  // if verify email token already exists
+  await Token.deleteOneToken({
+    userId,
+    type: tokenTypes.VERIFY_EMAIL,
+  });
+  const verifyEmailToken = await tokenService.generateVerifyEmailToken(userId);
+  // send verify token to client as email
+  await emailService.sendVerificationEmail(email, name, verifyEmailToken);
   // send response to client
-  res.status(httpStatus.OK).json(
-    new SuccessResponse(
-      httpStatus.OK,
-      `Email verification link has been sent to: ${req.user.email}`,
-      {
-        verifyEmailToken,
-      }
-    )
-  );
+  res
+    .status(httpStatus.OK)
+    .json(
+      new SuccessResponse(
+        httpStatus.OK,
+        `Email verification link has been sent to: ${email}`
+      )
+    );
 });
 
 /**
@@ -228,17 +235,15 @@ const verifyEmail = asyncHandler(async (req, res, next) => {
  */
 const oauthLogin = asyncHandler(async (req, res, next) => {
   const { _id: userId } = req.user;
-  // if refresh_token already exists
-  await Token.deleteOneToken({ userId });
   // generate and save tokens
-  const tokens = await tokenService.generateAuthTokens(req.user._id);
+  const tokens = await tokenService.generateAuthTokens(userId);
   // send response
   sendTokenResponse(
     res,
     null,
     tokens,
     httpStatus.OK,
-    'You logged in successfully'
+    httpStatus[httpStatus.OK]
   );
 });
 
@@ -247,26 +252,48 @@ const oauthLogin = asyncHandler(async (req, res, next) => {
  * @route POST /api/v1/auth/otp/send
  * @access Private
  */
-const sendOTPMessage = asyncHandler(async (req, res, next) => {
-  const { enabled, send_otp: serviceType } = req.body;
-  const { _id: userId, email } = req.user;
+const sendOtpCode = asyncHandler(async (req, res, next) => {
+  const { enabled, send_otp: verificationMethod } = req.body;
+  const { _id: userId, isTwoFactorAuthEnabled } = req.user;
 
+  // check if user is already enabled 2FA
+  if (enabled && isTwoFactorAuthEnabled) {
+    return res
+      .status(httpStatus.OK)
+      .json(
+        new SuccessResponse(
+          httpStatus.OK,
+          'Two factor authentication is already enabled'
+        )
+      );
+  }
+
+  // check if user is already disabled 2FA
+  if (!enabled && !isTwoFactorAuthEnabled) {
+    return res
+      .status(httpStatus.OK)
+      .json(
+        new SuccessResponse(
+          httpStatus.OK,
+          'Two factor authentication is already disabled'
+        )
+      );
+  }
+
+  // To enable two factor authentication
   if (enabled) {
     await otpService.deleteOneSecretKey({ user: userId });
-    const { secretKey } = await otpService.generateSecretKey(email);
-    const otpDoc = await otpService.saveSecretKey(
-      secretKey,
-      userId,
-      false,
-      serviceType
+    const otpDoc = await otpService.generateOtpCode(
+      req.user,
+      verificationMethod
     );
     return sendOtpResponse(res, req.user, otpDoc);
   }
 
-  // disable two factor authentication
+  // To disable two factor authentication
   await userService.updateUserById(userId, { isTwoFactorAuthEnabled: false });
-  // find and delete otp instance
   await otpService.deleteOneSecretKey({ user: userId });
+
   // send response
   return res
     .status(httpStatus.OK)
@@ -280,7 +307,7 @@ const sendOTPMessage = asyncHandler(async (req, res, next) => {
  * @route POST /api/v1/auth/otp/verify
  * @access Public
  */
-const verifyOTPCode = asyncHandler(async (req, res, next) => {
+const verifyOtpCode = asyncHandler(async (req, res, next) => {
   const { otp_id: otpId, otp_code: otpCode } = req.body;
 
   // find otp secret key and verify it against given otp code
@@ -291,13 +318,11 @@ const verifyOTPCode = asyncHandler(async (req, res, next) => {
   await userService.updateUserById(otpDoc.user, {
     isTwoFactorAuthEnabled: true,
   });
-  // update otp status
+  // update otp status as verified
   if (!otpDoc.verified) {
     await otpService.updateSecretKey({ _id: otpId }, { verified: true });
   }
-  // if refresh_token already exists
-  await Token.deleteOneToken({ userId: otpDoc.user });
-  // generate and save tokens
+  // generate auth tokens and save to db
   const tokens = await tokenService.generateAuthTokens(otpDoc.user);
   // send response
   sendTokenResponse(
@@ -305,7 +330,7 @@ const verifyOTPCode = asyncHandler(async (req, res, next) => {
     null,
     tokens,
     httpStatus.OK,
-    'You logged in successfully'
+    httpStatus[httpStatus.OK]
   );
 });
 
@@ -314,8 +339,20 @@ const verifyOTPCode = asyncHandler(async (req, res, next) => {
  * @route POST /api/v1/auth/otp/resend
  * @access Public
  */
-const resendOTPMessage = asyncHandler(async (req, res, next) => {
-  res.status(200).json({ success: true });
+const resendOtpCode = asyncHandler(async (req, res, next) => {
+  const { otp_id: otpId } = req.body;
+  // find otp secret key
+  const { user: userId, verificationMethod } = await otpService.getSecretKey({
+    _id: otpId,
+  });
+  // delete old otp secret key
+  await otpService.deleteOneSecretKey({
+    _id: otpId,
+  });
+  const user = await userService.getUserById(userId);
+  // generate new otp secret key and save
+  const otpDoc = await otpService.generateOtpCode(user, verificationMethod);
+  return sendOtpResponse(res, user, otpDoc);
 });
 
 // Module exports
@@ -329,7 +366,7 @@ module.exports = {
   sendVerificationEmail,
   verifyEmail,
   oauthLogin,
-  sendOTPMessage,
-  verifyOTPCode,
-  resendOTPMessage,
+  sendOtpCode,
+  verifyOtpCode,
+  resendOtpCode,
 };

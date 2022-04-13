@@ -45,9 +45,7 @@ OAuthStrategy.GOOGLE = new GoogleStrategy(
       const user = await User.findByEmail(payload.email);
       // if user doesn't exists then create a new user
       if (!user) {
-        const username = await User.generateUniqueUsername(
-          payload.given_name.toLowerCase()
-        );
+        const username = await User.generateUniqueUsername(payload.given_name);
         const newUser = await User.create({
           name: payload.name,
           username,

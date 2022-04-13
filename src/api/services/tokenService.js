@@ -6,27 +6,41 @@ const jwt = require('jsonwebtoken');
 
 // Internal module imports
 const config = require('config/config');
-const { ErrorResponse } = require('utils');
+const { ErrorResponse, common } = require('utils');
 const { tokenTypes } = require('config/tokens');
 const { Token } = require('models');
+
+const { genUniqueId } = common;
 
 /**
  * Save a token
  * @param {ObjectId} userId
+ * @param {ObjectId} deviceId
  * @param {string} token
  * @param {string} type
  * @param {Moment} expires
  * @param {boolean} [blacklisted]
  * @returns {Promise<Token>}
  */
-const saveToken = async (userId, token, type, expires, blacklisted = false) => {
-  const tokenDoc = await Token.create({
+const saveToken = async (
+  userId,
+  deviceId,
+  token,
+  type,
+  expires,
+  blacklisted = false
+) => {
+  const tokenBody = {
     user: userId,
     token,
     type,
     expireAt: expires.toDate(),
     blacklisted,
-  });
+  };
+  if (deviceId) {
+    tokenBody.deviceId = deviceId;
+  }
+  const tokenDoc = await Token.create(tokenBody);
   if (!tokenDoc) {
     throw new ErrorResponse(
       httpStatus.INTERNAL_SERVER_ERROR,
@@ -38,12 +52,24 @@ const saveToken = async (userId, token, type, expires, blacklisted = false) => {
 
 /**
  * Generate signed token
- * @param {object} payload
+ * @param {ObjectId} userId
+ * @param {ObjectId} deviceId
+ * @param {string} type
  * @param {string} secret
- * @param {object} options
+ * @param {Moment} expires
+ * @param {string} issuer
+ * @param {string} audience
  * @returns {string} a signed token
  */
-const generateSignedJWT = (userId, type, secret, expires, issuer, audience) => {
+const generateSignedJWT = (
+  userId,
+  deviceId,
+  type,
+  secret,
+  expires,
+  issuer,
+  audience
+) => {
   const payload = {
     sub: userId,
     iat: moment().unix(),
@@ -52,15 +78,22 @@ const generateSignedJWT = (userId, type, secret, expires, issuer, audience) => {
     aud: audience,
     type,
   };
-  return jwt.sign(payload, secret, { algorithm: 'HS384' });
+  const options = { algorithm: 'HS384' };
+  if (deviceId) {
+    options.jwtid = `${deviceId}`;
+  }
+  return jwt.sign(payload, secret, options);
 };
 
 /**
  * Generate auth tokens
  * @param {ObjectId} userId
- * @returns {Promise}
+ * @returns {Promise<object>}
  */
 const generateAuthTokens = async (userId) => {
+  // create a random device id
+  const deviceId = genUniqueId();
+
   // access_token expires time
   const accessTokenExpires = moment().add(
     config.jwt.accessExpirationMinutes,
@@ -74,6 +107,7 @@ const generateAuthTokens = async (userId) => {
   // generate access_token
   const accessToken = generateSignedJWT(
     userId,
+    deviceId,
     tokenTypes.ACCESS,
     config.jwt.accessSecret,
     accessTokenExpires,
@@ -82,6 +116,7 @@ const generateAuthTokens = async (userId) => {
   // generate refresh_token
   const refreshToken = generateSignedJWT(
     userId,
+    deviceId,
     tokenTypes.REFRESH,
     config.jwt.refreshSecret,
     refreshTokenExpires,
@@ -90,6 +125,7 @@ const generateAuthTokens = async (userId) => {
   // save refresh token to DB
   await saveToken(
     userId,
+    deviceId,
     refreshToken,
     tokenTypes.REFRESH,
     refreshTokenExpires
@@ -98,32 +134,6 @@ const generateAuthTokens = async (userId) => {
   return {
     access_token: accessToken,
     refresh_token: refreshToken,
-  };
-};
-
-/**
- * Generate access token
- * @param {Object} refreshTokenDoc
- * @returns {Promise}
- */
-const refreshAuthTokens = async (refreshTokenDoc) => {
-  const { user } = refreshTokenDoc;
-  // token expires time
-  const accessTokenExpires = moment().add(
-    config.jwt.accessExpirationMinutes,
-    'minutes'
-  );
-  // generate token
-  const accessToken = generateSignedJWT(
-    user._id,
-    tokenTypes.ACCESS,
-    config.jwt.accessSecret,
-    accessTokenExpires,
-    config.jwt.issuer
-  );
-  return {
-    access_token: accessToken,
-    refresh_token: refreshTokenDoc.token,
   };
 };
 
@@ -140,6 +150,7 @@ const generateResetPasswordToken = async (userId) => {
   // generate token
   const resetPasswordToken = generateSignedJWT(
     userId,
+    null,
     tokenTypes.RESET_PASSWORD,
     config.jwt.resetPasswordSecret,
     resetPasswordTokenExpires,
@@ -147,6 +158,7 @@ const generateResetPasswordToken = async (userId) => {
   );
   await saveToken(
     userId,
+    null,
     resetPasswordToken,
     tokenTypes.RESET_PASSWORD,
     resetPasswordTokenExpires
@@ -167,6 +179,7 @@ const generateVerifyEmailToken = async (userId) => {
   // generate token
   const verifyEmailToken = generateSignedJWT(
     userId,
+    null,
     tokenTypes.VERIFY_EMAIL,
     config.jwt.verifyEmailSecret,
     verifyEmailTokenExpires,
@@ -174,6 +187,7 @@ const generateVerifyEmailToken = async (userId) => {
   );
   await saveToken(
     userId,
+    null,
     verifyEmailToken,
     tokenTypes.VERIFY_EMAIL,
     verifyEmailTokenExpires
@@ -186,7 +200,6 @@ module.exports = {
   saveToken,
   generateSignedJWT,
   generateAuthTokens,
-  refreshAuthTokens,
   generateResetPasswordToken,
   generateVerifyEmailToken,
 };

@@ -36,8 +36,8 @@ const init = async () => {
   server = http.createServer(app);
 
   // listen on provided port, on all network interfaces
-  server.listen(config.port, () => {
-    logger.info(`Server listening on port ${config.port}`);
+  server.listen(config.port, config.host, () => {
+    logger.info(`Server listening on http://${config.host}:${config.port}`);
   });
 
   // process exits gracefully

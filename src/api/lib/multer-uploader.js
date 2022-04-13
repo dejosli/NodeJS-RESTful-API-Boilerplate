@@ -8,7 +8,7 @@ const multer = require('multer');
 // Internal module imports
 const { ErrorResponse, common } = require('utils');
 
-const { uniqueId } = common;
+const { genUniqueId } = common;
 
 // file upload directory
 const UPLOAD_DIR = path.join(__dirname, '../../public/uploads');
@@ -52,7 +52,7 @@ const diskStorage = (folder) => {
 
     filename(req, file, cb) {
       const extension = path.extname(file.originalname);
-      const uniquePrefix = uniqueId();
+      const uniquePrefix = genUniqueId();
       const fileName = `${uniquePrefix}${extension}`;
       cb(null, fileName);
     },

@@ -3,15 +3,15 @@ require('module-alias/register');
 const httpStatus = require('http-status');
 
 // Internal module imports
-const { serviceTypes } = require('config/otps');
+const { verificationMethods } = require('config/otps');
 const { otpService, emailService, messagingService } = require('services');
-const SuccessResponse = require('./SuccessResponse');
 const ErrorResponse = require('./ErrorResponse');
+const SuccessResponse = require('./SuccessResponse');
 
 const sendOtpResponse = async (res, user, otpDoc) => {
-  const { secretKey, serviceType } = otpDoc;
+  const { secretKey, verificationMethod } = otpDoc;
 
-  if (serviceType === serviceTypes.EMAIL) {
+  if (verificationMethod === verificationMethods.EMAIL) {
     // generate time-based token
     const token = otpService.getToken(secretKey);
     // calculate otp token remaining time
@@ -23,13 +23,13 @@ const sendOtpResponse = async (res, user, otpDoc) => {
       .json(
         new SuccessResponse(
           httpStatus.OK,
-          `Authentication code sent via ${serviceTypes.EMAIL}`,
+          `Authentication code sent via ${verificationMethods.EMAIL}`,
           { otp_id: otpDoc._id }
         )
       );
   }
 
-  if (serviceType === serviceTypes.SMS) {
+  if (verificationMethod === verificationMethods.SMS) {
     // generate time-based token
     const token = otpService.getToken(secretKey);
     // calculate otp token remaining time
@@ -41,13 +41,13 @@ const sendOtpResponse = async (res, user, otpDoc) => {
       .json(
         new SuccessResponse(
           httpStatus.OK,
-          `Authentication code sent via ${serviceTypes.SMS}`,
+          `Authentication code sent via ${verificationMethods.SMS}`,
           { otp_id: otpDoc._id }
         )
       );
   }
 
-  if (serviceType === serviceTypes.GOOGLE_AUTHENTICATOR) {
+  if (verificationMethod === verificationMethods.GOOGLE_AUTHENTICATOR) {
     // generate qrcode url
     const url = otpService.generateQRCodeURL(secretKey, user.email);
     // send qrcode url

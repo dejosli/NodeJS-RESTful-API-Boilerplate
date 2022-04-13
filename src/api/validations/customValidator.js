@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 // Internal module imports
 const { User } = require('models');
 const { allRoles, roles } = require('config/roles');
+const { methods } = require('config/otps');
 
 // check whether id is mongo ObjectId or not
 const isObjectId = (id) => {
@@ -47,14 +48,13 @@ const isInRoles = (role, { req }) => {
     : Promise.reject(new Error('Invalid role'));
 };
 
-const isOtpEnabled = (type, { req }) => {
+const isOtpEnabled = (method, { req }) => {
   const { enabled } = req.body;
-  const types = ['email', 'sms', 'none'];
-  if (enabled === 'true' && !type) {
-    return Promise.reject(new Error('Service type is required'));
+  if (enabled === true && !method) {
+    return Promise.reject(new Error('Verification method is required'));
   }
-  if (enabled === 'true' && !types.includes(type)) {
-    return Promise.reject(new Error('Invalid service type'));
+  if (enabled === true && !methods.includes(method)) {
+    return Promise.reject(new Error('Invalid verification method'));
   }
   return true;
 };

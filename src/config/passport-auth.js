@@ -87,12 +87,12 @@ jwtStrategy.ACCESS = new Strategy(
         // find refresh_token in DB
         const refreshTokenDoc = await Token.findToken({
           userId: jwtPayload.sub,
+          deviceId: jwtPayload.jti,
         });
-        // get user from refresh_token
-        const { user } = refreshTokenDoc;
         // if refresh_token and user exists
-        if (refreshTokenDoc && user) {
-          return done(null, user);
+        if (refreshTokenDoc && refreshTokenDoc.user) {
+          // return done(null, user);
+          return done(null, refreshTokenDoc);
         }
         return done(null, false);
       }
@@ -112,9 +112,10 @@ jwtStrategy.REFRESH = new Strategy(
         // find refresh_token in DB
         const refreshTokenDoc = await Token.findToken({
           userId: jwtPayload.sub,
+          deviceId: jwtPayload.jti,
         });
-        // if refresh_token exists
-        if (refreshTokenDoc) {
+        // if refresh_token and user exists
+        if (refreshTokenDoc && refreshTokenDoc.user) {
           return done(null, refreshTokenDoc);
         }
         return done(null, false);
@@ -137,8 +138,8 @@ jwtStrategy.RESET_PASSWORD = new Strategy(
           userId: jwtPayload.sub,
           type: tokenTypes.RESET_PASSWORD,
         });
-        // if resetPasswordToken exists
-        if (resetPasswordTokenDoc) {
+        // if resetPasswordToken and user exists
+        if (resetPasswordTokenDoc && resetPasswordTokenDoc.user) {
           return done(null, resetPasswordTokenDoc);
         }
         return done(null, false);
@@ -161,8 +162,8 @@ jwtStrategy.VERIFY_EMAIL = new Strategy(
           userId: jwtPayload.sub,
           type: tokenTypes.VERIFY_EMAIL,
         });
-        // if verifyEmailToken exists
-        if (verifyEmailTokenDoc) {
+        // if verifyEmailToken and user exists
+        if (verifyEmailTokenDoc && verifyEmailTokenDoc.user) {
           return done(null, verifyEmailTokenDoc);
         }
         return done(null, false);

@@ -86,12 +86,25 @@ const verifyToken = (token, secret, step = 30, window = 0) => {
   return verified;
 };
 
-const saveSecretKey = async (secretKey, userId, verified, serviceType) => {
+/**
+ * Save OTP secretKey
+ * @param {string} secretKey
+ * @param {ObjectId} userId
+ * @param {string} verificationMethod
+ * @param {boolean} [verified]
+ * @returns {Promise}
+ */
+const saveSecretKey = async (
+  secretKey,
+  userId,
+  verificationMethod,
+  verified = false
+) => {
   const otpDoc = await OTP.create({
+    user: userId,
     secretKey,
     verified,
-    serviceType,
-    user: userId,
+    verificationMethod,
   });
   if (!otpDoc) {
     throw new ErrorResponse(
@@ -102,6 +115,11 @@ const saveSecretKey = async (secretKey, userId, verified, serviceType) => {
   return otpDoc;
 };
 
+/**
+ * Get OTP document
+ * @param {object} filter
+ * @returns {Promise}
+ */
 const getSecretKey = async (filter) => {
   const otpDoc = await OTP.findOne(filter);
   if (!otpDoc) {
@@ -110,6 +128,12 @@ const getSecretKey = async (filter) => {
   return otpDoc;
 };
 
+/**
+ * Update OTP document
+ * @param {object} filter
+ * @param {object} updateBody
+ * @returns {Promise}
+ */
 const updateSecretKey = async (filter, updateBody) => {
   const otpDoc = await OTP.updateOne(filter, updateBody, {
     new: true,
@@ -121,6 +145,11 @@ const updateSecretKey = async (filter, updateBody) => {
   return otpDoc;
 };
 
+/**
+ * Delete single OTP document
+ * @param {object} filter
+ * @returns {Promise}
+ */
 const deleteOneSecretKey = async (filter) => {
   const otpDoc = await OTP.deleteOne(filter);
   if (!otpDoc) {
@@ -129,11 +158,29 @@ const deleteOneSecretKey = async (filter) => {
   return otpDoc;
 };
 
+/**
+ * Delete multiple OTP documents
+ * @param {object} filter
+ * @returns {Promise}
+ */
 const deleteManySecretKey = async (filter) => {
   const otpDoc = await OTP.deleteMany(filter);
   if (!otpDoc) {
     throw new ErrorResponse(httpStatus.NOT_FOUND, 'Not found');
   }
+  return otpDoc;
+};
+
+/**
+ * Generate and save OTP secret key
+ * @param {object.<User>} user
+ * @param {string} verificationMethod
+ * @returns {Promise}
+ */
+const generateOtpCode = async (user, verificationMethod) => {
+  const { _id: userId, email } = user;
+  const { secretKey } = await generateSecretKey(email);
+  const otpDoc = await saveSecretKey(secretKey, userId, verificationMethod);
   return otpDoc;
 };
 
@@ -148,4 +195,5 @@ module.exports = {
   updateSecretKey,
   deleteOneSecretKey,
   deleteManySecretKey,
+  generateOtpCode,
 };

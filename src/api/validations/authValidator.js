@@ -98,21 +98,21 @@ const verifyEmail = query('token')
   .isJWT()
   .withMessage('Invalid token');
 
-// validators for two factor authentication
-
-const sendOTPMessage = [
+// validators of two factor authentication
+const sendOtpCode = [
   body('enabled').isBoolean().withMessage('A boolean value must be provided'),
   body('send_otp').custom(isOtpEnabled),
 ];
 
-const verifyOTPCode = [
+const verifyOtpCode = [
   body('otp_id').notEmpty().withMessage('OTP id is missing').isMongoId(),
   body('otp_code').notEmpty().withMessage('OTP code is missing'),
 ];
 
-const resendOTPMessage = body('otp_id')
+const resendOtpCode = body('otp_id')
   .notEmpty()
-  .withMessage('OTP id is missing');
+  .withMessage('OTP id is missing')
+  .isMongoId();
 
 // Module exports
 module.exports = {
@@ -121,7 +121,7 @@ module.exports = {
   forgotPassword,
   resetPassword,
   verifyEmail,
-  sendOTPMessage,
-  verifyOTPCode,
-  resendOTPMessage,
+  sendOtpCode,
+  verifyOtpCode,
+  resendOtpCode,
 };

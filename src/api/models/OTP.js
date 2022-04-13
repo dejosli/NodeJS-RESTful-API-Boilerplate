@@ -3,7 +3,7 @@ require('module-alias/register');
 const mongoose = require('mongoose');
 
 // Internal module imports
-const { services, serviceTypes } = require('config/otps');
+const { methods, verificationMethods } = require('config/otps');
 const { toJSON } = require('./plugins');
 
 /**
@@ -26,10 +26,10 @@ const otpSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    serviceType: {
+    verificationMethod: {
       type: String,
-      enum: services,
-      default: serviceTypes.GOOGLE_AUTHENTICATOR,
+      enum: methods,
+      default: verificationMethods.GOOGLE_AUTHENTICATOR,
     },
   },
   {

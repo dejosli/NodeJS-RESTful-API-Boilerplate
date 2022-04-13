@@ -27,6 +27,11 @@ const tokenSchema = mongoose.Schema(
       enum: types,
       required: true,
     },
+    deviceId: {
+      type: mongoose.SchemaTypes.ObjectId,
+      unique: true,
+      required: false,
+    },
     expireAt: {
       type: Date,
       required: true,
@@ -61,43 +66,47 @@ tokenSchema.plugin(toJSON);
 
 /**
  * Find token
- * @param {ObjectID} userId
+ * @param {ObjectId} userId
+ * @param {ObjectId} deviceId
  * @param {string} type
- * @param {boolean} blacklisted
+ * @param {boolean} [blacklisted]
  * @returns {Promise<Token>}
  */
 tokenSchema.statics.findToken = async function ({
   userId,
+  deviceId,
   type = tokenTypes.REFRESH,
   blacklisted = false,
 }) {
   return this.findOne({
-    $and: [{ user: userId }, { type }, { blacklisted }],
+    $and: [{ user: userId }, { deviceId }, { type }, { blacklisted }],
   }).populate('user');
 };
 
 /**
  * Remove token
- * @param {ObjectID} userId
+ * @param {ObjectId} userId
+ * @param {ObjectId} deviceId
  * @param {string} type
- * @param {boolean} blacklisted
+ * @param {boolean} [blacklisted]
  * @returns {Promise<Token>}
  */
 tokenSchema.statics.deleteOneToken = async function ({
   userId,
+  deviceId,
   type = tokenTypes.REFRESH,
   blacklisted = false,
 }) {
   return this.deleteOne({
-    $and: [{ user: userId }, { type }, { blacklisted }],
+    $and: [{ user: userId }, { deviceId }, { type }, { blacklisted }],
   });
 };
 
 /**
  * Remove token
- * @param {ObjectID} userId
+ * @param {ObjectId} userId
  * @param {string} type
- * @param {boolean} blacklisted
+ * @param {boolean} [blacklisted]
  * @returns {Promise<Token>}
  */
 tokenSchema.statics.deleteManyToken = async function ({
