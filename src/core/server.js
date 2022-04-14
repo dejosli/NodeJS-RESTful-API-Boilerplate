@@ -1,6 +1,13 @@
 // External module imports
 require('module-alias/register');
 const http = require('http');
+const https = require('https');
+
+// define http protocol
+const PROTOCOLS = {
+  http,
+  https,
+};
 
 // Internal module imports
 const config = require('config/config');
@@ -33,11 +40,13 @@ const signalHandler = (signal) => {
 
 const init = async () => {
   // create http server
-  server = http.createServer(app);
+  server = PROTOCOLS[config.protocol].createServer(app);
 
   // listen on provided port, on all network interfaces
   server.listen(config.port, config.host, () => {
-    logger.info(`Server listening on http://${config.host}:${config.port}`);
+    logger.info(
+      `Server listening on ${config.protocol}://${config.host}:${config.port}`
+    );
   });
 
   // process exits gracefully

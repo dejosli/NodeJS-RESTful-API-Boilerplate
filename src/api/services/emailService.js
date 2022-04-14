@@ -1,11 +1,11 @@
 // External module imports
 require('module-alias/register');
-const httpStatus = require('http-status');
 
 // Internal module imports
 const config = require('config/config');
 const { ErrorResponse } = require('utils');
 const { createTransporter } = require('config/nodemailer');
+const { httpStatus } = require('config/custom-http-status');
 
 /**
  * Send an email

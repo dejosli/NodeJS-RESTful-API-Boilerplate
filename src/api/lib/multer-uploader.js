@@ -2,11 +2,11 @@
 require('module-alias/register');
 const path = require('path');
 const fs = require('fs-extra');
-const httpStatus = require('http-status');
 const multer = require('multer');
 
 // Internal module imports
 const { ErrorResponse, common } = require('utils');
+const { httpStatus, httpMessage } = require('config/custom-http-status');
 
 const { genUniqueId } = common;
 
@@ -35,7 +35,7 @@ const onErrorHandler = (err, next) => {
   return next(
     new ErrorResponse(
       httpStatus.BAD_REQUEST,
-      httpStatus[httpStatus.BAD_REQUEST],
+      httpMessage[httpStatus.BAD_REQUEST],
       errors
     )
   );

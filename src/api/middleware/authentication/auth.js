@@ -1,11 +1,10 @@
 // External module imports
 require('module-alias/register');
-const httpStatus = require('http-status');
 const passport = require('passport');
 
 // Internal module imports
 const config = require('config/config');
-const errorMessages = require('config/error-messages');
+const { httpStatus, httpMessage } = require('config/custom-http-status');
 const { ErrorResponse } = require('utils');
 
 // callback - object scaffolding
@@ -22,7 +21,7 @@ verifyCallback.ACCESS = (req, resolve, reject) => {
       return reject(
         new ErrorResponse(
           httpStatus.UNAUTHORIZED,
-          errorMessages.USER_UNAUTHORIZED_ERR
+          httpMessage[httpStatus.UNAUTHORIZED]
         )
       );
     }
@@ -40,7 +39,10 @@ verifyCallback.REFRESH = (req, resolve, reject) => {
   return (err, refreshTokenDoc, info) => {
     if (err || info || !refreshTokenDoc) {
       return reject(
-        new ErrorResponse(httpStatus.UNAUTHORIZED, 'Invalid refresh token')
+        new ErrorResponse(
+          httpStatus.UNAUTHORIZED,
+          httpMessage[httpStatus.UNAUTHORIZED]
+        )
       );
     }
     // set refreshToken to request object
@@ -55,7 +57,7 @@ verifyCallback.RESET_PASSWORD = (req, resolve, reject) => {
       return reject(
         new ErrorResponse(
           httpStatus.UNAUTHORIZED,
-          'Invalid reset password token'
+          httpMessage[httpStatus.UNAUTHORIZED]
         )
       );
     }
@@ -69,7 +71,10 @@ verifyCallback.VERIFY_EMAIL = (req, resolve, reject) => {
   return (err, verifyEmailTokenDoc, info) => {
     if (err || info || !verifyEmailTokenDoc) {
       return reject(
-        new ErrorResponse(httpStatus.UNAUTHORIZED, 'Invalid verify email token')
+        new ErrorResponse(
+          httpStatus.UNAUTHORIZED,
+          httpMessage[httpStatus.UNAUTHORIZED]
+        )
       );
     }
     // set resetPasswordToken to request object

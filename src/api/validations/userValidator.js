@@ -54,7 +54,7 @@ const getUsers = [
   query('page').optional().isInt({ gt: 0, allow_leading_zeroes: false }),
   query('limit')
     .optional()
-    .isInt({ min: 2, max: 10, allow_leading_zeroes: false }),
+    .isInt({ min: 1, max: 30, allow_leading_zeroes: false }),
   query('include_metadata').optional().isBoolean(),
 ];
 

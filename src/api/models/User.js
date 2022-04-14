@@ -58,7 +58,7 @@ const userSchema = new mongoose.Schema(
       trim: true,
       default: '',
     },
-    active: {
+    isActive: {
       type: Boolean,
       default: true,
     },

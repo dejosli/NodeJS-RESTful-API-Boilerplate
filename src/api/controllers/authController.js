@@ -1,6 +1,6 @@
 // External module imports
 require('module-alias/register');
-const httpStatus = require('http-status');
+const { httpStatus, httpMessage } = require('config/custom-http-status');
 
 // Internal module imports
 const {
@@ -48,7 +48,7 @@ const register = asyncHandler(async (req, res, next) => {
     user,
     tokens,
     httpStatus.CREATED,
-    'User created successfully'
+    httpMessage[httpStatus.CREATED]
   );
 });
 
@@ -166,7 +166,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
     .json(
       new SuccessResponse(
         httpStatus.OK,
-        'Password changed successful. Please check your email'
+        'Password changed successfully, please check your email'
       )
     );
 });
@@ -198,7 +198,7 @@ const sendVerificationEmail = asyncHandler(async (req, res, next) => {
     .json(
       new SuccessResponse(
         httpStatus.OK,
-        `Email verification link has been sent to: ${email}`
+        'Verification link has been sent to your email'
       )
     );
 });
@@ -223,7 +223,7 @@ const verifyEmail = asyncHandler(async (req, res, next) => {
     .json(
       new SuccessResponse(
         httpStatus.OK,
-        'Email verification successful. Please check your email'
+        'Email verification successfully, please check your email'
       )
     );
 });

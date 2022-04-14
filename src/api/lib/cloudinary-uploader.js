@@ -5,6 +5,7 @@ const fs = require('fs-extra');
 
 // Internal module imports
 const cloudinary = require('config/cloudinary');
+const { httpMessage } = require('config/custom-http-status');
 
 /**
  * Create cloudinary public_id
@@ -36,7 +37,7 @@ const uploadSingleFile = async (file, options) => {
   } catch (err) {
     // remove file from local storage
     fs.removeSync(file);
-    throw new Error('Cloudinary file upload failed');
+    throw new Error(httpMessage.CLOUDINARY_FILE_UPLOAD_ERROR);
   }
 };
 
@@ -55,7 +56,7 @@ const uploadManyFiles = async (files, options) => {
     const results = await Promise.all(uploaderPromises);
     return results;
   } catch (err) {
-    throw new Error('Cloudinary many files upload failed');
+    throw new Error(httpMessage.CLOUDINARY_FILE_UPLOAD_ERROR);
   }
 };
 
@@ -74,7 +75,7 @@ const deleteSingleFile = async (file, options) => {
     const result = await cloudinary.uploader.destroy(publicId, options);
     return result;
   } catch (err) {
-    throw new Error('Cloudinary file deletion failed');
+    throw new Error(httpMessage.CLOUDINARY_FILE_DELETE_ERROR);
   }
 };
 
@@ -93,7 +94,7 @@ const deleteManyFiles = async (files, options) => {
     const results = await Promise.all(uploaderPromises);
     return results;
   } catch (err) {
-    throw new Error('Cloudinary many files deletion failed');
+    throw new Error(httpMessage.CLOUDINARY_FILE_DELETE_ERROR);
   }
 };
 
@@ -113,7 +114,7 @@ const updateFile = async (oldFile, newFile, newOptions) => {
     const result = await uploadSingleFile(newFile, newOptions);
     return result;
   } catch (err) {
-    throw new Error('Cloudinary file updated failure');
+    throw new Error(httpMessage.CLOUDINARY_FILE_UPDATE_ERROR);
   }
 };
 
@@ -132,7 +133,7 @@ const uploadSingleFileStream = (file, options) => {
         if (err) {
           // remove file from local storage
           fs.removeSync(file);
-          return reject(new Error('Cloudinary file upload failed'));
+          return reject(new Error(httpMessage.CLOUDINARY_FILE_UPLOAD_ERROR));
         }
         // remove file from local storage
         fs.removeSync(file);
@@ -159,7 +160,7 @@ const uploadManyFilesStream = async (files, options) => {
     const results = await Promise.all(uploaderPromises);
     return results;
   } catch (err) {
-    throw new Error('Cloudinary many files upload failed');
+    throw new Error(httpMessage.CLOUDINARY_FILE_UPLOAD_ERROR);
   }
 };
 
@@ -179,7 +180,7 @@ const updateFileStream = async (oldFile, newFile, newOptions) => {
     const result = await uploadSingleFileStream(newFile, newOptions);
     return result;
   } catch (err) {
-    throw new Error('Cloudinary file updated failure');
+    throw new Error(httpMessage.CLOUDINARY_FILE_UPDATE_ERROR);
   }
 };
 

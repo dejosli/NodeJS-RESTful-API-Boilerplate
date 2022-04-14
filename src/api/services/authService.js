@@ -1,12 +1,11 @@
 // External module imports
 require('module-alias/register');
-const httpStatus = require('http-status');
 
 // Internal module imports
 const { User, Token } = require('models');
 const { ErrorResponse } = require('utils');
 const { tokenTypes } = require('config/tokens');
-const errorMessages = require('config/error-messages');
+const { httpStatus, httpMessage } = require('config/custom-http-status');
 const { updateUserById } = require('./userService');
 
 /**
@@ -22,7 +21,7 @@ const loginUserWithEmailAndPassword = async (email, password) => {
   if (!user || !(await user.isPasswordMatch(password))) {
     throw new ErrorResponse(
       httpStatus.UNAUTHORIZED,
-      errorMessages.USER_LOGIN_ERR
+      httpMessage.USER_LOGIN_ERROR
     );
   }
   return user;
@@ -40,7 +39,7 @@ const logoutUserWithToken = async (userId, deviceId) => {
   if (!refreshTokenDoc) {
     throw new ErrorResponse(
       httpStatus.UNAUTHORIZED,
-      errorMessages.USER_UNAUTHORIZED_ERR
+      httpMessage[httpStatus.UNAUTHORIZED]
     );
   }
   return refreshTokenDoc;
@@ -66,7 +65,7 @@ const requestPasswordReset = async (email) => {
   if (!user) {
     throw new ErrorResponse(
       httpStatus.NOT_FOUND,
-      errorMessages.USER_NOT_FOUND_ERR
+      httpMessage[httpStatus.NOT_FOUND]
     );
   }
   // if resetToken already exists
@@ -92,7 +91,7 @@ const resetPassword = async (userId, newPassword) => {
   } catch (err) {
     throw new ErrorResponse(
       httpStatus.UNAUTHORIZED,
-      errorMessages.USER_PASSWORD_RESET_ERR
+      httpMessage.USER_PASSWORD_RESET_ERROR
     );
   }
 };
@@ -113,7 +112,7 @@ const verifyEmail = async (userId) => {
   } catch (err) {
     throw new ErrorResponse(
       httpStatus.UNAUTHORIZED,
-      errorMessages.USER_EMAIL_VERIFICATION_ERR
+      httpMessage.USER_EMAIL_VERIFICATION_ERROR
     );
   }
 };

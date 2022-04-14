@@ -17,6 +17,7 @@ const {
   authorizeFacebookOAuth,
 } = require('middleware/authentication/oauth');
 const profilePicUpload = require('middleware/users/profilePicUpload');
+const otpLimiter = require('middleware/authentication/otpLimiter');
 
 // init express router
 const router = express.Router();
@@ -90,11 +91,13 @@ router.post(
 router.post(
   '/otp/verify',
   [authValidator.verifyOtpCode, validate],
+  otpLimiter,
   authController.verifyOtpCode
 );
 router.post(
   '/otp/resend',
   [authValidator.resendOtpCode, validate],
+  otpLimiter,
   authController.resendOtpCode
 );
 

@@ -1,9 +1,9 @@
 // External module imports
-const httpStatus = require('http-status');
 const mongoose = require('mongoose');
 
 // Internal module imports
 const config = require('config/config');
+const { httpStatus, httpMessage } = require('config/custom-http-status');
 const ErrorResponse = require('./ErrorResponse');
 
 // handle async middleware/controller functions
@@ -19,7 +19,7 @@ const asyncFunction =
     } catch (error) {
       throw new ErrorResponse(
         httpStatus.INTERNAL_SERVER_ERROR,
-        httpStatus[httpStatus.INTERNAL_SERVER_ERROR]
+        httpMessage[httpStatus.INTERNAL_SERVER_ERROR]
       );
     }
   };

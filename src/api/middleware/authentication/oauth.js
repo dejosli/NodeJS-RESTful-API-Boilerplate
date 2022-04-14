@@ -1,11 +1,11 @@
 // External module imports
 require('module-alias/register');
-const httpStatus = require('http-status');
 const passport = require('passport');
 
 // Internal module imports
 const config = require('config/config');
 const { ErrorResponse } = require('utils');
+const { httpStatus, httpMessage } = require('config/custom-http-status');
 
 /**
  * Callbacks
@@ -17,7 +17,7 @@ const verifyCallback = (req, resolve, reject) => {
       return reject(
         new ErrorResponse(
           httpStatus.UNAUTHORIZED,
-          'You have previously signed up with a different login method'
+          httpMessage.OAUTH_VERIFICATION_ERROR
         )
       );
     }

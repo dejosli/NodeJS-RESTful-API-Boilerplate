@@ -1,12 +1,12 @@
 // External module imports
 require('module-alias/register');
 const speakeasy = require('speakeasy');
-const httpStatus = require('http-status');
 
 // Internal module imports
 const config = require('config/config');
 const { ErrorResponse } = require('utils');
 const { OTP } = require('models');
+const { httpStatus, httpMessage } = require('config/custom-http-status');
 
 /**
  * Custom authentication URL for SHA512
@@ -81,7 +81,10 @@ const verifyToken = (token, secret, step = 30, window = 0) => {
   };
   const verified = speakeasy.totp.verify(options);
   if (!verified) {
-    throw new ErrorResponse(httpStatus.UNAUTHORIZED, 'Failed to verify');
+    throw new ErrorResponse(
+      httpStatus.UNAUTHORIZED,
+      httpMessage.OTP_VERIFICATION_ERROR
+    );
   }
   return verified;
 };
@@ -109,7 +112,7 @@ const saveSecretKey = async (
   if (!otpDoc) {
     throw new ErrorResponse(
       httpStatus.INTERNAL_SERVER_ERROR,
-      httpStatus[httpStatus.INTERNAL_SERVER_ERROR]
+      httpMessage[httpStatus.INTERNAL_SERVER_ERROR]
     );
   }
   return otpDoc;
@@ -123,7 +126,10 @@ const saveSecretKey = async (
 const getSecretKey = async (filter) => {
   const otpDoc = await OTP.findOne(filter);
   if (!otpDoc) {
-    throw new ErrorResponse(httpStatus.NOT_FOUND, 'Not found');
+    throw new ErrorResponse(
+      httpStatus.NOT_FOUND,
+      httpMessage[httpStatus.NOT_FOUND]
+    );
   }
   return otpDoc;
 };
@@ -140,7 +146,10 @@ const updateSecretKey = async (filter, updateBody) => {
     runValidators: true,
   });
   if (!otpDoc) {
-    throw new ErrorResponse(httpStatus.NOT_FOUND, 'Not found');
+    throw new ErrorResponse(
+      httpStatus.NOT_FOUND,
+      httpMessage[httpStatus.NOT_FOUND]
+    );
   }
   return otpDoc;
 };
@@ -153,7 +162,10 @@ const updateSecretKey = async (filter, updateBody) => {
 const deleteOneSecretKey = async (filter) => {
   const otpDoc = await OTP.deleteOne(filter);
   if (!otpDoc) {
-    throw new ErrorResponse(httpStatus.NOT_FOUND, 'Not found');
+    throw new ErrorResponse(
+      httpStatus.NOT_FOUND,
+      httpMessage[httpStatus.NOT_FOUND]
+    );
   }
   return otpDoc;
 };
@@ -166,7 +178,10 @@ const deleteOneSecretKey = async (filter) => {
 const deleteManySecretKey = async (filter) => {
   const otpDoc = await OTP.deleteMany(filter);
   if (!otpDoc) {
-    throw new ErrorResponse(httpStatus.NOT_FOUND, 'Not found');
+    throw new ErrorResponse(
+      httpStatus.NOT_FOUND,
+      httpMessage[httpStatus.NOT_FOUND]
+    );
   }
   return otpDoc;
 };

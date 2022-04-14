@@ -1,6 +1,5 @@
 // External module imports
 require('module-alias/register');
-const httpStatus = require('http-status');
 const mongoose = require('mongoose');
 const multer = require('multer');
 
@@ -8,6 +7,7 @@ const multer = require('multer');
 const { ErrorResponse } = require('utils');
 const logger = require('config/logger');
 const config = require('config/config');
+const { httpStatus, httpMessage } = require('config/custom-http-status');
 
 const isOperationalError = (err) => {
   if (err instanceof ErrorResponse) {
@@ -16,7 +16,7 @@ const isOperationalError = (err) => {
   return false;
 };
 
-const errorHandler = function (err, req, res, next) {
+const errorHandler = (err, req, res, next) => {
   let error = { ...err };
   error.message = err.message;
 
@@ -27,12 +27,12 @@ const errorHandler = function (err, req, res, next) {
       error instanceof multer.MulterError
         ? httpStatus.BAD_REQUEST
         : httpStatus.INTERNAL_SERVER_ERROR;
-    const message = error.message || httpStatus[statusCode];
+    const message = error.message || httpMessage[statusCode];
     error = new ErrorResponse(statusCode, message, false);
   }
 
   res.locals.errorMessage =
-    error.message || httpStatus[httpStatus.INTERNAL_SERVER_ERROR];
+    error.message || httpMessage[httpStatus.INTERNAL_SERVER_ERROR];
 
   if (config.env === 'development') {
     logger.error(err);
@@ -41,7 +41,7 @@ const errorHandler = function (err, req, res, next) {
   res.status(error.statusCode || httpStatus.INTERNAL_SERVER_ERROR).json({
     success: false,
     code: error.statusCode || httpStatus.INTERNAL_SERVER_ERROR,
-    message: error.message || httpStatus[httpStatus.INTERNAL_SERVER_ERROR],
+    message: error.message || httpMessage[httpStatus.INTERNAL_SERVER_ERROR],
     errors: error.errors,
   });
 };

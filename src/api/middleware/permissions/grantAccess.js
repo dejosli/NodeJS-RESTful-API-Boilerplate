@@ -1,9 +1,9 @@
 // External module imports
 require('module-alias/register');
-const httpStatus = require('http-status');
 
 // Internal module imports
 const { ErrorResponse } = require('utils');
+const { httpStatus, httpMessage } = require('config/custom-http-status');
 
 // check whether permissions are allowed or denied
 const grantAccess = (req, res, next) => {
@@ -11,10 +11,7 @@ const grantAccess = (req, res, next) => {
     return next();
   }
   return next(
-    new ErrorResponse(
-      httpStatus.FORBIDDEN,
-      `Access Denied - You don't have permission`
-    )
+    new ErrorResponse(httpStatus.FORBIDDEN, httpMessage[httpStatus.FORBIDDEN])
   );
 };
 

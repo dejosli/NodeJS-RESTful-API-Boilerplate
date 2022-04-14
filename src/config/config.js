@@ -12,6 +12,10 @@ const envVarsSchema = Joi.object()
     HOST: Joi.string()
       .default('localhost')
       .description('Server hostname/ip address'),
+    PROTOCOL: Joi.string()
+      .valid('http', 'https')
+      .default('http')
+      .description('Server protocol'),
     NODE_ENV: Joi.string()
       .valid('production', 'development', 'test')
       .default('development'),
@@ -91,6 +95,7 @@ if (error) {
 module.exports = {
   port: envVars.PORT,
   host: envVars.HOST,
+  protocol: envVars.PROTOCOL,
   env: envVars.NODE_ENV,
   appName: envVars.APP_NAME,
   mongodbUrl: envVars.MONGODB_URL,

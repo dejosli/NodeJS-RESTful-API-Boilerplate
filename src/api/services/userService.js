@@ -1,11 +1,10 @@
 // External module imports
 require('module-alias/register');
-const httpStatus = require('http-status');
 
 // Internal module imports
 const { User } = require('models');
 const { ErrorResponse, common } = require('utils');
-const errorMessages = require('config/error-messages');
+const { httpStatus, httpMessage } = require('config/custom-http-status');
 const { cloudinaryUploader } = require('lib/cloudinary-uploader');
 
 const { asyncFunction } = common;
@@ -50,7 +49,7 @@ const createUser = async (userBody) => {
     }
     throw new ErrorResponse(
       httpStatus.INTERNAL_SERVER_ERROR,
-      httpStatus[httpStatus.INTERNAL_SERVER_ERROR]
+      httpMessage[httpStatus.INTERNAL_SERVER_ERROR]
     );
   }
 
@@ -139,7 +138,7 @@ const getUserById = async (userId) => {
   if (!user) {
     throw new ErrorResponse(
       httpStatus.NOT_FOUND,
-      errorMessages.USER_NOT_FOUND_ERR
+      httpMessage[httpStatus.NOT_FOUND]
     );
   }
   return user;
@@ -159,7 +158,7 @@ const updateUserById = async (userId, updateBody) => {
   if (!user) {
     throw new ErrorResponse(
       httpStatus.NOT_FOUND,
-      errorMessages.USER_UPDATE_ERR
+      httpMessage[httpStatus.NOT_FOUND]
     );
   }
   return user;
@@ -175,7 +174,7 @@ const deleteUserById = async (userId) => {
   if (!user) {
     throw new ErrorResponse(
       httpStatus.NOT_FOUND,
-      errorMessages.USER_DELETE_ERR
+      httpMessage[httpStatus.NOT_FOUND]
     );
   }
   return user;

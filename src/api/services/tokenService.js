@@ -1,6 +1,5 @@
 // External module imports
 require('module-alias/register');
-const httpStatus = require('http-status');
 const moment = require('moment');
 const jwt = require('jsonwebtoken');
 
@@ -9,6 +8,7 @@ const config = require('config/config');
 const { ErrorResponse, common } = require('utils');
 const { tokenTypes } = require('config/tokens');
 const { Token } = require('models');
+const { httpStatus, httpMessage } = require('config/custom-http-status');
 
 const { genUniqueId } = common;
 
@@ -44,7 +44,7 @@ const saveToken = async (
   if (!tokenDoc) {
     throw new ErrorResponse(
       httpStatus.INTERNAL_SERVER_ERROR,
-      httpStatus[httpStatus.INTERNAL_SERVER_ERROR]
+      httpMessage[httpStatus.INTERNAL_SERVER_ERROR]
     );
   }
   return tokenDoc;

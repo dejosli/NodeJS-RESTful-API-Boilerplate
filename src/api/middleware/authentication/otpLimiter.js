@@ -9,7 +9,7 @@ const { ErrorResponse } = require('utils');
 
 // const windowMs = 15 * 60 * 1000; // 15 minutes
 const windowMs = moment().add(15, 'minutes').unix(); // 15 minutes
-const allowMaxRequests = 100; // Limit each IP to 100 requests
+const allowMaxRequests = 10; // Limit each IP to 10 requests
 
 const rateLimiter = rateLimit({
   windowMs, // time frame, M in milliseconds

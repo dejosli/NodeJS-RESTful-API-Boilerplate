@@ -1,6 +1,6 @@
 // External module imports
 require('module-alias/register');
-const httpStatus = require('http-status');
+const { httpStatus, httpMessage } = require('config/custom-http-status');
 
 // Internal module imports
 const {
@@ -34,7 +34,7 @@ const createUser = asyncHandler(async (req, res, next) => {
   const user = await userService.createUser(userBody);
   // send response
   res.status(httpStatus.CREATED).json(
-    new SuccessResponse(httpStatus.OK, httpStatus[httpStatus.OK], {
+    new SuccessResponse(httpStatus.CREATED, httpMessage[httpStatus.CREATED], {
       user,
     })
   );
@@ -93,7 +93,7 @@ const updateUser = asyncHandler(async (req, res, next) => {
   };
   const user = await userService.updateUserById(userId, updateBody);
   res.status(httpStatus.OK).json(
-    new SuccessResponse(httpStatus.OK, httpStatus[httpStatus.OK], {
+    new SuccessResponse(httpStatus.OK, httpMessage[httpStatus.OK], {
       user,
     })
   );
