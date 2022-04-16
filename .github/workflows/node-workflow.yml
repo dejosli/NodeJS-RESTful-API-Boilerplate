@@ -7,11 +7,12 @@ on:
     branches: [main]
 
 jobs:
-  staging:
+  develop:
     env:
       CI: true
-      NODE_ENV: production
       PORT: 5000
+      HOST: 'localhost'
+      NODE_ENV: production
       MONGODB_URL: mongodb://localhost/node-boilerplate
     runs-on: ubuntu-latest
     strategy:
@@ -20,30 +21,30 @@ jobs:
         mongodb-version: ['5.0']
     steps:
       - name: Git checkout
-      - uses: actions/checkout@v3
+        uses: actions/checkout@v3
 
       - name: Use Node.js ${{ matrix.node-version }}
-      - uses: actions/setup-node@v3
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
 
       - name: Start MongoDB
-      - uses: supercharge/mongodb-github-action@1.7.0
+        uses: supercharge/mongodb-github-action@1.7.0
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
 
       - name: Install dependencies
-      - run: yarn install --frozen-lockfile --production=false
+        run: yarn install --frozen-lockfile --production=false
 
       - name: Run linting
-      - run: yarn lint
+        run: yarn lint
 
       - name: Run test
-      - run: yarn test
+        run: yarn test
 
       # - name: Run test-coverage
-      # - run: yarn test:coverage
+      #   run: yarn test:coverage
 
       # - name: Coveralls
       #   uses: coverallsapp/github-action@master
