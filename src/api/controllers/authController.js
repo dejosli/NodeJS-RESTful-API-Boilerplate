@@ -124,7 +124,8 @@ const refreshTokens = asyncHandler(async (req, res, next) => {
  * @access Public
  */
 const forgotPassword = asyncHandler(async (req, res, next) => {
-  const user = await authService.requestPasswordReset(req.body.email);
+  const { email } = req.body;
+  const user = await authService.requestPasswordReset(email);
   const resetPasswordToken = await tokenService.generateResetPasswordToken(
     user._id
   );

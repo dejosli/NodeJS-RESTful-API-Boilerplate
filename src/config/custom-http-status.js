@@ -19,6 +19,8 @@ const httpMessage = {
 
   // error messages
   OTP_VERIFICATION_ERROR: 'Failed to verify otp token',
+  OTP_UNKNOWN_VERIFICATION_METHOD_ERROR: 'Invalid otp verification method',
+
   OAUTH_VERIFICATION_ERROR:
     'You have previously signed up with a different login method',
 

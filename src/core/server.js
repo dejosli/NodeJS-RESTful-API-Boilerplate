@@ -38,7 +38,7 @@ const signalHandler = (signal) => {
   exitHandler();
 };
 
-const init = async () => {
+const startServer = async () => {
   // create http server
   server = PROTOCOLS[config.protocol].createServer(app);
 
@@ -58,4 +58,4 @@ const init = async () => {
 };
 
 // Module exports
-module.exports = { init };
+module.exports = { startServer };

@@ -1,9 +1,9 @@
 // External module imports
 require('module-alias/register');
-const httpStatus = require('http-status');
 
 // Internal module imports
 const { verificationMethods } = require('config/otps');
+const { httpStatus, httpMessage } = require('config/custom-http-status');
 const { otpService, emailService, messagingService } = require('services');
 const ErrorResponse = require('./ErrorResponse');
 const SuccessResponse = require('./SuccessResponse');
@@ -67,7 +67,10 @@ const sendOtpResponse = async (res, user, otpDoc) => {
   return res
     .status(httpStatus.UNAUTHORIZED)
     .json(
-      new ErrorResponse(httpStatus.UNAUTHORIZED, 'Unknown error occurred!')
+      new ErrorResponse(
+        httpStatus.UNAUTHORIZED,
+        httpMessage.OTP_UNKNOWN_VERIFICATION_METHOD_ERROR
+      )
     );
 };
 

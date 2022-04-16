@@ -3,7 +3,7 @@ require('module-alias/register');
 
 // Internal module imports
 
-const init = async () => {};
+const startWorkers = async () => {};
 
 // Module exports
-module.exports = { init };
+module.exports = { startWorkers };

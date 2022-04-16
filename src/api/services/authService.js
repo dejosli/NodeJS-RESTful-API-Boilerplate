@@ -78,7 +78,7 @@ const requestPasswordReset = async (email) => {
 
 /**
  * Reset password
- * @param {string} resetPasswordToken
+ * @param {string} userId
  * @param {string} newPassword
  * @returns {Promise}
  */

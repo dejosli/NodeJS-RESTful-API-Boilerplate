@@ -9,18 +9,21 @@ require('module-alias/register');
 
 // Internal module imports
 const { connectDB } = require('core/database');
-const { init: initServer } = require('core/server');
-const { init: initWorkers } = require('core/workers');
+const { startServer } = require('core/server');
+const { startWorkers } = require('core/workers');
 
-const start = async () => {
+const init = async () => {
   // database connection
   await connectDB();
 
   // start the server
-  await initServer();
+  await startServer();
 
   // start the workers
-  await initWorkers();
+  await startWorkers();
 };
 
-start();
+/**
+ * Start the process
+ */
+init();
