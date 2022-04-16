@@ -13,12 +13,12 @@ The skeleton has many built-in features, such as authentication using JWT, reque
 - **Email sending**: using [Nodemailer](https://nodemailer.com/about/)
 - **SMS sending**: using [Twilio](https://github.com/twilio/twilio-node)
 - **Logging**: using [Winston](https://github.com/winstonjs/winston) and [Morgan](https://github.com/expressjs/morgan)
-- **Testing**: unit and integration tests using [Jest](https://jestjs.io) and [SuperTest](https://github.com/visionmedia/supertest)
+- **Testing**: unit and integration tests using [Jest](https://jestjs.io) and [SuperTest](https://github.com/visionmedia/supertest) and mocks with [node-mocks-http](https://www.npmjs.com/package/node-mocks-http)
 - **Error handling**: centralized error handling mechanism
 - **API documentation**: with [swagger-jsdoc](https://github.com/Surnet/swagger-jsdoc) and [swagger-ui-express](https://github.com/scottie1984/swagger-ui-express) `or` with [Postman](https://www.postman.com/) and [docgen](https://github.com/thedevsaddam/docgen)
 - **Process management**: advanced production process management using [PM2](https://pm2.keymetrics.io)
 - **Dependency management**: with [Yarn](https://yarnpkg.com)
-- **Environment variables**: using [dotenv](https://github.com/motdotla/dotenv) and [cross-env](https://github.com/kentcdodds/cross-env#readme)
+- **Environment variables**: using [dotenv](https://github.com/motdotla/dotenv)
 - **Security**: set security HTTP headers using [Helmet](https://helmetjs.github.io)
 - **Sanitizing**: sanitize request data against xss and query injection
 - **CORS**: Cross-Origin Resource-Sharing enabled using [Cors](https://github.com/expressjs/cors)
@@ -69,25 +69,32 @@ cp .env.example .env
 # open .env and modify the environment variables (if needed)
 ```
 
-## Project Structure
+## Folder Structure
 
-```
-├───src
-│   │   app.js
-│   │   index.js
-│   │
-│   ├───config
+```bash
+src
+│   index.js
+│
+├───api
 │   ├───controllers
 │   │   └───tests
 │   ├───docs
+│   ├───lib
+│   │   └───tests
 │   ├───middleware
 │   ├───models
+│   │   └───plugins
 │   ├───routes
 │   │   └───v1
 │   ├───services
 │   │   └───tests
 │   ├───utils
-│   └───validations
+│   │   └───tests
+│   ├───validators
+│   │   └───tests
+│   └───workers
+├───config
+├───core
 └───tests
 ```
 
@@ -193,6 +200,16 @@ yarn commit
 ```bash
 yarn prepare
 ```
+
+## List of things that need to be done
+
+- [ ] Test the utilities
+- [ ] Test the libraries
+- [ ] Test the validators
+- [ ] Test the middleware
+- [ ] Test the services
+- [ ] Test the controllers
+- [ ] Test the API's endpoints
 
 ## Inspirations
 

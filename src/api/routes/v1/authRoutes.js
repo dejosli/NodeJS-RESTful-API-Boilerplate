@@ -5,7 +5,7 @@ const passport = require('passport');
 
 // Internal module imports
 const { authController } = require('controllers');
-const { authValidator, validate } = require('validations');
+const { authValidator, validate } = require('validators');
 const {
   authorizeAccessToken,
   authorizeRefreshToken,

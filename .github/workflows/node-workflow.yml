@@ -1,6 +1,8 @@
-name: Node.js RESTFul API CI and CD
+name: NodeJS RESTFul API CI and CD
 
 on:
+  push:
+    branches: [main]
   pull_request:
     branches: [main]
 
@@ -37,10 +39,13 @@ jobs:
       - name: Run linting
       - run: yarn lint
 
-      - name: Make test-coverage
-      - run: yarn test:coverage
+      - name: Run test
+      - run: yarn test
 
-      - name: Coveralls
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Run test-coverage
+      # - run: yarn test:coverage
+
+      # - name: Coveralls
+      #   uses: coverallsapp/github-action@master
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}

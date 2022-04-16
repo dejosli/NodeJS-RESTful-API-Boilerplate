@@ -4,7 +4,7 @@ const express = require('express');
 
 // Internal module imports
 const { userController } = require('controllers');
-const { userValidator, validate } = require('validations');
+const { userValidator, validate } = require('validators');
 const { authorizeAccessToken } = require('middleware/authentication/auth');
 const {
   authorizeUsersCreatePermission,
