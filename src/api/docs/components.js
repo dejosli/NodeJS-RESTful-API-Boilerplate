@@ -8,7 +8,7 @@ const schemas = {
   // user model
   User: {
     type: 'object',
-    required: ['name', 'username', 'email', 'password', 'role'],
+    required: ['name', 'username', 'email', 'password', 'phoneNumber', 'role'],
     properties: {
       id: {
         type: 'string',
@@ -26,13 +26,21 @@ const schemas = {
         type: 'string',
         description: 'No password required to login with OAuth 2.0',
       },
+      phoneNumber: {
+        type: 'string',
+      },
       role: {
         type: 'string',
         enum: roles,
-        default: allRoles.USER.value,
+        default: allRoles.USER.alias,
       },
       profilePicture: {
         type: 'string',
+        default: '',
+      },
+      isActive: {
+        type: 'boolean',
+        default: true,
       },
       isEmailVerified: {
         type: 'boolean',

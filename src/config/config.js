@@ -138,7 +138,7 @@ module.exports = {
   twilio: {
     accountSid: envVars.TWILIO_ACCOUNT_SID,
     authToken: envVars.TWILIO_AUTH_TOKEN,
-    phoneNumber: envVars.TWILIO_NUMBER,
+    phoneNumber: envVars.TWILIO_PHONE_NUMBER,
   },
   cloudinary: {
     cloudName: envVars.CLOUD_NAME,

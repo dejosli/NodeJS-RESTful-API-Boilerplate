@@ -43,6 +43,10 @@ const createUser = [
     .withMessage(
       'Password should contain at least 1 lowercase, 1 uppercase, 1 number & 1 symbol'
     ),
+  body('phoneNumber')
+    .notEmpty()
+    .withMessage('Phone number is required')
+    .isMobilePhone(['en-US', 'bn-BD'], { strictMode: true }),
   body('role').custom(isInRoles).trim().escape(),
 ];
 

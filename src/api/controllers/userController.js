@@ -20,13 +20,14 @@ const { asyncHandler, getFullUrl } = common;
  * @access Private
  */
 const createUser = asyncHandler(async (req, res, next) => {
-  const { name, username, email, password, role } = req.body;
+  const { name, username, email, password, phoneNumber, role } = req.body;
   // define user object
   const userBody = {
     name,
     username,
     email,
     password,
+    phoneNumber,
     role,
     profilePicture: req?.file?.path,
   };

@@ -64,7 +64,7 @@ const register = [
   body('phoneNumber')
     .notEmpty()
     .withMessage('Phone number is required')
-    .isMobilePhone(['en-US', { strictMode: true }]),
+    .isMobilePhone(['en-US', 'bn-BD'], { strictMode: true }),
   body('role').optional().custom(isInRoles).trim().escape(),
 ];
 

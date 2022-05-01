@@ -79,7 +79,26 @@ const login = asyncHandler(async (req, res, next) => {
 });
 
 /**
- * @desc Logout current user
+ * @desc Login user for OAuth 2.0
+ * @route GET /api/v1/auth/<provider>/callback
+ * @access Public
+ */
+const oauthLogin = asyncHandler(async (req, res, next) => {
+  const { _id: userId } = req.user;
+  // generate and save tokens
+  const tokens = await tokenService.generateAuthTokens(userId);
+  // send response
+  sendTokenResponse(
+    res,
+    null,
+    tokens,
+    httpStatus.OK,
+    httpStatus[httpStatus.OK]
+  );
+});
+
+/**
+ * @desc Logout user
  * @route DELETE /api/v1/auth/logout
  * @access Private
  */
@@ -98,7 +117,7 @@ const logout = asyncHandler(async (req, res, next) => {
 });
 
 /**
- * @desc Logout current user
+ * @desc Refresh tokens
  * @route GET /api/v1/auth/refresh-tokens
  * @access Private
  */
@@ -230,26 +249,7 @@ const verifyEmail = asyncHandler(async (req, res, next) => {
 });
 
 /**
- * @desc Login user for OAuth 2.0
- * @route GET /api/v1/auth/<provider>/callback
- * @access Public
- */
-const oauthLogin = asyncHandler(async (req, res, next) => {
-  const { _id: userId } = req.user;
-  // generate and save tokens
-  const tokens = await tokenService.generateAuthTokens(userId);
-  // send response
-  sendTokenResponse(
-    res,
-    null,
-    tokens,
-    httpStatus.OK,
-    httpStatus[httpStatus.OK]
-  );
-});
-
-/**
- * @desc Enable two factor authentication
+ * @desc Enable or disable two factor authentication
  * @route POST /api/v1/auth/otp/send
  * @access Private
  */
@@ -360,13 +360,13 @@ const resendOtpCode = asyncHandler(async (req, res, next) => {
 module.exports = {
   register,
   login,
+  oauthLogin,
   logout,
   refreshTokens,
   forgotPassword,
   resetPassword,
   sendVerificationEmail,
   verifyEmail,
-  oauthLogin,
   sendOtpCode,
   verifyOtpCode,
   resendOtpCode,

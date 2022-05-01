@@ -5,7 +5,7 @@ require('module-alias/register');
 const { User } = require('models');
 const { ErrorResponse, common } = require('utils');
 const { httpStatus, httpMessage } = require('config/custom-http-status');
-const { cloudinaryUploader } = require('lib/cloudinary-uploader');
+const { cloudinaryUploader } = require('lib');
 
 const { asyncFunction } = common;
 

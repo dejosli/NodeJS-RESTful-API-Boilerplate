@@ -1,34 +1,32 @@
 {
   "Print to console": {
     "prefix": "log",
-    "body": ["console.log($1);"],
+    "body": [
+      "console.${1|log, dir, time, table, error|}(${TM_SELECTED_TEXT:${TM_CURRENT_WORD:$2}}, 'line number: $TM_LINE_NUMBER');"
+    ],
     "description": "Log output to console"
-  },
-  "Print dicrectory to console": {
-    "prefix": "dir",
-    "body": ["console.dir($1);"],
-    "description": "Dir output to console"
   },
   "Default comments for author": {
     "prefix": "author",
     "body": [
       "/**",
       "* Title: $1",
-      "* Description: $1",
-      "* Author: Josli Shubho Biswas",
-      "* Date: $1",
+      "* Description: $2",
+      "* Author: Josli Shubho Biswas <bjoslishubho@gmail.com>",
+      "* Date: $3",
       "*/"
     ],
     "description": "Multiline comments for a author"
   },
-  "Default comments for project": {
+  "Default comments for module": {
     "prefix": "comment",
     "body": [
-      "// External module imports\n",
+      "// External module imports",
+      "require('module-alias/register');\n",
       "// Internal module imports\n",
       "// Module exports\n"
     ],
-    "description": "Multiline comments for a project"
+    "description": "Multiline comments for a module"
   },
   "External module imports": {
     "prefix": "external",
@@ -54,7 +52,7 @@
     "prefix": "test",
     "body": [
       "// Expectation",
-      "test('$1', () => {",
+      "${1|test, it|}('$2', () => {",
       "  // Arrange",
       "  // Act",
       "  // Assert",
@@ -62,27 +60,15 @@
     ],
     "description": "Jest testing test block"
   },
-  "Jest it block": {
-    "prefix": "it",
-    "body": [
-      "// Expectation",
-      "it('$1', () => {",
-      "  // Arrange",
-      "  // Act",
-      "  // Assert",
-      "});"
-    ],
-    "description": "Jest testing it block"
-  },
   "Jest test suite": {
     "prefix": "suite",
     "body": [
       "// Unit under test",
       "describe('$1', () => {",
       "  // Scenario",
-      "  describe('$1', () => {",
+      "  describe('$2', () => {",
       "    // Expectation",
-      "    test('$1', () => {",
+      "    test('$3', () => {",
       "      // Arrange",
       "      // Act",
       "      // Assert",

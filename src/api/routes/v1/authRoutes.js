@@ -59,28 +59,6 @@ router.post(
   authController.verifyEmail
 );
 
-// mount google oauth routes
-router.get(
-  '/google',
-  passport.authenticate('google', {
-    scope: ['profile', 'email'],
-  })
-);
-router.get('/google/callback', authorizeGoogleOAuth, authController.oauthLogin);
-
-// mount facebook oauth routes
-router.get(
-  '/facebook',
-  passport.authenticate('facebook', {
-    scope: ['email'],
-  })
-);
-router.get(
-  '/facebook/callback',
-  authorizeFacebookOAuth,
-  authController.oauthLogin
-);
-
 // mount two factor authentication routes
 router.post(
   '/otp/send',
@@ -99,6 +77,28 @@ router.post(
   [authValidator.resendOtpCode, validate],
   otpLimiter,
   authController.resendOtpCode
+);
+
+// mount google oauth2 routes
+router.get(
+  '/google',
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+  })
+);
+router.get('/google/callback', authorizeGoogleOAuth, authController.oauthLogin);
+
+// mount facebook oauth2 routes
+router.get(
+  '/facebook',
+  passport.authenticate('facebook', {
+    scope: ['email'],
+  })
+);
+router.get(
+  '/facebook/callback',
+  authorizeFacebookOAuth,
+  authController.oauthLogin
 );
 
 // Module exports

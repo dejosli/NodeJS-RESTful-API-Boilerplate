@@ -2,6 +2,7 @@
 require('module-alias/register');
 
 // Internal module imports
+const { httpStatus, httpMessage } = require('config/custom-http-status');
 const { security } = require('./components');
 
 module.exports = {
@@ -16,7 +17,72 @@ module.exports = {
     },
   },
 
-  // auth endpoints
+  // auth routes
+  '/auth/register': {
+    post: {
+      tags: ['auth'],
+      summary: 'Register a new user',
+      operationId: 'createUser',
+      requestBody: {
+        content: {
+          'multipart/form-data': {
+            schema: {
+              type: 'object',
+              required: [
+                'name',
+                'username',
+                'email',
+                'password',
+                'phoneNumber',
+              ],
+              properties: {
+                name: {
+                  type: 'string',
+                },
+                username: {
+                  type: 'string',
+                },
+                email: {
+                  type: 'string',
+                },
+                password: {
+                  type: 'string',
+                },
+                phoneNumber: {
+                  type: 'string',
+                },
+                role: {
+                  type: 'string',
+                },
+                profilePicture: {
+                  type: 'file',
+                  format: 'binary',
+                },
+              },
+            },
+          },
+        },
+        required: true,
+      },
+      responses: {
+        [httpStatus.CREATED]: {
+          description: httpMessage[httpStatus.CREATED],
+        },
+        [httpStatus.FORBIDDEN]: {
+          description: httpMessage[httpStatus.FORBIDDEN],
+        },
+        [httpStatus.UNAUTHORIZED]: {
+          description: httpMessage[httpStatus.UNAUTHORIZED],
+        },
+        [httpStatus.TOO_MANY_REQUESTS]: {
+          description: httpStatus[httpStatus.TOO_MANY_REQUESTS],
+        },
+        [httpStatus.INTERNAL_SERVER_ERROR]: {
+          description: httpMessage[httpStatus.INTERNAL_SERVER_ERROR],
+        },
+      },
+    },
+  },
   '/auth/login': {
     post: {
       tags: ['auth'],
@@ -26,28 +92,23 @@ module.exports = {
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/User',
-            },
-            examples: {
-              user: {
-                summary: 'User Example',
-                value: {
-                  email: 'john.doe@example.com',
-                  password: 'John@1234',
+              type: 'object',
+              required: ['email', 'password'],
+              properties: {
+                email: {
+                  type: 'string',
+                },
+                password: {
+                  type: 'string',
                 },
               },
+            },
+            examples: {
               editor: {
-                summary: 'Editor Example',
+                summary: 'Example - Login',
                 value: {
                   email: 'dylan.young@example.com',
                   password: 'Dylan@1234',
-                },
-              },
-              admin: {
-                summary: 'Admin Example',
-                value: {
-                  email: 'admin@example.com',
-                  password: 'Admin@1234',
                 },
               },
             },
@@ -56,20 +117,20 @@ module.exports = {
         required: true,
       },
       responses: {
-        200: {
-          description: 'You logged in successfully',
+        [httpStatus.OK]: {
+          description: httpStatus[httpStatus.OK],
         },
-        400: {
-          description: 'Bad Request',
+        [httpStatus.BAD_REQUEST]: {
+          description: httpMessage[httpStatus.BAD_REQUEST],
         },
-        401: {
-          description: 'Wrong email or password',
+        [httpStatus.UNAUTHORIZED]: {
+          description: httpMessage.USER_LOGIN_ERROR,
         },
-        429: {
-          description: 'Too many requests',
+        [httpStatus.TOO_MANY_REQUESTS]: {
+          description: httpStatus[httpStatus.TOO_MANY_REQUESTS],
         },
-        500: {
-          description: 'Internal server error',
+        [httpStatus.INTERNAL_SERVER_ERROR]: {
+          description: httpMessage[httpStatus.INTERNAL_SERVER_ERROR],
         },
       },
     },
@@ -77,20 +138,20 @@ module.exports = {
   '/auth/logout': {
     delete: {
       tags: ['auth'],
-      summary: 'Logout current user',
+      summary: 'Logout user',
       operationId: 'logout',
       responses: {
-        204: {
-          description: 'Logout successful',
+        [httpStatus.NO_CONTENT]: {
+          description: httpStatus[httpStatus.NO_CONTENT],
         },
-        401: {
-          description: 'Please authenticate',
+        [httpStatus.UNAUTHORIZED]: {
+          description: httpMessage[httpStatus.UNAUTHORIZED],
         },
-        429: {
-          description: 'Too many requests',
+        [httpStatus.TOO_MANY_REQUESTS]: {
+          description: httpStatus[httpStatus.TOO_MANY_REQUESTS],
         },
-        500: {
-          description: 'Internal server error',
+        [httpStatus.INTERNAL_SERVER_ERROR]: {
+          description: httpMessage[httpStatus.INTERNAL_SERVER_ERROR],
         },
       },
       security,
@@ -99,36 +160,383 @@ module.exports = {
   '/auth/refresh-tokens': {
     get: {
       tags: ['auth'],
-      summary: 'Refresh Tokens',
+      summary: 'Refresh tokens',
       operationId: 'refreshTokens',
       responses: {
-        200: {
-          description: 'Logout successful',
+        [httpStatus.OK]: {
+          description: httpStatus[httpStatus.OK],
         },
-        401: {
-          description: 'Please authenticate',
+        [httpStatus.UNAUTHORIZED]: {
+          description: httpMessage[httpStatus.UNAUTHORIZED],
         },
-        429: {
-          description: 'Too many requests',
+        [httpStatus.TOO_MANY_REQUESTS]: {
+          description: httpStatus[httpStatus.TOO_MANY_REQUESTS],
         },
-        500: {
-          description: 'Internal server error',
+        [httpStatus.INTERNAL_SERVER_ERROR]: {
+          description: httpMessage[httpStatus.INTERNAL_SERVER_ERROR],
         },
       },
       security,
     },
   },
+  '/auth/forgot-password': {
+    post: {
+      tags: ['auth'],
+      summary: 'Forgot password',
+      operationId: 'forgotPassword',
+      requestBody: {
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              required: ['email'],
+              properties: {
+                email: {
+                  type: 'string',
+                },
+              },
+            },
+            examples: {
+              user: {
+                summary: 'Requested email',
+                value: {
+                  email: 'dylan.young@example.com',
+                },
+              },
+            },
+          },
+        },
+        required: true,
+      },
+      responses: {
+        [httpStatus.OK]: {
+          description: httpStatus[httpStatus.OK],
+        },
+        [httpStatus.BAD_REQUEST]: {
+          description: httpMessage[httpStatus.BAD_REQUEST],
+        },
+        [httpStatus.TOO_MANY_REQUESTS]: {
+          description: httpStatus[httpStatus.TOO_MANY_REQUESTS],
+        },
+        [httpStatus.INTERNAL_SERVER_ERROR]: {
+          description: httpMessage[httpStatus.INTERNAL_SERVER_ERROR],
+        },
+      },
+    },
+  },
+  '/auth/reset-password': {
+    post: {
+      tags: ['auth'],
+      summary: 'Reset password',
+      operationId: 'resetPassword',
+      parameters: [
+        {
+          name: 'token',
+          in: 'query',
+          description: 'include token to reset password',
+          required: true,
+          schema: {
+            type: 'string',
+          },
+        },
+      ],
+      requestBody: {
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              required: ['password'],
+              properties: {
+                password: {
+                  type: 'string',
+                },
+              },
+            },
+            examples: {
+              user: {
+                summary: 'Changed password',
+                value: {
+                  password: 'Young@1234',
+                },
+              },
+            },
+          },
+        },
+        required: true,
+      },
+      responses: {
+        [httpStatus.OK]: {
+          description: httpStatus[httpStatus.OK],
+        },
+        [httpStatus.UNAUTHORIZED]: {
+          description: httpMessage[httpStatus.UNAUTHORIZED],
+        },
+        [httpStatus.BAD_REQUEST]: {
+          description: httpMessage[httpStatus.BAD_REQUEST],
+        },
+        [httpStatus.TOO_MANY_REQUESTS]: {
+          description: httpStatus[httpStatus.TOO_MANY_REQUESTS],
+        },
+        [httpStatus.INTERNAL_SERVER_ERROR]: {
+          description: httpMessage[httpStatus.INTERNAL_SERVER_ERROR],
+        },
+      },
+      security,
+    },
+  },
+  '/auth/send-verification-email': {
+    post: {
+      tags: ['auth'],
+      summary: 'Send verification email',
+      operationId: 'sendVerificationEmail',
+      responses: {
+        [httpStatus.OK]: {
+          description: httpStatus[httpStatus.OK],
+        },
+        [httpStatus.BAD_REQUEST]: {
+          description: httpMessage[httpStatus.BAD_REQUEST],
+        },
+        [httpStatus.TOO_MANY_REQUESTS]: {
+          description: httpStatus[httpStatus.TOO_MANY_REQUESTS],
+        },
+        [httpStatus.INTERNAL_SERVER_ERROR]: {
+          description: httpMessage[httpStatus.INTERNAL_SERVER_ERROR],
+        },
+      },
+    },
+  },
+  '/auth/verify-email': {
+    post: {
+      tags: ['auth'],
+      summary: 'Verify Email',
+      operationId: 'verifyEmail',
+      parameters: [
+        {
+          name: 'token',
+          in: 'query',
+          description: 'include token to verify email',
+          required: true,
+          schema: {
+            type: 'string',
+          },
+        },
+      ],
+      responses: {
+        [httpStatus.OK]: {
+          description: httpStatus[httpStatus.OK],
+        },
+        [httpStatus.UNAUTHORIZED]: {
+          description: httpMessage[httpStatus.UNAUTHORIZED],
+        },
+        [httpStatus.BAD_REQUEST]: {
+          description: httpMessage[httpStatus.BAD_REQUEST],
+        },
+        [httpStatus.TOO_MANY_REQUESTS]: {
+          description: httpStatus[httpStatus.TOO_MANY_REQUESTS],
+        },
+        [httpStatus.INTERNAL_SERVER_ERROR]: {
+          description: httpMessage[httpStatus.INTERNAL_SERVER_ERROR],
+        },
+      },
+      security,
+    },
+  },
+  '/auth/google': {
+    get: {
+      tags: ['auth'],
+      summary: 'Login using google oauth2',
+      operationId: 'passport',
+      responses: {
+        [httpStatus.OK]: {
+          description: httpStatus[httpStatus.OK],
+        },
+        [httpStatus.BAD_REQUEST]: {
+          description: httpMessage[httpStatus.BAD_REQUEST],
+        },
+        [httpStatus.UNAUTHORIZED]: {
+          description: httpMessage.USER_LOGIN_ERROR,
+        },
+        [httpStatus.TOO_MANY_REQUESTS]: {
+          description: httpStatus[httpStatus.TOO_MANY_REQUESTS],
+        },
+        [httpStatus.INTERNAL_SERVER_ERROR]: {
+          description: httpMessage[httpStatus.INTERNAL_SERVER_ERROR],
+        },
+      },
+    },
+  },
+  '/auth/facebook': {
+    get: {
+      tags: ['auth'],
+      summary: 'Login using facebook oauth2',
+      operationId: 'passport',
+      responses: {
+        [httpStatus.OK]: {
+          description: httpStatus[httpStatus.OK],
+        },
+        [httpStatus.BAD_REQUEST]: {
+          description: httpMessage[httpStatus.BAD_REQUEST],
+        },
+        [httpStatus.UNAUTHORIZED]: {
+          description: httpMessage.USER_LOGIN_ERROR,
+        },
+        [httpStatus.TOO_MANY_REQUESTS]: {
+          description: httpStatus[httpStatus.TOO_MANY_REQUESTS],
+        },
+        [httpStatus.INTERNAL_SERVER_ERROR]: {
+          description: httpMessage[httpStatus.INTERNAL_SERVER_ERROR],
+        },
+      },
+    },
+  },
+  '/auth/otp/send': {
+    post: {
+      tags: ['auth'],
+      summary: 'Enable or disable two factor authentication',
+      operationId: 'sendOtpCode',
+      requestBody: {
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                enabled: {
+                  type: 'boolean',
+                },
+                send_otp: {
+                  type: 'string',
+                },
+              },
+            },
+            examples: {
+              enable: {
+                summary: 'Enable 2FA',
+                value: {
+                  enabled: true,
+                  send_otp: 'google-authenticator',
+                },
+              },
+              disable: {
+                summary: 'Disable 2FA',
+                value: {
+                  enabled: false,
+                },
+              },
+            },
+          },
+        },
+        required: true,
+      },
+      responses: {
+        [httpStatus.OK]: {
+          description: httpStatus[httpStatus.OK],
+        },
+        [httpStatus.UNAUTHORIZED]: {
+          description: httpMessage[httpStatus.UNAUTHORIZED],
+        },
+        [httpStatus.BAD_REQUEST]: {
+          description: httpMessage[httpStatus.BAD_REQUEST],
+        },
+        [httpStatus.TOO_MANY_REQUESTS]: {
+          description: httpStatus[httpStatus.TOO_MANY_REQUESTS],
+        },
+        [httpStatus.INTERNAL_SERVER_ERROR]: {
+          description: httpMessage[httpStatus.INTERNAL_SERVER_ERROR],
+        },
+      },
+      security,
+    },
+  },
+  '/auth/otp/verify': {
+    post: {
+      tags: ['auth'],
+      summary: 'Verify two factor authentication code',
+      operationId: 'verifyOtpCode',
+      requestBody: {
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              required: ['otp_id', 'otp_code'],
+              properties: {
+                otp_id: {
+                  type: 'string',
+                },
+                otp_code: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+        required: true,
+      },
+      responses: {
+        [httpStatus.OK]: {
+          description: httpStatus[httpStatus.OK],
+        },
+        [httpStatus.UNAUTHORIZED]: {
+          description: httpMessage.OTP_VERIFICATION_ERROR,
+        },
+        [httpStatus.BAD_REQUEST]: {
+          description: httpMessage[httpStatus.BAD_REQUEST],
+        },
+        [httpStatus.TOO_MANY_REQUESTS]: {
+          description: httpStatus[httpStatus.TOO_MANY_REQUESTS],
+        },
+        [httpStatus.INTERNAL_SERVER_ERROR]: {
+          description: httpMessage[httpStatus.INTERNAL_SERVER_ERROR],
+        },
+      },
+    },
+  },
+  '/auth/otp/resend': {
+    post: {
+      tags: ['auth'],
+      summary: 'Resend two factor authentication code',
+      operationId: 'resendOtpCode',
+      requestBody: {
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              required: ['otp_id'],
+              properties: {
+                otp_id: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+        required: true,
+      },
+      responses: {
+        [httpStatus.OK]: {
+          description: httpStatus[httpStatus.OK],
+        },
+        [httpStatus.BAD_REQUEST]: {
+          description: httpMessage[httpStatus.BAD_REQUEST],
+        },
+        [httpStatus.TOO_MANY_REQUESTS]: {
+          description: httpStatus[httpStatus.TOO_MANY_REQUESTS],
+        },
+        [httpStatus.INTERNAL_SERVER_ERROR]: {
+          description: httpMessage[httpStatus.INTERNAL_SERVER_ERROR],
+        },
+      },
+    },
+  },
 
-  // users endpoints
+  // users routes
   '/users': {
-    // GET request
     get: {
       tags: ['user'],
       summary: 'Get all users',
       operationId: 'getUsers',
       parameters: [
         {
-          name: 'include_meta',
+          name: 'include_metadata',
           in: 'query',
           description: 'include metadata for pagination',
           required: false,
@@ -138,64 +546,63 @@ module.exports = {
         },
       ],
       responses: {
-        200: {
-          description: 'All user details',
+        [httpStatus.OK]: {
+          description: httpStatus[httpStatus.OK],
         },
-        401: {
-          description: 'Please authenticate',
+        [httpStatus.FORBIDDEN]: {
+          description: httpMessage[httpStatus.FORBIDDEN],
         },
-        403: {
-          description: 'Access denied',
+        [httpStatus.UNAUTHORIZED]: {
+          description: httpMessage[httpStatus.UNAUTHORIZED],
         },
-        429: {
-          description: 'Too many requests',
+        [httpStatus.TOO_MANY_REQUESTS]: {
+          description: httpStatus[httpStatus.TOO_MANY_REQUESTS],
         },
-        500: {
-          description: 'Internal server error',
+        [httpStatus.INTERNAL_SERVER_ERROR]: {
+          description: httpMessage[httpStatus.INTERNAL_SERVER_ERROR],
         },
       },
       security,
     },
-    // POST request
     post: {
       tags: ['user'],
-      summary: 'Create user',
+      summary: 'Create a new user',
       operationId: 'createUser',
       requestBody: {
         content: {
-          'application/json': {
+          'multipart/form-data': {
             schema: {
-              $ref: '#/components/schemas/User',
-            },
-            examples: {
-              user: {
-                summary: 'User Example',
-                value: {
-                  name: 'Mitch Johnson',
-                  username: 'johnson',
-                  email: 'mitch@example.com',
-                  password: 'Mitch@1234',
-                  role: 'USER',
+              type: 'object',
+              required: [
+                'name',
+                'username',
+                'email',
+                'password',
+                'phoneNumber',
+                'role',
+              ],
+              properties: {
+                name: {
+                  type: 'string',
                 },
-              },
-              editor: {
-                summary: 'Editor Example',
-                value: {
-                  name: 'John Doe',
-                  username: 'john',
-                  email: 'john.doe@example.com',
-                  password: 'John@1234',
-                  role: 'EDITOR',
+                username: {
+                  type: 'string',
                 },
-              },
-              admin: {
-                summary: 'Admin Example',
-                value: {
-                  name: 'Fraser Bond',
-                  username: 'bond',
-                  email: 'fraser.bond@example.com',
-                  password: 'Bond@1234',
-                  role: 'ADMIN',
+                email: {
+                  type: 'string',
+                },
+                password: {
+                  type: 'string',
+                },
+                phoneNumber: {
+                  type: 'string',
+                },
+                role: {
+                  type: 'string',
+                },
+                profilePicture: {
+                  type: 'file',
+                  format: 'binary',
                 },
               },
             },
@@ -204,30 +611,29 @@ module.exports = {
         required: true,
       },
       responses: {
-        201: {
-          description: 'User created',
+        [httpStatus.CREATED]: {
+          description: httpMessage[httpStatus.CREATED],
         },
-        400: {
-          description: 'Bad Request',
+        [httpStatus.FORBIDDEN]: {
+          description: httpMessage[httpStatus.FORBIDDEN],
         },
-        403: {
-          description: 'Access denied',
+        [httpStatus.UNAUTHORIZED]: {
+          description: httpMessage[httpStatus.UNAUTHORIZED],
         },
-        429: {
-          description: 'Too many requests',
+        [httpStatus.TOO_MANY_REQUESTS]: {
+          description: httpStatus[httpStatus.TOO_MANY_REQUESTS],
         },
-        500: {
-          description: 'Internal server error',
+        [httpStatus.INTERNAL_SERVER_ERROR]: {
+          description: httpMessage[httpStatus.INTERNAL_SERVER_ERROR],
         },
       },
       security,
     },
   },
   '/users/{userId}': {
-    // GET request
     get: {
       tags: ['user'],
-      summary: 'Get user by id',
+      summary: 'Get a particular user',
       operationId: 'getUser',
       parameters: [
         {
@@ -241,28 +647,27 @@ module.exports = {
         },
       ],
       responses: {
-        200: {
-          description: 'Particular user details',
+        [httpStatus.OK]: {
+          description: httpStatus[httpStatus.OK],
         },
-        401: {
-          description: 'Please authenticate',
+        [httpStatus.FORBIDDEN]: {
+          description: httpMessage[httpStatus.FORBIDDEN],
         },
-        403: {
-          description: 'Access denied',
+        [httpStatus.UNAUTHORIZED]: {
+          description: httpMessage[httpStatus.UNAUTHORIZED],
         },
-        429: {
-          description: 'Too many requests',
+        [httpStatus.TOO_MANY_REQUESTS]: {
+          description: httpStatus[httpStatus.TOO_MANY_REQUESTS],
         },
-        500: {
-          description: 'Internal server error',
+        [httpStatus.INTERNAL_SERVER_ERROR]: {
+          description: httpMessage[httpStatus.INTERNAL_SERVER_ERROR],
         },
       },
       security,
     },
-    // PUT request
     put: {
       tags: ['user'],
-      summary: 'Update user',
+      summary: 'Update a particular user',
       operationId: 'updateUser',
       parameters: [
         {
@@ -279,7 +684,18 @@ module.exports = {
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/User',
+              type: 'object',
+              properties: {
+                name: {
+                  type: 'string',
+                },
+                email: {
+                  type: 'string',
+                },
+                password: {
+                  type: 'string',
+                },
+              },
             },
             examples: {
               user: {
@@ -314,28 +730,30 @@ module.exports = {
         required: true,
       },
       responses: {
-        200: {
-          description: 'User updated',
+        [httpStatus.OK]: {
+          description: httpStatus[httpStatus.OK],
         },
-        400: {
-          description: 'Bad Request',
+        [httpStatus.BAD_REQUEST]: {
+          description: httpMessage[httpStatus.BAD_REQUEST],
         },
-        403: {
-          description: 'Access denied',
+        [httpStatus.FORBIDDEN]: {
+          description: httpMessage[httpStatus.FORBIDDEN],
         },
-        429: {
-          description: 'Too many requests',
+        [httpStatus.UNAUTHORIZED]: {
+          description: httpMessage[httpStatus.UNAUTHORIZED],
         },
-        500: {
-          description: 'Internal server error',
+        [httpStatus.TOO_MANY_REQUESTS]: {
+          description: httpStatus[httpStatus.TOO_MANY_REQUESTS],
+        },
+        [httpStatus.INTERNAL_SERVER_ERROR]: {
+          description: httpMessage[httpStatus.INTERNAL_SERVER_ERROR],
         },
       },
       security,
     },
-    // DELETE request
     delete: {
       tags: ['user'],
-      summary: 'Delete user',
+      summary: 'Delete a particular user',
       operationId: 'deleteUser',
       parameters: [
         {
@@ -349,20 +767,20 @@ module.exports = {
         },
       ],
       responses: {
-        204: {
-          description: 'User deleted',
+        [httpStatus.NO_CONTENT]: {
+          description: httpStatus[httpStatus.NO_CONTENT],
         },
-        400: {
-          description: 'Bad Request',
+        [httpStatus.FORBIDDEN]: {
+          description: httpMessage[httpStatus.FORBIDDEN],
         },
-        403: {
-          description: 'Access denied',
+        [httpStatus.UNAUTHORIZED]: {
+          description: httpMessage[httpStatus.UNAUTHORIZED],
         },
-        429: {
-          description: 'Too many requests',
+        [httpStatus.TOO_MANY_REQUESTS]: {
+          description: httpStatus[httpStatus.TOO_MANY_REQUESTS],
         },
-        500: {
-          description: 'Internal server error',
+        [httpStatus.INTERNAL_SERVER_ERROR]: {
+          description: httpMessage[httpStatus.INTERNAL_SERVER_ERROR],
         },
       },
       security,
