@@ -1,11 +1,19 @@
 [
   {
-    "name": "John Doe",
-    "username": "john",
+    "name": "Tiffany Wright",
+    "username": "wright",
     "email": "admin@example.com",
-    "password": "Admin@1234",
+    "password": "Wright@1234",
     "role": "ADMIN",
-    "phoneNumber": "01705799465"
+    "phoneNumber": "+8801705799465"
+  },
+  {
+    "name": "Phillip Anderson",
+    "username": "phillip",
+    "email": "admin@example.com",
+    "password": "Anderson@1234",
+    "role": "ADMIN",
+    "phoneNumber": "+8801705799465"
   },
   {
     "name": "Dylan Young",
@@ -13,7 +21,7 @@
     "email": "dylan.young@example.com",
     "password": "Dylan@1234",
     "role": "EDITOR",
-    "phoneNumber": "01705799465"
+    "phoneNumber": "+8801705799465"
   },
   {
     "name": "Fraser Bond",
@@ -21,20 +29,90 @@
     "email": "fraser.bond@example.com",
     "password": "Bond@1234",
     "role": "EDITOR",
-    "phoneNumber": "01705799465"
+    "phoneNumber": "+8801705799465"
   },
   {
     "name": "Ricky Ponting",
     "username": "punter",
     "email": "ricky.ponting@example.com",
     "password": "Punter@1234",
-    "phoneNumber": "01705799465"
+    "phoneNumber": "+8801705799465"
   },
   {
-    "name": "Micheal Clarke",
-    "username": "clarke",
+    "name": "Michael Clarke",
+    "username": "pup",
     "email": "micheal.clarke@example.com",
     "password": "Clarke@1234",
-    "phoneNumber": "01705799465"
+    "phoneNumber": "+8801705799465"
+  },
+  {
+    "name": "Jeanette Cooper",
+    "username": "cooper",
+    "email": "jeanette.cooper@example.com",
+    "password": "Cooper@1234",
+    "phoneNumber": "+8801705799465"
+  },
+  {
+    "name": "Daryl Lowe",
+    "username": "lowe",
+    "email": "daryl.lowe@example.com",
+    "password": "Lowe@1234",
+    "phoneNumber": "+8801705799465"
+  },
+  {
+    "name": "Jean Carroll",
+    "username": "carroll",
+    "email": "jean.carroll@example.com",
+    "password": "Carroll@1234",
+    "phoneNumber": "+8801705799465"
+  },
+  {
+    "name": "Manuel Freeman",
+    "username": "manuel",
+    "email": "manuel.freeman@example.com",
+    "password": "Freeman@1234",
+    "phoneNumber": "+8801705799465"
+  },
+  {
+    "name": "Celina Vargas",
+    "username": "celina",
+    "email": "celina.vargas@example.com",
+    "password": "Vargas@1234",
+    "phoneNumber": "+8801705799465"
+  },
+  {
+    "name": "Carolyn Clark",
+    "username": "carolyn",
+    "email": "carolyn.clark@example.com",
+    "password": "Carolyn@1234",
+    "phoneNumber": "+8801705799465"
+  },
+  {
+    "name": "Clifford Horton",
+    "username": "horton",
+    "email": "clifford.horton@example.com",
+    "password": "Clifford@1234",
+    "phoneNumber": "+8801705799465"
+  },
+  {
+    "name": "Levi Gutierrez",
+    "username": "gutierrez",
+    "email": "levi.gutierrez@example.com",
+    "password": "Gutierrez@1234",
+    "phoneNumber": "+8801705799465"
+  },
+  {
+    "name": "Carla Rose",
+    "username": "carla",
+    "email": "carla.rose@example.com",
+    "password": "Carla@1234",
+    "phoneNumber": "+8801705799465"
+  },
+  {
+    "name": "Kylie Cook",
+    "username": "cook",
+    "email": "kylie.cook@example.com",
+    "password": "Kylie@1234",
+    "phoneNumber": "+8801705799465"
   }
 ]
