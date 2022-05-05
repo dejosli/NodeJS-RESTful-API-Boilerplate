@@ -25,10 +25,8 @@ coverage
 ssl
 .idea
 nbproject
-uploads/*
-!uploads/.gitkeep
-public/uploads/*
-!public/uploads/.gitkeep
+**/public/**
+!public/.gitkeep
 
 # Windows
 Thumbs.db
