@@ -1,8 +1,5 @@
-// External module imports
-require('module-alias/register');
-
 // Internal module imports
-const { allRoles, roles } = require('config/roles');
+const { allRoles, roles } = require('../../config/roles');
 
 const schemas = {
   // user model

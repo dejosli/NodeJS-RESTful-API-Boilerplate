@@ -1,8 +1,7 @@
 /* eslint-disable no-param-reassign */
-require('module-alias/register');
 
 // Internal module imports
-const { cleanedObject } = require('utils').common;
+const { cleanedObject } = require('../../utils').common;
 
 /**
  * Default options having properties

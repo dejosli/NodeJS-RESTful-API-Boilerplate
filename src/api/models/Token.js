@@ -1,9 +1,8 @@
 // External module imports
-require('module-alias/register');
 const mongoose = require('mongoose');
 
 // Internal module imports
-const { tokenTypes, types } = require('config/tokens');
+const { tokenTypes, types } = require('../../config/tokens');
 const { toJSON } = require('./plugins');
 
 /**

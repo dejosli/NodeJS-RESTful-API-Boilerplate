@@ -1,16 +1,14 @@
 // External module imports
-require('module-alias/register');
 const moment = require('moment');
 const jwt = require('jsonwebtoken');
 
 // Internal module imports
-const config = require('config/config');
-const { ErrorResponse, common } = require('utils');
-const { tokenTypes } = require('config/tokens');
-const { Token } = require('models');
-const { httpStatus, httpMessage } = require('config/custom-http-status');
-
-const { genUniqueId } = common;
+const config = require('../../config/config');
+const { ErrorResponse } = require('../utils');
+const { genUniqueId } = require('../utils').common;
+const { tokenTypes } = require('../../config/tokens');
+const { Token } = require('../models');
+const { httpStatus, httpMessage } = require('../../config/custom-http-status');
 
 /**
  * Save a token

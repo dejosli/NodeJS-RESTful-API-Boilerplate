@@ -1,9 +1,6 @@
-// External module imports
-require('module-alias/register');
-
 // Internal module imports
-const logger = require('config/logger');
-const User = require('models/User');
+const User = require('../src/api/models/User');
+const logger = require('../src/config/logger');
 const users = require('./_data/users.json');
 
 const seedUsers = async () => {

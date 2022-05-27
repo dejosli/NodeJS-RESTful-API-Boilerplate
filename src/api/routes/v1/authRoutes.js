@@ -1,23 +1,22 @@
 // External module imports
-require('module-alias/register');
 const express = require('express');
 const passport = require('passport');
 
 // Internal module imports
-const { authController } = require('controllers');
-const { authValidator, validate } = require('validators');
 const {
   authorizeAccessToken,
   authorizeRefreshToken,
   authorizeResetPasswordToken,
   authorizeVerifyEmailToken,
-} = require('middleware/authentication/auth');
+} = require('../../middleware/authentication/auth');
 const {
   authorizeGoogleOAuth,
   authorizeFacebookOAuth,
-} = require('middleware/authentication/oauth');
-const profilePicUpload = require('middleware/users/profilePicUpload');
-const otpLimiter = require('middleware/authentication/otpLimiter');
+} = require('../../middleware/authentication/oauth');
+const profilePicUpload = require('../../middleware/users/profilePicUpload');
+const otpLimiter = require('../../middleware/authentication/otpLimiter');
+const { authValidator, validate } = require('../../validators');
+const { authController } = require('../../controllers');
 
 // init express router
 const router = express.Router();

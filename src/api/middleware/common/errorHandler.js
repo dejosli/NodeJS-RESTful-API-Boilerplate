@@ -1,13 +1,15 @@
 // External module imports
-require('module-alias/register');
 const mongoose = require('mongoose');
 const multer = require('multer');
 
 // Internal module imports
-const { ErrorResponse } = require('utils');
-const logger = require('config/logger');
-const config = require('config/config');
-const { httpStatus, httpMessage } = require('config/custom-http-status');
+const {
+  httpStatus,
+  httpMessage,
+} = require('../../../config/custom-http-status');
+const config = require('../../../config/config');
+const logger = require('../../../config/logger');
+const { ErrorResponse } = require('../../utils');
 
 const isOperationalError = (err) => {
   if (err instanceof ErrorResponse) {

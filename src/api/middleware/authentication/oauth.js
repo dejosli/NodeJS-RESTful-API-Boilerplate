@@ -1,11 +1,13 @@
 // External module imports
-require('module-alias/register');
 const passport = require('passport');
 
 // Internal module imports
-const config = require('config/config');
-const { ErrorResponse } = require('utils');
-const { httpStatus, httpMessage } = require('config/custom-http-status');
+const {
+  httpStatus,
+  httpMessage,
+} = require('../../../config/custom-http-status');
+const { ErrorResponse } = require('../../utils');
+const config = require('../../../config/config');
 
 /**
  * Callbacks

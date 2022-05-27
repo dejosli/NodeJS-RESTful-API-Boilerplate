@@ -1,9 +1,9 @@
-// External module imports
-require('module-alias/register');
-
 // Internal module imports
-const { ErrorResponse } = require('utils');
-const { httpStatus, httpMessage } = require('config/custom-http-status');
+const { ErrorResponse } = require('../../utils');
+const {
+  httpStatus,
+  httpMessage,
+} = require('../../../config/custom-http-status');
 
 // check whether permissions are allowed or denied
 const grantAccess = (req, res, next) => {

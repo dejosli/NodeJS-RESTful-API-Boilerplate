@@ -1,11 +1,8 @@
-// External module imports
-require('module-alias/register');
-
 // Internal module imports
-const config = require('config/config');
-const { ErrorResponse } = require('utils');
-const { createTransporter } = require('config/nodemailer');
-const { httpStatus } = require('config/custom-http-status');
+const config = require('../../config/config');
+const { ErrorResponse } = require('../utils');
+const { createTransporter } = require('../../config/nodemailer');
+const { httpStatus } = require('../../config/custom-http-status');
 
 /**
  * Send an email

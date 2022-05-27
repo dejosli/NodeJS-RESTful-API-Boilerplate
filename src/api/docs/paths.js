@@ -1,8 +1,5 @@
-// External module imports
-require('module-alias/register');
-
 // Internal module imports
-const { httpStatus, httpMessage } = require('config/custom-http-status');
+const { httpStatus, httpMessage } = require('../../config/custom-http-status');
 const { security } = require('./components');
 
 module.exports = {

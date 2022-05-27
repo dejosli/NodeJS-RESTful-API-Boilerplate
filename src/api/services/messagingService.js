@@ -1,10 +1,7 @@
-// External module imports
-require('module-alias/register');
-
 // Internal module imports
-const { ErrorResponse } = require('utils');
-const { client, phoneNumber } = require('config/twilio');
-const { httpStatus } = require('config/custom-http-status');
+const { ErrorResponse } = require('../utils');
+const { client, phoneNumber } = require('../../config/twilio');
+const { httpStatus } = require('../../config/custom-http-status');
 
 /**
  * Send a SMS

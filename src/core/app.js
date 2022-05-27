@@ -1,5 +1,4 @@
 // External module imports
-require('module-alias/register');
 const express = require('express');
 const helmet = require('helmet');
 const xss = require('xss-clean');
@@ -10,12 +9,13 @@ const cookieParser = require('cookie-parser');
 const mongoSanitize = require('express-mongo-sanitize');
 
 // Internal module imports
-const compression = require('config/compression');
-const cors = require('config/cors');
-const morgan = require('config/morgan');
-const routes = require('routes');
-const errorHandler = require('middleware/common/errorHandler');
-const notFoundHandler = require('middleware/common/notFoundHandler');
+const compression = require('../config/compression');
+const cors = require('../config/cors');
+const morgan = require('../config/morgan');
+const routes = require('../api/routes/v1');
+const errorHandler = require('../api/middleware/common/errorHandler');
+const notFoundHandler = require('../api/middleware/common/notFoundHandler');
+const ignoreFavicon = require('../api/middleware/common/ignoreFavicon');
 
 // create express app
 const app = express();
@@ -54,13 +54,16 @@ app.use(compression);
 app.use(cors);
 
 // passport config
-require('config/passport-auth')(passport);
-require('config/passport-oauth')(passport);
+require('../config/passport-auth')(passport);
+require('../config/passport-oauth')(passport);
 
 app.use(passport.initialize());
 
 // mount api v1 routes
 app.use('/api/v1', routes);
+
+// catch the favicon.ico request and send a 204 status
+app.use(ignoreFavicon);
 
 // catch 404 and forward to error handler
 app.use(notFoundHandler);

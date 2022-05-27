@@ -1,10 +1,7 @@
-// External module imports
-require('module-alias/register');
-
 // Internal module imports
-const { verificationMethods } = require('config/otps');
-const { httpStatus, httpMessage } = require('config/custom-http-status');
-const { otpService, emailService, messagingService } = require('services');
+const { verificationMethods } = require('../../config/otps');
+const { httpStatus, httpMessage } = require('../../config/custom-http-status');
+const { otpService, emailService, messagingService } = require('../services');
 const ErrorResponse = require('./ErrorResponse');
 const SuccessResponse = require('./SuccessResponse');
 

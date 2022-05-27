@@ -1,8 +1,5 @@
-// External module imports
-require('module-alias/register');
-
 // Internal module imports
-const config = require('config/config');
+const config = require('../../config/config');
 const { version } = require('../../../package.json');
 
 const tags = require('./tags');

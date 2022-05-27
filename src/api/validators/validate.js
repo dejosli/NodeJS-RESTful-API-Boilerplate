@@ -1,11 +1,10 @@
 // External module imports
-require('module-alias/register');
-const httpStatus = require('http-status');
 const { validationResult } = require('express-validator');
 const fs = require('fs-extra');
 
 // Internal module imports
-const { ErrorResponse } = require('utils');
+const { ErrorResponse } = require('../utils');
+const { httpStatus } = require('../../config/custom-http-status');
 
 const validate = (req, res, next) => {
   const errors = validationResult(req);

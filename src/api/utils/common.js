@@ -2,8 +2,8 @@
 const mongoose = require('mongoose');
 
 // Internal module imports
-const config = require('config/config');
-const { httpStatus, httpMessage } = require('config/custom-http-status');
+const config = require('../../config/config');
+const { httpStatus, httpMessage } = require('../../config/custom-http-status');
 const ErrorResponse = require('./ErrorResponse');
 
 // handle async middleware/controller functions
@@ -34,6 +34,7 @@ const toTitleCase = (str) => {
     })
     .join(' ');
 };
+
 // remove undefined field (property) from one-level object
 const removeUndefined = (obj) => {
   const newObj = { ...obj };

@@ -1,9 +1,8 @@
 // External module imports
-require('module-alias/register');
 const { Strategy, ExtractJwt } = require('passport-jwt');
 
 // Internal module imports
-const { Token } = require('models');
+const { Token } = require('../api/models');
 const config = require('./config');
 const { tokenTypes } = require('./tokens');
 

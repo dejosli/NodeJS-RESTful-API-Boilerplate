@@ -1,25 +1,20 @@
-// External module imports
-require('module-alias/register');
-const { httpStatus, httpMessage } = require('config/custom-http-status');
-
 // Internal module imports
 const {
   SuccessResponse,
   sendTokenResponse,
   sendOtpResponse,
-  common,
-} = require('utils');
+} = require('../utils');
+const { asyncHandler } = require('../utils').common;
 const {
   authService,
   userService,
   tokenService,
   emailService,
   otpService,
-} = require('services');
-const { Token } = require('models');
-const { tokenTypes } = require('config/tokens');
-
-const { asyncHandler } = common;
+} = require('../services');
+const { Token } = require('../models');
+const { tokenTypes } = require('../../config/tokens');
+const { httpStatus, httpMessage } = require('../../config/custom-http-status');
 
 /**
  * @desc Register user

@@ -1,18 +1,13 @@
-// External module imports
-require('module-alias/register');
-const { httpStatus, httpMessage } = require('config/custom-http-status');
-
 // Internal module imports
 const {
   SuccessResponse,
   mappedDocuments,
   mappedMetadata,
   sendMetadataResponse,
-  common,
-} = require('utils');
-const { userService } = require('services');
-
-const { asyncHandler, getFullUrl } = common;
+} = require('../utils');
+const { asyncHandler, getFullUrl } = require('../utils').common;
+const { userService } = require('../services');
+const { httpStatus, httpMessage } = require('../../config/custom-http-status');
 
 /**
  * @desc Create user

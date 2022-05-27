@@ -1,12 +1,11 @@
 // External module imports
-require('module-alias/register');
 const speakeasy = require('speakeasy');
 
 // Internal module imports
-const config = require('config/config');
-const { ErrorResponse } = require('utils');
-const { OTP } = require('models');
-const { httpStatus, httpMessage } = require('config/custom-http-status');
+const config = require('../../config/config');
+const { ErrorResponse } = require('../utils');
+const { OTP } = require('../models');
+const { httpStatus, httpMessage } = require('../../config/custom-http-status');
 
 /**
  * Custom authentication URL for SHA512

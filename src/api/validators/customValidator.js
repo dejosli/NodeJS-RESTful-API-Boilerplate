@@ -1,11 +1,10 @@
 // External module imports
-require('module-alias/register');
 const mongoose = require('mongoose');
 
 // Internal module imports
-const { User } = require('models');
-const { allRoles, roles } = require('config/roles');
-const { methods } = require('config/otps');
+const { User } = require('../models');
+const { allRoles, roles } = require('../../config/roles');
+const { methods } = require('../../config/otps');
 
 // check whether id is mongo ObjectId or not
 const isObjectId = (id) => {

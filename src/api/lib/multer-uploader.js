@@ -1,14 +1,12 @@
 // External module imports
-require('module-alias/register');
 const path = require('path');
 const fs = require('fs-extra');
 const multer = require('multer');
 
 // Internal module imports
-const { ErrorResponse, common } = require('utils');
-const { httpStatus, httpMessage } = require('config/custom-http-status');
-
-const { genUniqueId } = common;
+const { ErrorResponse } = require('../utils');
+const { genUniqueId } = require('../utils').common;
+const { httpStatus, httpMessage } = require('../../config/custom-http-status');
 
 // file upload directory
 const UPLOAD_DIR = path.join(__dirname, '../../public/uploads');

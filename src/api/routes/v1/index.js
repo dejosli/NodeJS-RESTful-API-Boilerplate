@@ -1,11 +1,10 @@
 // External module imports
-require('module-alias/register');
 const express = require('express');
 
 // Internal module imports
-const { SuccessResponse } = require('utils');
-const { httpStatus } = require('config/custom-http-status');
-const authLimiter = require('middleware/authentication/authLimiter');
+const { httpStatus } = require('../../../config/custom-http-status');
+const authLimiter = require('../../middleware/authentication/authLimiter');
+const { SuccessResponse } = require('../../utils');
 
 const docsRoutes = require('./docsRoutes');
 const authRoutes = require('./authRoutes');

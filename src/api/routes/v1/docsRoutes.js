@@ -1,11 +1,10 @@
 // External module imports
-require('module-alias/register');
 const express = require('express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
 
 // Internal module imports
-const swaggerDefinition = require('docs/swaggerDef');
+const swaggerDefinition = require('../../docs/swaggerDef');
 
 const router = express.Router();
 

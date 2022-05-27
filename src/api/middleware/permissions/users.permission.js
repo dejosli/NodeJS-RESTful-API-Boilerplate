@@ -1,11 +1,10 @@
 // External module imports
-require('module-alias/register');
 const AccessControl = require('accesscontrol');
 
 // Internal module imports
-const { allRoles } = require('config/roles');
-const { mappedPermissions, common } = require('utils');
-const { userService } = require('services');
+const { allRoles } = require('../../../config/roles');
+const { mappedPermissions, common } = require('../../utils');
+const { userService } = require('../../services');
 const grantAccess = require('./grantAccess');
 
 const { asyncHandler } = common;

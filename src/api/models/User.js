@@ -1,12 +1,11 @@
 // External module imports
-require('module-alias/register');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 // Internal module imports
-const config = require('config/config');
-const { allRoles, roles } = require('config/roles');
-const { toTitleCase } = require('utils').common;
+const config = require('../../config/config');
+const { allRoles, roles } = require('../../config/roles');
+const { toTitleCase } = require('../utils').common;
 const { toJSON, offsetBasedPaginate } = require('./plugins');
 
 /**

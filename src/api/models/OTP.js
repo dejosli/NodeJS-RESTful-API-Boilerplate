@@ -1,9 +1,8 @@
 // External module imports
-require('module-alias/register');
 const mongoose = require('mongoose');
 
 // Internal module imports
-const { methods, verificationMethods } = require('config/otps');
+const { methods, verificationMethods } = require('../../config/otps');
 const { toJSON } = require('./plugins');
 
 /**

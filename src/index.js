@@ -4,13 +4,10 @@
  * Author: Josli Shubho Biswas <bjoslishubho@gmail.com>
  */
 
-// External module imports
-require('module-alias/register');
-
 // Internal module imports
-const { connectDB } = require('core/database');
-const { startServer } = require('core/server');
-const { startWorkers } = require('core/workers');
+const { startServer } = require('./core/server');
+const { startWorkers } = require('./core/workers');
+const { connectDB } = require('./core/database');
 
 const init = async () => {
   // database connection

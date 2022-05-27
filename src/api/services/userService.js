@@ -1,13 +1,9 @@
-// External module imports
-require('module-alias/register');
-
 // Internal module imports
-const { User } = require('models');
-const { ErrorResponse, common } = require('utils');
-const { httpStatus, httpMessage } = require('config/custom-http-status');
-const { cloudinaryUploader } = require('lib');
-
-const { asyncFunction } = common;
+const { ErrorResponse } = require('../utils');
+const { asyncFunction } = require('../utils').common;
+const { httpStatus, httpMessage } = require('../../config/custom-http-status');
+const { cloudinaryUploader } = require('../lib');
+const { User } = require('../models');
 
 // define upload folder for profile picture
 const AVATAR_UPLOAD_FOLDER = 'avatar';
