@@ -35,7 +35,7 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
-    "express": "^4.17.2",
+    "express": "^4.19.2",
     "express-mongo-sanitize": "^2.1.0",
     "express-rate-limit": "^6.1.0",
     "express-slow-down": "^1.4.0",
